@@ -1,14 +1,14 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import NavBar from '@/components/Navbar';
+import Navbar from '../../../components/Navbar';
 
 export default function SolutionPage() {
   const t = useTranslations();
 
   return (
     <>
-      <NavBar />
+      <Navbar />
       <main className="pt-20 max-w-5xl mx-auto px-6">
         <h1 className="text-4xl font-bold mb-4">{t('nav.solution')}</h1>
         <p className="text-lg text-gray-600 mb-8">
