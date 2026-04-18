@@ -1,7 +1,6 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import Navbar from '../../../components/Navbar';
 
 export default function ProductPage() {
   const t = useTranslations();
