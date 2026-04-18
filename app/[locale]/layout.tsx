@@ -1,7 +1,9 @@
-﻿import type { Metadata } from "next";
+﻿import dynamic from "next/dynamic";
+const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
+
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import Navbar from "@/components/Navbar";
 import ScrollButtons from "@/components/ScrollButtons";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +23,6 @@ export default function RootLayout({
   return (
     <html lang={params.locale}>
       <body className={inter.className}>
-        <Navbar />
         <ScrollButtons />
 
         <main className="pt-16 min-h-screen">

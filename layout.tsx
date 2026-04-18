@@ -20,7 +20,6 @@ export default function RootLayout({
   return (
     <html lang={params.locale}>
       <body className={inter.className}>
-        <Navbar />
         <main className="pt-16">
           {children}
         </main>

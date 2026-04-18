@@ -24,7 +24,6 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Navbar />
       <main className="pt-20 max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-bold mb-4">Dashboard</h1>
         <p className="text-gray-700">Welcome, {user.email}</p>

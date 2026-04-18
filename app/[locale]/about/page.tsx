@@ -7,7 +7,6 @@ export default function AboutPage() {
 
   return (
     <>
-      <NavBar />
       <main className="pt-20 max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-bold mb-4">{t('nav.about')}</h1>
         <p className="text-lg text-gray-600 mb-6">
