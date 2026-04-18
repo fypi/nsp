@@ -1,7 +1,4 @@
-﻿import dynamic from "next/dynamic";
-const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
-
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
 import ScrollButtons from "@/components/ScrollButtons";
@@ -29,7 +26,7 @@ export default function RootLayout({
           {children}
         </main>
 
-        {/* ⭐ Tesla风格版权 */}
+        {/* Tesla风格版权 */}
         <footer className="text-center text-xs text-gray-500 py-12 space-y-2 border-t border-gray-100">
           {params.locale === "zh" ? (
             <>

@@ -12,9 +12,7 @@ const nextConfig = {
     config.resolve.alias["@"] = path.resolve(__dirname);
     return config;
   },
-  experimental: {
-    turbo: false,   // ⭐ 关闭 Turbopack
-  },
+  // 移除了错误的 experimental.turbo 配置
 };
 
 module.exports = nextConfig;
