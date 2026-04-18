@@ -1,10 +1,13 @@
+// middleware.ts
+import { locales, defaultLocale } from './i18n';
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
-  locales: ['en', 'zh', 'zh-TW'],
-  defaultLocale: 'zh'
+  locales,
+  defaultLocale,
+  localePrefix: 'always',
 });
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };
