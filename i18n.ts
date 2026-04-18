@@ -1,6 +1,4 @@
-import {defineConfig} from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 
-export default defineConfig({
-  locales: ['en', 'zh', 'zh-TW'],
-  defaultLocale: 'en'
-});
+export const locales = ['en', 'zh', 'zh-TW'];
+export const defaultLocale = 'zh';
