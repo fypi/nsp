@@ -12,6 +12,9 @@ const nextConfig = {
     config.resolve.alias["@"] = path.resolve(__dirname);
     return config;
   },
+  experimental: {
+    turbo: false,   // ⭐ 关闭 Turbopack
+  },
 };
 
 module.exports = nextConfig;
