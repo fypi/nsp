@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {supabase} from '@/lib/supabaseClient';
 import {useRouter} from 'next/navigation';
-import NavBar from '@/components/NavBar';
+import NavBar from '@/components/Navbar';
 
 export default function DashboardPage() {
   const router = useRouter();

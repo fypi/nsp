@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import NavBar from '@/components/NavBar';
+import NavBar from '@/components/Navbar';
 
 export default function LoginRequired() {
   return (

@@ -1,48 +1,29 @@
-import {NextIntlClientProvider} from 'next-intl';
-import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
+﻿import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "../globals.css";
+import Navbar from "@/components/Navbar";
 
-type Props = {
-  children: React.ReactNode;
-  params: Promise<{locale: string}>; // Next.js 16 必须是 Promise
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "NinesPro",
+  description: "永久免费公益工具平台",
 };
 
-// --- SEO ---
-export async function generateMetadata({params}: Props): Promise<Metadata> {
-  const {locale} = await params; // ✔ 必须 await
-
-  const messages = (await import(`../../messages/${locale}.json`)).default;
-
-  return {
-    title: messages['hero.title'] || 'Ninespro',
-    description: messages['hero.subtitle'] || 'Simple and powerful digital services for all humanity',
-    alternates: {
-      languages: {
-        en: '/en',
-        zh: '/zh',
-        'zh-TW': '/zh-TW'
-      }
-    }
-  };
-}
-
-// --- Layout ---
-export default async function LocaleLayout({children, params}: Props) {
-  const {locale} = await params; // ✔ 必须 await
-
-  let messages;
-  try {
-    messages = (await import(`../../messages/${locale}.json`)).default;
-  } catch {
-    notFound();
-  }
-
+export default function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { locale: string };
+}) {
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+    <html lang={params.locale}>
+      <body className={inter.className}>
+        <Navbar />
+        <main className="pt-16">
           {children}
-        </NextIntlClientProvider>
+        </main>
       </body>
     </html>
   );

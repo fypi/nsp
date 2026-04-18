@@ -1,7 +1,7 @@
 'use client';
 
 import {useTranslations} from 'next-intl';
-import NavBar from '@/components/NavBar';
+import NavBar from '@/components/Navbar';
 
 export default function SolutionPage() {
   const t = useTranslations();
