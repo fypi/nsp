@@ -1,5 +1,5 @@
 ﻿import "../globals.css";
-import Navbar from "@/components/Navbar";  // 👈 必须加这行
+import Navbar from "@/components/Navbar";
 
 export default function Layout({
   children,
@@ -7,8 +7,9 @@ export default function Layout({
 }) {
   return (
     <html lang={locale}>
+      {/* 👇 只有一个 body！！！ */}
       <body>
-        <Navbar />  {/* 👈 必须加这行 */}
+        <Navbar />
         {children}
       </body>
     </html>
