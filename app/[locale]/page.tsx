@@ -1,21 +1,55 @@
-﻿export default function Home() {
+﻿"use client";
+
+const sections = [
+  {
+    title: "NinesPro",
+    subtitle: "尽知天下事，弹指皆可得",
+    bg: "/images/hero-1.jpg",
+  },
+  {
+    title: "Products",
+    subtitle: "Powerful tools for everyone",
+    bg: "/images/hero-2.jpg",
+  },
+  {
+    title: "Tools",
+    subtitle: "永久免费工具集合",
+    bg: "/images/hero-3.jpg",
+  },
+];
+
+export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            NinesPro
-          </h1>
-          <p className="text-xl text-gray-300 mb-8">
-            永久免费公益工具平台
-          </p>
-          <div className="flex justify-center gap-4">
-            <a href="/en/products" className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition">
-              开始使用
-            </a>
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory">
+      {sections.map((s, i) => (
+        <section
+          key={i}
+          className="h-screen snap-start relative flex flex-col items-center justify-between text-center"
+        >
+          {/* 背景图 */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${s.bg})` }}
+          />
+
+          {/* 蒙层（Tesla关键） */}
+          <div className="absolute inset-0 bg-black/20" />
+
+          {/* 内容 */}
+          <div className="relative z-10 mt-24">
+            <h1 className="text-5xl font-medium tracking-wide text-white">
+              {s.title}
+            </h1>
+            <p className="text-lg text-white/80 mt-2">{s.subtitle}</p>
           </div>
-        </div>
-      </div>
+
+          {/* 按钮 */}
+          <div className="relative z-10 mb-16 flex gap-4">
+            <button className="btn-white">开始使用</button>
+            <button className="btn-dark">了解更多</button>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

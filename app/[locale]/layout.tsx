@@ -1,48 +1,55 @@
-﻿import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../globals.css";
-import ScrollButtons from "@/components/ScrollButtons";
+﻿"use client";
 
-const inter = Inter({ subsets: ["latin"] });
+const sections = [
+  {
+    title: "NinesPro",
+    subtitle: "尽知天下事，弹指皆可得",
+    bg: "/images/hero-1.jpg",
+  },
+  {
+    title: "Products",
+    subtitle: "Powerful tools for everyone",
+    bg: "/images/hero-2.jpg",
+  },
+  {
+    title: "Tools",
+    subtitle: "永久免费工具集合",
+    bg: "/images/hero-3.jpg",
+  },
+];
 
-export const metadata: Metadata = {
-  title: "NinesPro",
-  description: "永久免费公益工具平台",
-};
-
-export default function RootLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+export default function Home() {
   return (
-    <html lang={params.locale}>
-      <body className={inter.className}>
-        <ScrollButtons />
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      {sections.map((s, i) => (
+        <section
+          key={i}
+          className="h-screen snap-start relative flex flex-col items-center justify-between text-center"
+        >
+          {/* 背景 */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${s.bg})` }}
+          />
 
-        <main className="pt-16 min-h-screen">
-          {children}
-        </main>
+          {/* 黑色渐变遮罩（关键） */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
 
-        {/* Tesla风格版权 */}
-        <footer className="text-center text-xs text-gray-500 py-12 space-y-2 border-t border-gray-100">
-          {params.locale === "zh" ? (
-            <>
-              <div>九 © 2026 九域</div>
-              <div>保留所有权利</div>
-              <div>最终解释权归九域所有</div>
-            </>
-          ) : (
-            <>
-              <div>© 2026 NinesPro</div>
-              <div>All rights reserved</div>
-              <div>Final interpretation rights belong to NinesPro</div>
-            </>
-          )}
-        </footer>
-      </body>
-    </html>
+          {/* 标题 */}
+          <div className="relative z-10 mt-24 animate-fadeUp">
+            <h1 className="text-5xl md:text-6xl font-medium text-white tracking-wide">
+              {s.title}
+            </h1>
+            <p className="text-lg text-white/80 mt-3">{s.subtitle}</p>
+          </div>
+
+          {/* 按钮 */}
+          <div className="relative z-10 mb-16 flex gap-4 animate-fadeUp delay-200">
+            <button className="btn-white">开始使用</button>
+            <button className="btn-dark">了解更多</button>
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }

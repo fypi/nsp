@@ -1,54 +1,98 @@
-/* 圆形按钮（Tesla风） */
 .circle-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.4);
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
-.circle-btn:hover {
-  background: rgba(0,0,0,0.05);
-}
-
-/* 下拉菜单 */
 .dropdown {
   position: absolute;
-  top: 40px;
   right: 0;
+  top: 40px;
   background: white;
   border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 8px;
-  min-width: 160px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  animation: fadeIn 0.2s ease;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .dropdown-item {
   display: block;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: 0.2s;
+  padding: 10px 16px;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .dropdown-item:hover {
   background: #f5f5f5;
 }
 
-/* 动画（只能单独写，不能嵌套） */
-@keyframes fadeIn {
+.animate-fade {
+  animation: fade 0.25s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }，
+  /* ===== Tesla风格基础 ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+/* ===== 按钮 ===== */
+.btn-white {
+  background: white;
+  color: black;
+  padding: 10px 26px;
+  border-radius: 9999px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-white:hover {
+  background: #e5e5e5;
+  transform: translateY(-1px);
+}
+
+.btn-dark {
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 10px 26px;
+  border-radius: 9999px;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.btn-dark:hover {
+  background: rgba(0,0,0,0.8);
+  transform: translateY(-1px);
+}
+
+/* ===== 动画 ===== */
+@keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
 }
