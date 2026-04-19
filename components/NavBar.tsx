@@ -15,21 +15,36 @@ const languageNames: Record<Locale, string> = {
   "zh-TW": "繁體中文",
 };
 
-const brandNames: Record<Locale, string> = {
-  en: "NinesPro",
-  zh: "九域",
-  "zh-TW": "九域",
-};
+const navItems = [
+  {
+    key: "product",
+    name: { zh: "产品中心", en: "Products", tw: "產品中心" },
+    path: "/product",
+  },
+  {
+    key: "solution",
+    name: { zh: "解决方案", en: "Solutions", tw: "解決方案" },
+    path: "/solution",
+  },
+  {
+    key: "support",
+    name: { zh: "支持中心", en: "Support", tw: "支援中心" },
+    path: "/support",
+  },
+  {
+    key: "tool",
+    name: { zh: "工具中心", en: "Tools", tw: "工具中心" },
+    path: "/tool",
+  },
+];
 
 function stripLocaleFromPath(path: string): string {
   const parts = path.split("/");
   const maybeLocale = parts[1];
-
   if (locales.includes(maybeLocale as Locale)) {
     const rest = "/" + parts.slice(2).join("/");
-    return rest === "/" ? "/" : rest.replace(/\/+$/, "");
+    return rest === "/" ? "/" : rest;
   }
-
   return path;
 }
 
@@ -40,154 +55,229 @@ export default function Navbar() {
 
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [menu, setMenu] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw as Locale;
+    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
     return "zh";
   }, [params]);
 
-  const brand = brandNames[locale];
+  const currentPath = useMemo(() => {
+    return stripLocaleFromPath(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     setMounted(true);
-
     supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
-
     const { data: listener } = supabase.auth.onAuthStateChange((_, sess) => {
       setUser(sess?.user ?? null);
     });
-
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-
     return () => {
       listener.subscription.unsubscribe();
-      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
   const changeLanguage = (l: Locale) => {
     document.cookie = `locale=${l}; path=/; max-age=31536000`;
-
     const basePath = stripLocaleFromPath(pathname);
-    const nextPath = basePath === "/" ? `/${l}` : `/${l}${basePath}`;
-
-    router.push(nextPath);
+    router.push(`/${l}${basePath === "/" ? "" : basePath}`);
+    setShowLangMenu(false);
   };
 
   if (!mounted) return null;
 
   return (
     <>
-      {/* ===== Navbar 主体 ===== */}
       <nav
-        className={`fixed top-0 w-full h-16 px-10 flex items-center justify-between z-50 transition-all duration-500
-        ${scrolled ? "bg-white/70 backdrop-blur-xl border-b border-gray-200" : "bg-transparent"}`}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "calc(100% - 12px)",
+          height: "52px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "0 32px",
+          zIndex: 9999,
+          backgroundColor: "#ffffff",
+          borderBottom: "none",
+        }}
       >
-        {/* ===== LOGO（这里就是你问的地方） ===== */}
         <Link
           href={`/${locale}`}
-          className="text-sm md:text-base tracking-[0.3em] font-medium text-black hover:opacity-70"
+          style={{
+            fontSize: "20px",
+            fontWeight: 600,
+            color: "#000",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+          }}
         >
-          {brand}
+          {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        {/* ===== 中间导航 ===== */}
-        <div className="hidden md:flex gap-10 text-sm tracking-wide">
-          {["products", "tools", "support"].map((item) => (
-            <div
-              key={item}
-              onMouseEnter={() => setMenu(item)}
-              onMouseLeave={() => setMenu(null)}
-              className="cursor-pointer hover:opacity-60"
-            >
-              {item.toUpperCase()}
-            </div>
-          ))}
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            fontSize: "15px",
+            color: "#000",
+          }}
+        >
+          {navItems.map((item) => {
+            const isActive = currentPath === item.path;
+            return (
+              <Link
+                key={item.key}
+                href={`/${locale}${item.path}`}
+                style={{
+                  padding: "7px 13px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  color: "#000",
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+
+                  // 🔥 常驻液态玻璃选中效果
+                  background: isActive
+                    ? "rgba(255, 255, 255, 0.25)"
+                    : "transparent",
+                  backdropFilter: isActive ? "blur(12px)" : "none",
+                  WebkitBackdropFilter: isActive ? "blur(12px)" : "none",
+                  border: isActive
+                    ? "1px solid rgba(255, 255, 255, 0.4)"
+                    : "none",
+
+                  // hover 液态玻璃
+                  "&:hover": {
+                    background: "rgba(255, 255, 255, 0.15)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                  },
+                }}
+                onMouseEnter={() => setActiveMenu(item.key)}
+                onMouseLeave={() => setActiveMenu(null)}
+              >
+                {locale === "zh"
+                  ? item.name.zh
+                  : locale === "zh-TW"
+                  ? item.name.tw
+                  : item.name.en}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* ===== 右侧按钮 ===== */}
-        <div className="flex gap-4">
-          <button className="circle-btn">?</button>
+        <div style={{ display: "flex", gap: "12px", position: "relative" }}>
+          <button style={iconBtn}>?</button>
 
-          {/* 语言 */}
-          <div
-            onMouseEnter={() => setMenu("lang")}
-            onMouseLeave={() => setMenu(null)}
-            className="relative"
+          <button
+            style={iconBtn}
+            onClick={() => setShowLangMenu(!showLangMenu)}
           >
-            <button className="circle-btn">🌐</button>
-            {menu === "lang" && (
-              <div className="dropdown">
-                {locales.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => changeLanguage(l)}
-                    className="dropdown-item"
-                  >
-                    {languageNames[l]}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+            🌐
+          </button>
+          {showLangMenu && (
+            <div
+              style={{
+                position: "absolute",
+                top: "44px",
+                right: "0",
+                background: "#fff",
+                borderRadius: "12px",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                zIndex: 1000,
+                padding: "6px",
+                border: "none",
+              }}
+            >
+              {locales.map((l) => (
+                <button
+                  key={l}
+                  onClick={() => changeLanguage(l)}
+                  style={{
+                    padding: "10px 16px",
+                    border: "none",
+                    background: "none",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    borderRadius: "8px",
+                    color: "#000",
+                    opacity: 1,
+                    fontWeight: 500,
+                  }}
+                >
+                  {languageNames[l]}
+                </button>
+              ))}
+            </div>
+          )}
 
-          {/* 用户 */}
-          <div
-            onMouseEnter={() => setMenu("user")}
-            onMouseLeave={() => setMenu(null)}
-            className="relative"
-          >
-            <button className="circle-btn">
-              {user ? user.email?.[0].toUpperCase() : "👤"}
+          <Link href={`/${locale}/login`} style={{ textDecoration: "none" }}>
+            <button style={iconBtn}>
+              {user ? user.email?.charAt(0).toUpperCase() : "👤"}
             </button>
-
-            {menu === "user" && (
-              <div className="dropdown">
-                {!user ? (
-                  <Link href={`/${locale}/login`} className="dropdown-item">
-                    Sign In
-                  </Link>
-                ) : (
-                  <>
-                    <Link href={`/${locale}/account`} className="dropdown-item">
-                      Account
-                    </Link>
-                    <button
-                      onClick={() => supabase.auth.signOut()}
-                      className="dropdown-item"
-                    >
-                      Logout
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
+          </Link>
         </div>
       </nav>
 
-      {/* ===== 大下拉 ===== */}
-      {menu && ["products", "tools", "support"].includes(menu) && (
+      {activeMenu && (
         <div
-          onMouseEnter={() => setMenu(menu)}
-          onMouseLeave={() => setMenu(null)}
-          className="fixed top-16 left-0 w-full bg-white border-t border-gray-200 z-40 animate-fade"
+          style={{
+            position: "fixed",
+            top: "52px",
+            left: 0,
+            width: "100%",
+            backgroundColor: "#fff",
+            border: "none",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+            zIndex: 998,
+            padding: "50px 30px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "50px",
+          }}
+          onMouseEnter={() => setActiveMenu(activeMenu)}
+          onMouseLeave={() => setActiveMenu(null)}
         >
-          <div className="max-w-6xl mx-auto py-20 text-center">
-            <h1 className="text-4xl font-medium mb-4">{brand}</h1>
-            <p className="text-gray-500 text-lg">
-              {locale === "zh"
-                ? "尽知天下事，弹指皆可得"
-                : "Everything you need, instantly."}
-            </p>
-          </div>
+          {activeMenu === "product" && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ width: 120, height: 120, background: "#f5f5f5", borderRadius: 12, margin: "0 auto 12px" }}></div>
+              <h3 style={{ fontSize: 16, fontWeight: 500, color: "#000" }}>
+                {locale === "zh" ? "产品A" : locale === "zh-TW" ? "產品A" : "Product A"}
+              </h3>
+            </div>
+          )}
         </div>
       )}
     </>
   );
 }
+
+const iconBtn = {
+  width: "34px",
+  height: "34px",
+  borderRadius: "17px",
+  border: "none",
+  background: "#f5f5f5",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "15px",
+  cursor: "pointer",
+  color: "#000",
+  opacity: 1,
+
+  // 按钮也加液态玻璃 hover
+  "&:hover": {
+    background: "rgba(255,255,255,0.2)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+  },
+};

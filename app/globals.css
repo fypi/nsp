@@ -1,98 +1,29 @@
-.circle-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 9999px;
-  background: rgba(0,0,0,0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
+* {margin:0;padding:0;box-sizing:border-box}
+html,body {background:#fff;overflow:hidden;height:100%;width:100%}
+.page-wrapper {height:100%;width:100%;margin-left:0}
+.page-container {height:100%;overflow-y:scroll;scroll-behavior:smooth;padding-bottom:20px}
+.screen {height:100vh;margin:30px 0;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative}
+.overlay {position:absolute;inset:0;background:rgba(0,0,0,0.3)}
+.content {position:relative;z-index:10;text-align:center;color:#fff;max-width:600px;padding:0 20px}
+.content h1 {font-size:44px;font-weight:600;margin-bottom:10px}
+.content p {font-size:18px;color:rgba(255,255,255,0.85);margin-bottom:40px}
+.btn-group {display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-white {background:#fff;color:#000;padding:12px 32px;border-radius:999px;border:none;font-size:14px;font-weight:500;cursor:pointer}
+.btn-dark {background:rgba(255,255,255,0.15);color:#fff;padding:12px 32px;border-radius:999px;border:none;font-size:14px;font-weight:500;backdrop-filter:blur(10px);cursor:pointer}
 
-.dropdown {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-}
+.page-container::-webkit-scrollbar {width:12px}
+.page-container::-webkit-scrollbar-track {background:#fff}
+.page-container::-webkit-scrollbar-thumb {background:#888;border-radius:6px;border:2.5px solid transparent;background-clip:content-box}
+.page-container::-webkit-scrollbar-button {display:none}
+.page-container::-webkit-scrollbar-button:vertical:start:decrement {display:block;width:12px;height:12px;background:#e0e0e0;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 8l8 8H4z"/></svg>');background-repeat:no-repeat;background-position:center;background-size:16px}
+.page-container::-webkit-scrollbar-button:vertical:end:increment {display:block;width:12px;height:12px;background:#e0e0e0;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 16l-8-8h16z"/></svg>');background-repeat:no-repeat;background-position:center;background-size:16px}
 
-.dropdown-item {
-  display: block;
-  padding: 10px 16px;
-  font-size: 14px;
-  white-space: nowrap;
-}
+.page-footer {width:100%;text-align:center;padding:0!important;margin:0!important;background:#fff;font-size:13px;color:#333;line-height:1}
+.footer-links {display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:0;padding:0}
+.footer-links a {color:#333;text-decoration:none;margin:0 5px}
+.footer-links a:hover {text-decoration:underline}
 
-.dropdown-item:hover {
-  background: #f5f5f5;
-}
-
-.animate-fade {
-  animation: fade 0.25s ease;
-}
-
-@keyframes fade {
-  from { opacity: 0; }
-  to { opacity: 1; }，
-  /* ===== Tesla风格基础 ===== */
-html, body {
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-}
-
-/* ===== 按钮 ===== */
-.btn-white {
-  background: white;
-  color: black;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-}
-
-.btn-white:hover {
-  background: #e5e5e5;
-  transform: translateY(-1px);
-}
-
-.btn-dark {
-  background: rgba(0,0,0,0.6);
-  color: white;
-  padding: 10px 26px;
-  border-radius: 9999px;
-  font-size: 14px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.btn-dark:hover {
-  background: rgba(0,0,0,0.8);
-  transform: translateY(-1px);
-}
-
-/* ===== 动画 ===== */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeUp {
-  animation: fadeUp 0.8s ease forwards;
-}
-
-.delay-200 {
-  animation-delay: 0.2s;
-}
-
-}
+/* 液态玻璃效果 */
+a,button,[role="button"] {position:relative;border-radius:8px;transition:all .25s ease!important}
+a:hover,button:hover,[role="button"]:hover {background:rgba(255,255,255,0.2)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;border:1px solid rgba(255,255,255,0.3)!important;transform:translateY(-1px)}
+a[aria-current="page"],a.active,.navbar a.active {background:rgba(255,255,255,0.3)!important;backdrop-filter:blur(12px)!important;border:1px solid rgba(255,255,255,0.4)!important}

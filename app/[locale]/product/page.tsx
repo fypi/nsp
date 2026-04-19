@@ -1,27 +1,24 @@
-'use client';
-
-import {useTranslations} from 'next-intl';
+"use client";
+import Navbar from "@/components/Navbar";
+import { useParams } from "next/navigation";
 
 export default function ProductPage() {
-  const t = useTranslations();
-
+  const { locale } = useParams();
+  const texts = {
+    zh: { title: "产品中心", desc: "高效智能 · 极简体验" },
+    "zh-TW": { title: "產品中心", desc: "高效智能 · 極簡體驗" },
+    en: { title: "Products", desc: "Efficient & Intelligent · Minimalist Experience" },
+  };
+  const t = texts[locale as keyof typeof texts] || texts.zh;
   return (
-    <>
-      <main className="pt-20 max-w-5xl mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-4">{t('nav.product')}</h1>
-        <p className="text-lg text-gray-600 mb-8">
-          {t('product.intro', {defaultValue: 'Our core products for global users.'})}
-        </p>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="border rounded-xl p-6 shadow-sm">
-            <h2 className="font-semibold mb-2">Cloud Engine</h2>
-            <p className="text-sm text-gray-600">
-              High-availability infrastructure for your digital services.
-            </p>
-          </div>
+    <div className="page-wrapper">
+      <Navbar />
+      <div className="page-container" style={{ padding: "80px 20px" }}>
+        <div style={{ textAlign: "center", color: "#000" }}>
+          <h1 style={{ fontSize: "32px" }}>{t.title}</h1>
+          <p style={{ marginTop: 10 }}>{t.desc}</p>
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
