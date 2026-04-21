@@ -1,14 +1,13 @@
-import "../globals.css";
-import Navbar from "@/components/Navbar";
+import "./globals.css";
 
-export default function Layout({
+export default function RootLayout({
   children,
-  params: { locale },
+}: {
+  children: React.ReactNode;
 }) {
   return (
-    <html lang={locale}>
-      <body>
-        <Navbar />
+    <html lang="zh-CN" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         {children}
       </body>
     </html>
