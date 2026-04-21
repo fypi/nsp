@@ -1,15 +1,15 @@
-import "./globals.css";
-import Navbar from "./components/Navbar";
+import "../globals.css";
+import Navbar from "@/components/Navbar";
 
-export default function RootLayout({
+export default function Layout({
   children,
-}: {
-  children: React.ReactNode;
+  params: { locale },
 }) {
   return (
-    <html lang="zh-CN">
+    <html lang={locale}>
       <body>
-        <main>{children}</main>
+        <Navbar />
+        {children}
       </body>
     </html>
   );
