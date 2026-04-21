@@ -3,9 +3,9 @@ import "../globals.css";
 
 export default function Layout({ children }) {
   return (
-    <div>
+    <div style={{ minHeight: "100vh" }}>
       <Navbar />
-      {children}
+      <main style={{ flex: 1 }}>{children}</main>
     </div>
   );
 }
