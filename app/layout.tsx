@@ -1,13 +1,9 @@
 import "./globals.css";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <body suppressHydrationWarning>
+    <html lang="zh-CN">
+      <body>
         {children}
       </body>
     </html>
