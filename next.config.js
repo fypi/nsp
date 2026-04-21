@@ -1,12 +1,12 @@
-const path = require("path");
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: { ignoreBuildErrors: true },
-  images: { unoptimized: true },
-  output: "standalone", // 关键配置，强制生成静态路由
-  webpack: (config) => {
-    config.resolve.alias["@"] = path.resolve(__dirname);
-    return config;
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
