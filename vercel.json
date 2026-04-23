@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/:locale", "destination": "/[locale]/page" },
-    { "source": "/:locale/:path*", "destination": "/[locale]/:path*" }
-  ]
-}
