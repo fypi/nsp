@@ -90,6 +90,7 @@ export default function Navbar() {
 
   return (
     <>
+      {/* 导航栏保持纯白色，不影响玻璃效果 */}
       <nav
         style={{
           position: "fixed",
@@ -140,19 +141,60 @@ export default function Navbar() {
                   color: "#000",
                   fontWeight: 500,
                   textDecoration: "none",
-                  transition: "all 0.2s ease",
-                  // 🔥 直接用内联样式控制选中态，100%生效
+                  transition: "all 0.25s cubic-bezier(0.25, 1, 0.5, 1)",
+
+                  // ✅ 核心：纯背景下的液态玻璃效果
                   background: isActive
-                    ? "rgba(255, 255, 255, 0.3)"
+                    ? "rgba(240, 240, 240, 0.6)"
                     : "transparent",
-                  backdropFilter: isActive ? "blur(12px)" : "none",
-                  WebkitBackdropFilter: isActive ? "blur(12px)" : "none",
+                  backdropFilter: isActive ? "blur(15px) saturate(120%)" : "none",
+                  WebkitBackdropFilter: isActive ? "blur(15px) saturate(120%)" : "none",
                   border: isActive
-                    ? "1px solid rgba(255, 255, 255, 0.4)"
+                    ? "1px solid rgba(255, 255, 255, 0.7)"
                     : "none",
+                  boxShadow: isActive
+                    ? `
+                      0 3px 10px rgba(0, 0, 0, 0.05),
+                      inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                      inset 0 -1px 2px rgba(0, 0, 0, 0.03)
+                    `
+                    : "none",
+                  transform: isActive ? "scale(1.02)" : "scale(1)",
                 }}
-                onMouseEnter={() => setActiveMenu(item.key)}
-                onMouseLeave={() => setActiveMenu(null)}
+                onMouseEnter={(e) => {
+                  // 鼠标 hover 时的玻璃效果
+                  Object.assign(e.target.style, {
+                    background: "rgba(240, 240, 240, 0.6)",
+                    backdropFilter: "blur(15px) saturate(120%)",
+                    WebkitBackdropFilter: "blur(15px) saturate(120%)",
+                    border: "1px solid rgba(255, 255, 255, 0.7)",
+                    boxShadow: `
+                      0 3px 10px rgba(0, 0, 0, 0.05),
+                      inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                      inset 0 -1px 2px rgba(0, 0, 0, 0.03)
+                    `,
+                    transform: "scale(1.02)",
+                  });
+                  setActiveMenu(item.key);
+                }}
+                onMouseLeave={(e) => {
+                  // 鼠标离开时恢复
+                  Object.assign(e.target.style, {
+                    background: isActive ? "rgba(240, 240, 240, 0.6)" : "transparent",
+                    backdropFilter: isActive ? "blur(15px) saturate(120%)" : "none",
+                    WebkitBackdropFilter: isActive ? "blur(15px) saturate(120%)" : "none",
+                    border: isActive ? "1px solid rgba(255, 255, 255, 0.7)" : "none",
+                    boxShadow: isActive
+                      ? `
+                        0 3px 10px rgba(0, 0, 0, 0.05),
+                        inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                        inset 0 -1px 2px rgba(0, 0, 0, 0.03)
+                      `
+                      : "none",
+                    transform: isActive ? "scale(1.02)" : "scale(1)",
+                  });
+                  setActiveMenu(null);
+                }}
               >
                 {locale === "zh"
                   ? item.name.zh
