@@ -134,6 +134,7 @@ export default function Navbar() {
                 key={item.key}
                 href={`/${locale}${item.path}`}
                 className={isActive ? "nav-active" : ""}
+                aria-current={isActive ? "page" : undefined}
                 style={{
                   padding: "7px 13px",
                   borderRadius: "10px",
@@ -143,8 +144,6 @@ export default function Navbar() {
                   textDecoration: "none",
                   transition: "all 0.2s ease",
                   background: "transparent",
-                  backdropFilter: "none",
-                  WebkitBackdropFilter: "none",
                   border: "none",
                 }}
                 onMouseEnter={() => setActiveMenu(item.key)}
