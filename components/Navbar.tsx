@@ -133,6 +133,7 @@ export default function Navbar() {
               <Link
                 key={item.key}
                 href={`/${locale}${item.path}`}
+                className={isActive ? "nav-active" : ""}
                 style={{
                   padding: "7px 13px",
                   borderRadius: "10px",
@@ -141,24 +142,10 @@ export default function Navbar() {
                   fontWeight: 500,
                   textDecoration: "none",
                   transition: "all 0.2s ease",
-
-                  // 🔥 常驻液态玻璃选中效果
-                  background: isActive
-                    ? "rgba(255, 255, 255, 0.25)"
-                    : "transparent",
-                  backdropFilter: isActive ? "blur(12px)" : "none",
-                  WebkitBackdropFilter: isActive ? "blur(12px)" : "none",
-                  border: isActive
-                    ? "1px solid rgba(255, 255, 255, 0.4)"
-                    : "none",
-
-                  // hover 液态玻璃
-                  "&:hover": {
-                    background: "rgba(255, 255, 255, 0.15)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                  },
+                  background: "transparent",
+                  backdropFilter: "none",
+                  WebkitBackdropFilter: "none",
+                  border: "none",
                 }}
                 onMouseEnter={() => setActiveMenu(item.key)}
                 onMouseLeave={() => setActiveMenu(null)}
@@ -273,11 +260,4 @@ const iconBtn = {
   cursor: "pointer",
   color: "#000",
   opacity: 1,
-
-  // 按钮也加液态玻璃 hover
-  "&:hover": {
-    background: "rgba(255,255,255,0.2)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-  },
 };
