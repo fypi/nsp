@@ -133,8 +133,6 @@ export default function Navbar() {
               <Link
                 key={item.key}
                 href={`/${locale}${item.path}`}
-                className={isActive ? "nav-active" : ""}
-                aria-current={isActive ? "page" : undefined}
                 style={{
                   padding: "7px 13px",
                   borderRadius: "10px",
@@ -143,8 +141,15 @@ export default function Navbar() {
                   fontWeight: 500,
                   textDecoration: "none",
                   transition: "all 0.2s ease",
-                  background: "transparent",
-                  border: "none",
+                  // 🔥 直接用内联样式控制选中态，100%生效
+                  background: isActive
+                    ? "rgba(255, 255, 255, 0.3)"
+                    : "transparent",
+                  backdropFilter: isActive ? "blur(12px)" : "none",
+                  WebkitBackdropFilter: isActive ? "blur(12px)" : "none",
+                  border: isActive
+                    ? "1px solid rgba(255, 255, 255, 0.4)"
+                    : "none",
                 }}
                 onMouseEnter={() => setActiveMenu(item.key)}
                 onMouseLeave={() => setActiveMenu(null)}
