@@ -102,7 +102,6 @@ export default function Home() {
 
   return (
     <div className="page-wrapper">
-      <Navbar />
 
       <div className="page-container">
         {sections.map((item, index) => (
