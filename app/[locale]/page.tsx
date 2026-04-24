@@ -1,17 +1,11 @@
 ﻿"use client";
+
 import Navbar from "@/components/Navbar";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [mounted, setMounted] = useState(false);
-  const { locale } = useParams();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  const params = useParams();
+  const locale = typeof params?.locale === "string" ? params.locale : "zh";
 
   const data = {
     zh: [
@@ -22,7 +16,7 @@ export default function Home() {
         btn1: "开始使用",
         btn2: "了解更多",
         footer: {
-          copyright: "九域  ©  2026  九域  版权所有 | 最终解释权归九域所有",
+          copyright: "九域 © 2026 九域 版权所有 | 最终解释权归九域所有",
           privacy: "隐私与法律",
           contact: "联系方式",
           help: "帮助中心",
@@ -51,7 +45,7 @@ export default function Home() {
         btn1: "開始使用",
         btn2: "了解更多",
         footer: {
-          copyright: "九域  ©  2026  九域  版權所有 | 最終解釋權歸九域所有",
+          copyright: "九域 © 2026 九域 版權所有 | 最終解釋權歸九域所有",
           privacy: "隱私與法律",
           contact: "聯絡方式",
           help: "說明中心",
@@ -80,7 +74,7 @@ export default function Home() {
         btn1: "Get Started",
         btn2: "Learn More",
         footer: {
-          copyright: "NinesPro © 2026 NinesPro All Rights Reserved | Final Interpretation Rights Reserved",
+          copyright: "NinesPro © 2026 NinesPro All Rights Reserved",
           privacy: "Privacy & Legal",
           contact: "Contact",
           help: "Help Center",
@@ -103,12 +97,13 @@ export default function Home() {
     ],
   };
 
-  const sections = data[locale as string] || data.zh;
+  const sections = data[locale] || data.zh;
   const footer = sections[0].footer;
 
   return (
     <div className="page-wrapper">
       <Navbar />
+
       <div className="page-container">
         {sections.map((item, index) => (
           <section
@@ -117,9 +112,11 @@ export default function Home() {
             style={{ backgroundImage: `url(${item.image})` }}
           >
             <div className="overlay"></div>
+
             <div className="content">
               <h1>{item.title}</h1>
               <p>{item.subtitle}</p>
+
               <div className="btn-group">
                 <button className="btn-white">{item.btn1}</button>
                 <button className="btn-dark">{item.btn2}</button>
@@ -128,13 +125,12 @@ export default function Home() {
           </section>
         ))}
 
-        {/* 底部版权（可点击 + 不报错 + 多语言） */}
         <footer className="page-footer">
           <div className="footer-links">
-            <span>{footer.copyright}</span>
-            <a href={`/${locale}/privacy`}>{footer.privacy}</a>
-            <a href={`/${locale}/contact`}>{footer.contact}</a>
-            <a href={`/${locale}/help`}>{footer.help}</a>
+            <span>{footer?.copyright}</span>
+            <a href={`/${locale}/privacy`}>{footer?.privacy}</a>
+            <a href={`/${locale}/contact`}>{footer?.contact}</a>
+            <a href={`/${locale}/help`}>{footer?.help}</a>
           </div>
         </footer>
       </div>
