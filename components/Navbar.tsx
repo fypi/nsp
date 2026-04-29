@@ -128,6 +128,9 @@ export default function Navbar() {
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // 👇 用户菜单弹出状态
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
     if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
@@ -149,7 +152,14 @@ export default function Navbar() {
     };
   }, []);
 
-  // ✅ 只给选中的导航项跟随鼠标设置液态变量（未选中不影响）
+  // 👇 退出登录
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setShowUserMenu(false);
+    router.push(`/${locale}`);
+  };
+
   const handleLiquidMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--lx", `${e.clientX - rect.left}px`);
@@ -181,7 +191,6 @@ export default function Navbar() {
     setShowLangMenu(false);
   };
 
-  // 为了不遮住你原来滚动条（上下小三角）
   const NAV_H = 52;
   const SCROLLBAR_W = 12;
 
@@ -256,16 +265,13 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* ✅ 右上角：帮助 / 语言 / 账户（恢复成你原来那种小圆圈按钮） */}
         <div style={{ display: "flex", gap: "12px", position: "relative" }}>
-          {/* 帮助：跳支持中心（按你要求的“帮助”） */}
           <Link href={`/${locale}/support`} style={{ textDecoration: "none" }}>
             <button style={iconBtn} aria-label="Help">
               ?
             </button>
           </Link>
 
-          {/* 语言 */}
           <button
             style={iconBtn}
             onClick={() => setShowLangMenu(!showLangMenu)}
@@ -311,12 +317,84 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* 账户：跳登录/注册/忘记密码/修改密码所在页（由你项目的 /login 实现） */}
-          <Link href={`/${locale}/login`} style={{ textDecoration: "none" }}>
-            <button style={iconBtn} aria-label="Account">
-              {user ? user.email?.charAt(0).toUpperCase() : "👤"}
-            </button>
-          </Link>
+          {/* 👇 只修这里！登录后不跳注册，弹出菜单 */}
+          <div style={{ position: "relative" }}>
+            {!user ? (
+              <Link href={`/${locale}/login`} style={{ textDecoration: "none" }}>
+                <button style={iconBtn}>👤</button>
+              </Link>
+            ) : (
+              <button
+                style={iconBtn}
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                {user.email?.charAt(0).toUpperCase()}
+              </button>
+            )}
+
+            {/* 用户下拉菜单 */}
+            {showUserMenu && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: NAV_H + 4,
+                  right: 0,
+                  width: 160,
+                  background: "#fff",
+                  borderRadius: 12,
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                  zIndex: 9999,
+                  padding: "6px 0",
+                }}
+              >
+                <div
+                  style={{
+                    padding: "8px 14px",
+                    fontSize: 12,
+                    color: "#666",
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
+                >
+                  {user.email}
+                </div>
+
+                <button
+                  onClick={() => {
+                    router.push(`/${locale}/profile`);
+                    setShowUserMenu(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    textAlign: "left",
+                    border: "none",
+                    background: "none",
+                    fontSize: 14,
+                    cursor: "pointer",
+                  }}
+                >
+                  个人信息
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    textAlign: "left",
+                    border: "none",
+                    background: "none",
+                    fontSize: 14,
+                    color: "red",
+                    cursor: "pointer",
+                  }}
+                >
+                  退出登录
+                </button>
+              </div>
+            )}
+          </div>
+
         </div>
       </nav>
 
