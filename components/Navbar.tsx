@@ -127,9 +127,10 @@ export default function Navbar() {
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  // 手机汉堡菜单状态
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
@@ -152,7 +153,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // 👇 退出登录
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -208,17 +208,18 @@ export default function Navbar() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 32px",
+          padding: "0 16px",
           zIndex: 9999,
           backgroundColor: "#ffffff",
           borderBottom: "none",
           boxShadow: "none",
         }}
       >
+        {/* Logo */}
         <Link
           href={`/${locale}`}
           style={{
-            fontSize: "20px",
+            fontSize: "18px",
             fontWeight: 600,
             color: "#000",
             textDecoration: "none",
@@ -228,7 +229,16 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        <div style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
+        {/* 桌面端横向导航（≥768px 显示） */}
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            fontSize: "15px",
+            color: "#000",
+            "@media (max-width: 768px)": { display: "none" },
+          }}
+        >
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
             const clicked = pressedKey === item.key;
@@ -265,11 +275,26 @@ export default function Navbar() {
           })}
         </div>
 
-        <div style={{ display: "flex", gap: "12px", position: "relative" }}>
+        {/* 手机端：三横汉堡按钮（≤768px 显示） */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            display: "none",
+            "@media (max-width: 768px)": { display: "block" },
+            background: "transparent",
+            border: "none",
+            fontSize: "24px",
+            cursor: "pointer",
+            padding: "0 8px",
+          }}
+        >
+          {mobileMenuOpen ? "✕" : "☰"}
+        </button>
+
+        {/* 右侧：帮助 + 语言 + 头像 */}
+        <div style={{ display: "flex", gap: "8px", position: "relative" }}>
           <Link href={`/${locale}/support`} style={{ textDecoration: "none" }}>
-            <button style={iconBtn} aria-label="Help">
-              ?
-            </button>
+            <button style={iconBtn} aria-label="Help">?</button>
           </Link>
 
           <button
@@ -299,12 +324,12 @@ export default function Navbar() {
                   key={l}
                   onClick={() => changeLanguage(l)}
                   style={{
-                    padding: "10px 16px",
+                    padding: "8px 14px",
                     border: "none",
                     background: "none",
                     textAlign: "left",
                     cursor: "pointer",
-                    fontSize: "14px",
+                    fontSize: "13px",
                     borderRadius: "8px",
                     color: "#000",
                     opacity: 1,
@@ -317,7 +342,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* 👇 只修这里！登录后不跳注册，弹出菜单 */}
           <div style={{ position: "relative" }}>
             {!user ? (
               <Link href={`/${locale}/login`} style={{ textDecoration: "none" }}>
@@ -332,7 +356,6 @@ export default function Navbar() {
               </button>
             )}
 
-            {/* 用户下拉菜单 */}
             {showUserMenu && (
               <div
                 style={{
@@ -357,7 +380,6 @@ export default function Navbar() {
                 >
                   {user.email}
                 </div>
-
                 <button
                   onClick={() => {
                     router.push(`/${locale}/profile`);
@@ -375,7 +397,6 @@ export default function Navbar() {
                 >
                   个人信息
                 </button>
-
                 <button
                   onClick={handleLogout}
                   style={{
@@ -394,13 +415,57 @@ export default function Navbar() {
               </div>
             )}
           </div>
-
         </div>
       </nav>
 
+      {/* 手机端全屏垂直菜单（≤768px 展开） */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            display: "none",
+            "@media (max-width: 768px)": { display: "block" },
+            position: "fixed",
+            top: `${NAV_H}px`,
+            left: 0,
+            width: "100%",
+            height: "calc(100vh - 52px)",
+            background: "#fff",
+            zIndex: 9998,
+            padding: "20px",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {navItems.map((item) => (
+              <Link
+                key={item.key}
+                href={`/${locale}${item.path}`}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 500,
+                  color: "#000",
+                  textDecoration: "none",
+                  padding: "12px 0",
+                  borderBottom: "1px solid #f0f0f0",
+                }}
+              >
+                {locale === "zh"
+                  ? item.name.zh
+                  : locale === "zh-TW"
+                  ? item.name.tw
+                  : item.name.en}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 桌面端 Mega 下拉菜单 */}
       {activeMenu && (
         <div
           style={{
+            display: "none",
+            "@media (min-width: 769px)": { display: "flex" },
             position: "fixed",
             top: `${NAV_H}px`,
             left: 0,
@@ -410,7 +475,6 @@ export default function Navbar() {
             boxShadow: "0 4px 12px rgba(249, 250, 250, 0.05)",
             zIndex: 998,
             padding: "50px 30px",
-            display: "flex",
             justifyContent: "center",
             gap: "50px",
           }}
