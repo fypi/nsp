@@ -13,7 +13,6 @@ export default function LoginPage() {
   const params = useParams();
   const search = useSearchParams();
 
-  // 修复：直接从 params 获取 locale，避免 useMemo 不生效
   const locale = (() => {
     const raw = params?.locale;
     if (typeof raw === 'string' && locales.includes(raw as Locale)) return raw as Locale;
@@ -44,35 +43,28 @@ export default function LoginPage() {
     router.replace(target);
   };
 
-  // 修复：内联样式 + Tailwind 双重保障，强制居中
   return (
     <div style={{
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '1rem',
-      paddingTop: '5rem', // 避开导航栏
+      padding: '20px',
       backgroundColor: '#ffffff'
     }}>
-      <div style={{ width: '100%', maxWidth: '28rem' }}>
+      <div style={{ width: '100%', maxWidth: '380px' }}>
         <h1 style={{
-          fontSize: '1.875rem',
+          fontSize: '24px',
           fontWeight: 'bold',
-          marginBottom: '1.5rem',
+          marginBottom: '24px',
           textAlign: 'center'
         }}>
           {locale === 'en' ? 'Login' : locale === 'zh-TW' ? '登入' : '登录'}
         </h1>
 
-        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              marginBottom: '0.25rem',
-              fontWeight: 500
-            }}>
+            <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
               {locale === 'en' ? 'Email' : '邮箱'}
             </label>
             <input
@@ -80,32 +72,20 @@ export default function LoginPage() {
                 width: '100%',
                 border: '1px solid #d1d5db',
                 borderRadius: '9999px',
-                padding: '0.75rem 1rem',
+                padding: '14px 18px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
                 outline: 'none'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#000000';
-                e.target.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
               }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               required
-              autoComplete="email"
             />
           </div>
 
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              marginBottom: '0.25rem',
-              fontWeight: 500
-            }}>
+            <label style={{ display: 'block', fontSize: '14px', marginBottom: '6px' }}>
               {locale === 'en' ? 'Password' : '密码'}
             </label>
             <input
@@ -113,31 +93,20 @@ export default function LoginPage() {
                 width: '100%',
                 border: '1px solid #d1d5db',
                 borderRadius: '9999px',
-                padding: '0.75rem 1rem',
+                padding: '14px 18px',
+                fontSize: '15px',
+                boxSizing: 'border-box',
                 outline: 'none'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#000000';
-                e.target.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
               }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               required
-              autoComplete="current-password"
             />
           </div>
 
           {errorMsg && (
-            <div style={{
-              color: '#dc2626',
-              fontSize: '0.875rem',
-              textAlign: 'center'
-            }}>
+            <div style={{ color: '#dc2626', fontSize: '13px', textAlign: 'center' }}>
               {errorMsg}
             </div>
           )}
@@ -145,45 +114,26 @@ export default function LoginPage() {
           <button
             style={{
               width: '100%',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#000000',
-              color: '#ffffff',
+              padding: '14px',
+              backgroundColor: '#000',
+              color: '#fff',
               borderRadius: '9999px',
               border: 'none',
+              fontSize: '15px',
               cursor: 'pointer'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#1f2937';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#000000';
             }}
             disabled={loading}
             type="submit"
           >
-            {loading ? '...' : locale === 'en' ? 'Sign in' : locale === 'zh-TW' ? '登入' : '登录'}
+            {loading ? '...' : locale === 'en' ? 'Sign in' : '登录'}
           </button>
         </form>
 
-        <div style={{
-          marginTop: '1.25rem',
-          fontSize: '0.875rem',
-          color: '#4b5563',
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.5rem'
-        }}>
-          <Link
-            href={`/${locale}/register`}
-            style={{ color: '#2563eb', textDecoration: 'underline' }}
-          >
+        <div style={{ marginTop: '20px', fontSize: '14px', textAlign: 'center', gap: '8px', display: 'flex', flexDirection: 'column' }}>
+          <Link href={`/${locale}/register`} style={{ color: '#007bff' }}>
             {locale === 'en' ? 'Create an account' : '注册账号'}
           </Link>
-          <Link
-            href={`/${locale}/forgot-password`}
-            style={{ color: '#2563eb', textDecoration: 'underline' }}
-          >
+          <Link href={`/${locale}/forgot-password`} style={{ color: '#007bff' }}>
             {locale === 'en' ? 'Forgot password?' : '忘记密码？'}
           </Link>
         </div>
