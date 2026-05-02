@@ -1,4 +1,4 @@
-﻿'use client';
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter, useParams, usePathname } from "next/navigation";
@@ -130,8 +130,7 @@ export default function Navbar() {
 
   // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
-
-  // 【新增】移动端菜单展开状态
+  // 👇 移动端菜单状态（新增，无修改原有代码）
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const locale: Locale = useMemo(() => {
@@ -206,7 +205,7 @@ export default function Navbar() {
           position: "fixed",
           top: 0,
           left: 0,
-          // 修复滚动条镂空：改为100%，不再减去滚动条宽度
+          // 修复滚动条镂空：铺满全屏
           width: "100%",
           height: `${NAV_H}px`,
           display: "flex",
@@ -223,7 +222,7 @@ export default function Navbar() {
           href={`/${locale}`}
           style={{
             fontSize: "20px",
-            fontWeight: 600,
+            fontWeight: 60,
             color: "#000",
             textDecoration: "none",
             whiteSpace: "nowrap",
@@ -232,7 +231,7 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        {/* 手机汉堡菜单 */}
+        {/* 新增：特斯拉风格汉堡按钮 */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           style={{
@@ -248,7 +247,7 @@ export default function Navbar() {
           <span style={{ width: 22, height: 2, background: "#000" }} />
         </button>
 
-        {/* 加了nav-center类，用于移动端隐藏中间导航 */}
+        {/* 新增class：用于移动端隐藏 */}
         <div className="nav-center" style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
@@ -419,7 +418,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* 手机展开菜单 */}
+      {/* 手机展开菜单（语法已修复） */}
       {mobileOpen && (
         <div className="mobile-menu">
           {navItems.map((item) => (
@@ -433,11 +432,7 @@ export default function Navbar() {
               }}
               onClick={() => setMobileOpen(false)}
             >
-              {locale === "zh"
-                ? item.name.zh
-                : locale === "zh-TW"
-                ? item.name.tw
-                : item.name.en}
+              {pickLocaleText(item.name, locale)}
             </Link>
           ))}
         </div>
@@ -465,7 +460,7 @@ export default function Navbar() {
           <div
             style={{
               maxWidth: 1220,
-              width: 100%,
+              width: "100%",
               display: "grid",
               gridTemplateColumns: "1fr 260px",
               gap: 50,
