@@ -222,7 +222,7 @@ a,button,[role="button"] {
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgba(255,255,255,0.48) 0%,
+    rgba255,255,255,0.48) 0%,
     rgba(255,255,255,0.16) 35%,
     rgba(255,255,255,0) 72%
   );
@@ -296,5 +296,10 @@ a,button,[role="button"] {
     flex-direction: column;
     gap: 10px;
     border-top: 1px solid #eee;
+  }
+
+  /* 移动端隐藏右上角所有图标，全部收进菜单，对标特斯拉 */
+  nav > div:last-child {
+    display: none !important;
   }
 }
