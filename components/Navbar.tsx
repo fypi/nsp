@@ -131,9 +131,6 @@ export default function Navbar() {
   // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  // 👇 移动端菜单状态
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
     if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
@@ -190,9 +187,8 @@ export default function Navbar() {
   const changeLanguage = (l: Locale) => {
     document.cookie = `locale=${l}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
-    router.push(`/l{basePath === "/" ? "" : basePath}`);
+    router.push(`/${l}${basePath === "/" ? "" : basePath}`);
     setShowLangMenu(false);
-    setMobileMenuOpen(false);
   };
 
   const NAV_H = 52;
@@ -207,7 +203,8 @@ export default function Navbar() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: `calc(100% - SCROLLBARW​px)‘,height:‘{NAV_H}px`,
+          width: `calc(100% - ${SCROLLBAR_W}px)`,
+          height: `${NAV_H}px`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -231,8 +228,7 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        {/* 👇 桌面端导航链接 - 完全保留原代码 */}
-        <div className="desktop-nav" style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
+        <div style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
             const clicked = pressedKey === item.key;
@@ -268,17 +264,6 @@ export default function Navbar() {
             );
           })}
         </div>
-
-        {/* 👇 移动端汉堡菜单按钮 */}
-        <button
-          className="mobile-menu-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Menu"
-        >
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${mobileMenuOpen ? "open" : ""}`}></span>
-        </button>
 
         <div style={{ display: "flex", gap: "12px", position: "relative" }}>
           <Link href={`/${locale}/support`} style={{ textDecoration: "none" }}>
@@ -413,45 +398,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* 👇 移动端下拉菜单面板 */}
-      <div className={`mobile-menu-panel ${mobileMenuOpen ? "open" : ""}`}>
-        <div className="mobile-menu-content">
-          {navItems.map((item) => {
-            const isActive = currentPath === item.path;
-            return (
-              <Link
-                key={item.key}
-                href={`/locale{item.path}`}
-                className={`mobile-nav-item ${isActive ? "active" : ""}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {locale === "zh"
-                  ? item.name.zh
-                  : locale === "zh-TW"
-                  ? item.name.tw
-                  : item.name.en}
-              </Link>
-            );
-          })}
-          
-          {/* 移动端语言切换 */}
-          <div className="mobile-lang-section">
-            <div className="mobile-lang-label">Language / 语言</div>
-            <div className="mobile-lang-buttons">
-              {locales.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => changeLanguage(l)}
-                  className={`mobile-lang-btn ${locale === l ? "active" : ""}`}
-                >
-                  {languageNames[l]}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {activeMenu && (
         <div
           style={{
@@ -497,225 +443,63 @@ export default function Navbar() {
                       borderRadius: 12,
                       background: "linear-gradient(180deg,#f6f7f8 0%,#eceff2 100%)",
                       border: "1px solid rgba(0,0,0,0.04)",
-                      marginBottom: 12,
+                      marginBottom: 10,
                     }}
                   />
-                  <p style={{ fontSize: 14, fontWeight: 500, color: "#000" }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>
                     {pickLocaleText(card.title, locale)}
-                  </p>
+                  </h3>
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div
+              style={{
+                borderLeft: "1px solid rgba(0,0,0,0.08)",
+                paddingLeft: 26,
+                display: "flex",
+                flexDirection: "column",
+                gap: 11,
+              }}
+            >
               {megaData[activeMenu].links.map((link, i) => (
                 <a
                   key={`${activeMenu}-link-${i}`}
                   href="#"
                   style={{
-                    fontSize: 14,
-                    color: "#000",
+                    color: "#111",
                     textDecoration: "none",
-                    padding: "8px 0",
-                    borderBottom:
-                      i < megaData[activeMenu].links.length - 1
-                        ? "1px solid rgba(0,0,0,0.06)"
-                        : "none",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    lineHeight: 1.2,
                   }}
                 >
-                  {pickLocaleText(
-                    { zh: link.zh, en: link.en, tw: link.tw },
-                    locale
-                  )}
+                  {locale === "en"
+                    ? link.en
+                    : locale === "zh-TW"
+                    ? link.tw
+                    : link.zh}
                 </a>
               ))}
             </div>
           </div>
         </div>
       )}
-
-      {/* 👇 移动端响应式样式 - 添加在文件末尾 */}
-      <style jsx>{`
-        /* 汉堡菜单按钮 - 默认隐藏 */
-        .mobile-menu-btn {
-          display: none;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          width: 40px;
-          height: 40px;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          padding: 8px;
-          gap: 5px;
-        }
-
-        .hamburger-line {
-          display: block;
-          width: 22px;
-          height: 2px;
-          background-color: #000;
-          border-radius: 2px;
-          transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-          transform-origin: center;
-        }
-
-        .hamburger-line.open:nth-child(1) {
-          transform: translateY(7px) rotate(45deg);
-        }
-
-        .hamburger-line.open:nth-child(2) {
-          opacity: 0;
-          transform: scaleX(0);
-        }
-
-        .hamburger-line.open:nth-child(3) {
-          transform: translateY(-7px) rotate(-45deg);
-        }
-
-        /* 移动端菜单面板 - 默认隐藏 */
-        .mobile-menu-panel {
-          display: none;
-          position: fixed;
-          top: ${NAV_H}px;
-          left: 0;
-          right: 0;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          z-index: 9998;
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-        }
-
-        .mobile-menu-panel.open {
-          max-height: calc(100vh - ${NAV_H}px);
-          overflow-y: auto;
-        }
-
-        .mobile-menu-content {
-          padding: 20px 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .mobile-nav-item {
-          padding: 16px 0;
-          font-size: 17px;
-          font-weight: 500;
-          color: #000;
-          text-decoration: none;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-          transition: all 0.2s ease;
-        }
-
-        .mobile-nav-item.active {
-          color: #0066cc;
-        }
-
-        .mobile-nav-item:last-of-type {
-          border-bottom: none;
-        }
-
-        .mobile-lang-section {
-          margin-top: 20px;
-          padding-top: 20px;
-          border-top: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .mobile-lang-label {
-          font-size: 13px;
-          color: #666;
-          margin-bottom: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .mobile-lang-buttons {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-
-        .mobile-lang-btn {
-          padding: 8px 16px;
-          font-size: 14px;
-          border: 1px solid rgba(0, 0, 0, 0.12);
-          border-radius: 20px;
-          background: transparent;
-          color: #000;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .mobile-lang-btn.active {
-          background: #000;
-          color: #fff;
-          border-color: #000;
-        }
-
-        /* 移动端响应式断点 */
-        @media (max-width: 768px) {
-          /* 隐藏桌面端导航 */
-          .desktop-nav {
-            display: none !important;
-          }
-
-          /* 显示汉堡菜单 */
-          .mobile-menu-btn {
-            display: flex;
-          }
-
-          /* 显示移动端菜单面板 */
-          .mobile-menu-panel {
-            display: block;
-          }
-
-          /* 调整导航栏内边距 */
-          nav {
-            padding: 0 16px !important;
-            width: 100% !important;
-          }
-
-          /* 修复滚动镂空：添加毛玻璃背景 */
-          nav {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
-          }
-
-          /* 隐藏桌面端mega menu */
-          nav + div[style*="position: fixed"] {
-            display: none !important;
-          }
-        }
-
-        /* 桌面端：隐藏移动端元素 */
-        @media (min-width: 769px) {
-          .mobile-menu-btn,
-          .mobile-menu-panel {
-            display: none !important;
-          }
-        }
-      `}</style>
     </>
   );
 }
 
-const iconBtn: React.CSSProperties = {
-  width: 36,
-  height: 36,
-  borderRadius: "50%",
+const iconBtn = {
+  width: "34px",
+  height: "34px",
+  borderRadius: "17px",
   border: "none",
-  background: "rgba(0,0,0,0.04)",
-  cursor: "pointer",
-  fontSize: 16,
+  background: "#f5f5f5",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  transition: "all 0.2s ease",
+  fontSize: "15px",
+  cursor: "pointer",
+  color: "#000",
+  opacity: 1,
 };
