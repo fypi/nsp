@@ -131,6 +131,9 @@ export default function Navbar() {
   // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  // 👇 移动端菜单状态
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
     if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
@@ -228,7 +231,23 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        <div style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
+        {/* 手机汉堡菜单 */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            display: "none",
+            flexDirection: "column",
+            gap: "4px",
+            cursor: "pointer",
+          }}
+          className="mobile-menu-btn"
+        >
+          <span style={{ width: 22, height: 2, background: "#000" }} />
+          <span style={{ width: 22, height: 2, background: "#000" }} />
+          <span style={{ width: 22, height: 2, background: "#000" }} />
+        </button>
+
+        <div className="nav-center" style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
             const clicked = pressedKey === item.key;
@@ -397,6 +416,30 @@ export default function Navbar() {
 
         </div>
       </nav>
+
+      {/* 手机展开菜单 */}
+      {mobileOpen && (
+        <div className="mobile-menu">
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              href={`/${locale}${item.path}`}
+              style={{
+                padding: "12px 0",
+                display: "block",
+                fontSize: "16px",
+              }}
+              onClick={() => setMobileOpen(false)}
+            >
+              {locale === "zh"
+                ? item.name.zh
+                : locale === "zh-TW"
+                ? item.name.tw
+                : item.name.en}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {activeMenu && (
         <div

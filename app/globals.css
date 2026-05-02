@@ -263,3 +263,38 @@ a,button,[role="button"] {
 .teslaIconBtn:active{
   transform: translateY(1px);
 }
+/* ===== 移动端适配 ===== */
+
+/* 默认隐藏汉堡按钮 */
+.mobile-menu-btn {
+  display: none;
+}
+
+/* 手机/平板 */
+@media (max-width: 900px) {
+
+  /* 显示三条线 */
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  /* 隐藏中间导航 */
+  .nav-center {
+    display: none !important;
+  }
+
+  /* 手机菜单 */
+  .mobile-menu {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #eee;
+  }
+}
