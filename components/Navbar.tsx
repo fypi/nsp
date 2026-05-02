@@ -130,8 +130,6 @@ export default function Navbar() {
 
   // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
-  // 👇 移动端菜单状态（新增，无修改原有代码）
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
@@ -205,8 +203,7 @@ export default function Navbar() {
           position: "fixed",
           top: 0,
           left: 0,
-          // 修复滚动条镂空：铺满全屏
-          width: "100%",
+          width: `calc(100% - ${SCROLLBAR_W}px)`,
           height: `${NAV_H}px`,
           display: "flex",
           alignItems: "center",
@@ -222,7 +219,7 @@ export default function Navbar() {
           href={`/${locale}`}
           style={{
             fontSize: "20px",
-            fontWeight: 60,
+            fontWeight: 600,
             color: "#000",
             textDecoration: "none",
             whiteSpace: "nowrap",
@@ -231,24 +228,7 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        {/* 新增：特斯拉风格汉堡按钮 */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{
-            display: "none",
-            flexDirection: "column",
-            gap: "4px",
-            cursor: "pointer",
-          }}
-          className="mobile-menu-btn"
-        >
-          <span style={{ width: 22, height: 2, background: "#000" }} />
-          <span style={{ width: 22, height: 2, background: "#000" }} />
-          <span style={{ width: 22, height: 2, background: "#000" }} />
-        </button>
-
-        {/* 新增class：用于移动端隐藏 */}
-        <div className="nav-center" style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
+        <div style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
             const clicked = pressedKey === item.key;
@@ -417,26 +397,6 @@ export default function Navbar() {
 
         </div>
       </nav>
-
-      {/* 手机展开菜单（语法已修复） */}
-      {mobileOpen && (
-        <div className="mobile-menu">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              href={`/${locale}${item.path}`}
-              style={{
-                padding: "12px 0",
-                display: "block",
-                fontSize: "16px",
-              }}
-              onClick={() => setMobileOpen(false)}
-            >
-              {pickLocaleText(item.name, locale)}
-            </Link>
-          ))}
-        </div>
-      )}
 
       {activeMenu && (
         <div
