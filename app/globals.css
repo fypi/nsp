@@ -303,3 +303,74 @@ a,button,[role="button"] {
     display: none !important;
   }
 }
+/* ===== CSS 变量：导航栏高度 ===== */
+:root {
+  --nav-height: 52px;
+}
+
+/* ===== 移动端滚动修复 ===== */
+@media (max-width: 900px) {
+  /* 确保 body 可以滚动，而不是 .page-container */
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+  }
+  
+  /* 移动端禁用 .page-container 的独立滚动 */
+  .page-container {
+    overflow-y: visible;
+    height: auto;
+  }
+  
+  /* 移动端屏幕高度自适应 */
+  .screen {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  /* 移动端减小间距 */
+  .screen + .screen {
+    margin-top: 16px;
+  }
+  
+  .screen:first-child {
+    margin-top: calc(var(--nav-height) + 16px);
+  }
+  
+  .screen:last-child {
+    margin-bottom: 16px;
+  }
+  
+  /* 移动端内容适配 */
+  .content h1 {
+    font-size: 32px;
+  }
+  
+  .content p {
+    font-size: 16px;
+  }
+  
+  /* 按钮组垂直排列 */
+  .btn-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-white,
+  .btn-dark {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* ===== 小屏幕手机额外优化 ===== */
+@media (max-width: 480px) {
+  .content h1 {
+    font-size: 28px;
+  }
+  
+  .content {
+    padding: 0 16px;
+  }
+}
