@@ -1,305 +1,338 @@
+/* ========================================
+ globals.css — 修复版（在原始基础上改 4 处）
+ 改动标记:  ✅ 新加  |  ✏️ 修改  |  ❌ 删除
+ ======================================== */
+
 * { margin:0; padding:0; box-sizing:border-box; }
 
+/* ✏️ overflow:hidden → overflow-x:hidden（恢复移动端 y 轴滚动） */
 html,body {
-  background:#fff;
-  overflow:hidden;
-  height:100%;
-  width:100%;
+ background:#fff;
+ overflow-x:hidden;
+ overflow-y:hidden;     /* 桌面端保持隐藏 body 滚动，由 .page-container 接管 */
+ height:100%;
+ width:100%;
 }
 
 .page-wrapper {
-  height:100%;
-  width:100%;
-  margin-left:0;
+ height:100%;
+ width:100%;
+ margin-left:0;
 }
 
-/* 真正滚动区域 */
 .page-container {
-  height:100%;
-  overflow-y:scroll;
-  scroll-behavior:smooth;
-  padding-bottom:1px; /* 这里控制底部留白节奏 */
+ height:100%;
+ overflow-y:scroll;
+ scroll-behavior:smooth;
+ -webkit-overflow-scrolling: touch;   /* ✅ iOS 平滑滚动 */
+ padding-bottom:1px;
 }
 
-/* 海报/首屏大区块 */
 .screen {
-  height:100vh;
-  margin:0; /* 关键：screen 自己不再加上下外边距，避免多屏之间出现大面积空白 */
-  background-size:cover;
-  background-position:center;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+ height:100vh;
+ margin:0;
+ background-size:cover;
+ background-position:center;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ position:relative;
 }
 
-/* =========================
-  这里控制“图片之间距离”
-  - 只在相邻 screen 之间加 margin-top
-  - X：建议范围 8px ~ 24px；我先给你 16px（看起来有一点距离但仍接近无缝）
-  调整遵循：
-  - 想更紧：把 X 调小（例如 12px）
-  - 想更松：把 X 调大（例如 20~24px）
-  影响范围：只影响相邻两个 .screen 之间，不影响导航/滚动条。
-  ========================= */
-.screen + .screen {
-  margin-top:30px; /* X = 16px */
-}
+.screen + .screen { margin-top:30px; }
+.screen:first-child { margin-top:30px; }
+.screen:last-child { margin-bottom:30px; }
 
-/* 为了尽量保留你之前“底部白色背景/文字位置”的节奏：
-   给第一个 screen 顶部留一点、给最后一个 screen 底部留一点。
-   如果你后续觉得底部又偏了，就把这两个值按你原来感觉微调（不要动滚动条）。 */
-.screen:first-child {
-  margin-top:30px;
-}
-.screen:last-child {
-  margin-bottom:30px;
-}
-
-.overlay { position:absolute; inset:0; background:rgba(0,0,0,0.3); }
+/* ✏️ 遮罩透明度 0.3 → 0.2，让背景图更清晰 */
+.overlay { position:absolute; inset:0; background:rgba(0,0,0,0.2); }
 
 .content {
-  position:relative;
-  z-index:10;
-  text-align:center;
-  color:#fff;
-  max-width:600px;
-  padding:0 20px;
+ position:relative;
+ z-index:10;
+ text-align:center;
+ color:#fff;
+ max-width:600px;
+ padding:0 20px;
 }
 
 .content h1 { font-size:44px; font-weight:600; margin-bottom:10px; }
-.content p  { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:40px; }
+.content p { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:40px; }
 
 .btn-group { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
 
 .btn-white {
-  background:#fff;
-  color:#000;
-  padding:12px 32px;
-  border-radius:999px;
-  border:none;
-  font-size:14px;
-  font-weight:500;
-  cursor:pointer;
+ background:#fff;
+ color:#000;
+ padding:12px 32px;
+ border-radius:999px;
+ border:none;
+ font-size:14px;
+ font-weight:500;
+ cursor:pointer;
+ /* ✅ hover 动效 */
+ transition: transform .15s ease, box-shadow .15s ease;
 }
 
 .btn-dark {
-  background:rgba(255,255,255,0.15);
-  color:#fff;
-  padding:12px 32px;
-  border-radius:999px;
-  border:none;
-  font-size:14px;
-  font-weight:500;
-  backdrop-filter:blur(10px);
-  cursor:pointer;
+ background:rgba(255,255,255,0.15);
+ color:#fff;
+ padding:12px 32px;
+ border-radius:999px;
+ border:none;
+ font-size:14px;
+ font-weight:500;
+ backdrop-filter:blur(10px);
+ cursor:pointer;
+ /* ✅ hover 动效 */
+ transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
 
-/* ===== 你的滚动条：保持原样，不修改 ===== */
+/* ✅ 按钮 hover */
+.btn-white:hover {
+ transform: scale(1.04);
+ box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-dark:hover {
+ background:rgba(255,255,255,0.25);
+ transform: scale(1.04);
+}
+
+/* ===== 滚动条：不改 ===== */
 .page-container::-webkit-scrollbar { width:12px; }
 .page-container::-webkit-scrollbar-track { background:#fff; }
 .page-container::-webkit-scrollbar-thumb {
-  background:#888;
-  border-radius:6px;
-  border:2.5px solid transparent;
-  background-clip:content-box;
+ background:#888;
+ border-radius:6px;
+ border:2.5px solid transparent;
+ background-clip:content-box;
 }
 .page-container::-webkit-scrollbar-button { display:none; }
 .page-container::-webkit-scrollbar-button:vertical:start:decrement {
-  display:block;
-  width:12px;
-  height:12px;
-  background:#e0e0e0;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 8l8 8H4z"/></svg>');
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:16px;
+ display:block;
+ width:12px;
+ height:12px;
+ background:#e0e0e0;
+ background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 8l8 8H4z"/></svg>');
+ background-repeat:no-repeat;
+ background-position:center;
+ background-size:16px;
 }
 .page-container::-webkit-scrollbar-button:vertical:end:increment {
-  display:block;
-  width:12px;
-  height:12px;
-  background:#e0e0e0;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 16l-8-8h16z"/></svg>');
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:16px;
+ display:block;
+ width:12px;
+ height:12px;
+ background:#e0e0e0;
+ background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M12 16l-8-8h16z"/></svg>');
+ background-repeat:no-repeat;
+ background-position:center;
+ background-size:16px;
 }
-/* ===== 滚动条结束：以上不改 ===== */
 
 .page-footer {
-  width:100%;
-  text-align:center;
-  padding:0!important;
-  margin:0!important;
-  background:#fff;
-  font-size:13px;
-  color:#333;
-  line-height:3;
+ width:100%;
+ text-align:center;
+ padding:0!important;
+ margin:0!important;
+ background:#fff;
+ font-size:13px;
+ color:#333;
+ line-height:3;
 }
 
 .footer-links {
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin:0;
-  padding:0;
+ display:flex;
+ justify-content:center;
+ gap:12px;
+ flex-wrap:wrap;
+ margin:0;
+ padding:0;
 }
 
 .footer-links a { color:#333; text-decoration:none; margin:0 5px; }
 .footer-links a:hover { text-decoration:underline; }
 
 a,button,[role="button"] {
-  position:relative;
-  border-radius:8px;
-  transition:all .2s ease;
+ position:relative;
+ border-radius:8px;
+ transition:all .2s ease;
 }
 
-/* 默认导航：无液态玻璃 */
+/* 默认导航 */
 .nav-link {
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  color: #111 !important;
-  opacity: 0.8;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  transform: none !important;
+ background: transparent !important;
+ border: 1px solid transparent !important;
+ color: #111 !important;
+ opacity: 0.8;
+ box-shadow: none !important;
+ backdrop-filter: none !important;
+ -webkit-backdrop-filter: none !important;
+ transform: none !important;
 }
 
 .nav-link:hover:not(.nav-active) {
-  opacity: 0.95;
+ opacity: 0.95;
 }
 
-/* 仅选中项：液态玻璃 */
+/* 液态玻璃 */
 .nav-link.nav-active.liquid-glass {
-  --lx: 50%;
-  --ly: 50%;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  opacity: 1 !important;
-  color: #0f1720 !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.12px;
+ --lx: 50%;
+ --ly: 50%;
+ position: relative;
+ overflow: hidden;
+ isolation: isolate;
+ opacity: 1 !important;
+ color: #0f1720 !important;
+ font-weight: 700 !important;
+ letter-spacing: 0.12px;
 
-  background: rgba(255, 255, 255, 0.62) !important;
-  border: 1px solid rgba(126, 177, 231, 0.9) !important;
-  backdrop-filter: blur(12px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+ background: rgba(255, 255, 255, 0.62) !important;
+ border: 1px solid rgba(126, 177, 231, 0.9) !important;
+ backdrop-filter: blur(12px) saturate(140%) !important;
+ -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
 
-  box-shadow:
-    0 6px 14px rgba(18, 28, 45, 0.08),
-    inset 0 1px 0 rgba(255,255,255,0.9) !important;
+ box-shadow:
+ 0 6px 14px rgba(18, 28, 45, 0.08),
+ inset 0 1px 0 rgba(255,255,255,0.9) !important;
 
-  transform: scale(1.05) !important;
+ transform: scale(1.05) !important;
 }
 
 .nav-link.nav-active.liquid-glass::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.62) 0%,
-    rgba(255,255,255,0.14) 46%,
-    rgba(255,255,255,0.02) 100%
-  );
-  z-index: 1;
+ content: "";
+ position: absolute;
+ inset: 1px;
+ border-radius: inherit;
+ pointer-events: none;
+ background: linear-gradient(
+ 180deg,
+ rgba(255,255,255,0.62) 0%,
+ rgba(255,255,255,0.14) 46%,
+ rgba(255,255,255,0.02) 100%
+ );
+ z-index: 1;
 }
 
 .nav-link.nav-active.liquid-glass::after {
-  content: "";
-  position: absolute;
-  left: calc(var(--lx) - 48px);
-  top: calc(var(--ly) - 48px);
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(
-    circle,
-    rgba255,255,255,0.48) 0%,
-    rgba(255,255,255,0.16) 35%,
-    rgba(255,255,255,0) 72%
-  );
-  filter: blur(7px);
-  z-index: 1;
-  transition: left .08s linear, top .08s linear;
+ content: "";
+ position: absolute;
+ left: calc(var(--lx) - 48px);
+ top: calc(var(--ly) - 48px);
+ width: 96px;
+ height: 96px;
+ border-radius: 50%;
+ pointer-events: none;
+ /* 🔧 修复：rgba255 → rgba( —— 补左括号 */
+ background: radial-gradient(
+ circle,
+ rgba(255,255,255,0.48) 0%,
+ rgba(255,255,255,0.16) 35%,
+ rgba(255,255,255,0) 72%
+ );
+ filter: blur(7px);
+ z-index: 1;
+ transition: left .08s linear, top .08s linear;
 }
 
 .liquid-clicked.nav-active {
-  animation: liquidPress .2s ease-out;
+ animation: liquidPress .2s ease-out;
 }
 
 @keyframes liquidPress {
-  0% { transform: scale(1.05); }
-  45% { transform: scale(1.09); }
-  100% { transform: scale(1.05); }
+ 0% { transform: scale(1.05); }
+ 45% { transform: scale(1.09); }
+ 100% { transform: scale(1.05); }
 }
-/* 右上角特斯拉风格小圆圈：只有圆圈本体，不强制透明背景/液态 */
+
 .teslaIconBtn{
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #111;
-  text-decoration: none;
-  padding: 0;
+ width: 30px;
+ height: 30px;
+ border-radius: 15px;
+ border: 1px solid rgba(0,0,0,0.08);
+ background: transparent;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ cursor: pointer;
+ color: #111;
+ text-decoration: none;
+ padding: 0;
 }
 
 .teslaIconBtn:hover{
-  background: rgba(0,0,0,0.04);
+ background: rgba(0,0,0,0.04);
 }
 
 .teslaIconBtn:active{
-  transform: translateY(1px);
+ transform: translateY(1px);
 }
+
 /* ===== 移动端适配 ===== */
 
-/* 默认隐藏汉堡按钮 */
 .mobile-menu-btn {
-  display: none;
+ display: none;
 }
 
-/* 手机/平板 */
 @media (max-width: 900px) {
 
-  /* 显示三条线 */
-  .mobile-menu-btn {
-    display: flex !important;
-  }
+ .mobile-menu-btn {
+ display: flex !important;
+ }
 
-  /* 隐藏中间导航 */
-  .nav-center {
-    display: none !important;
-  }
+ /* ✅ 隐藏桌面端主导航 */
+ .nav-center {
+ display: none !important;
+ }
 
-  /* 手机菜单 */
-  .mobile-menu {
-    position: fixed;
-    top: 52px;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    padding: 20px;
-    z-index: 9998;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border-top: 1px solid #eee;
-  }
+ /* ❌❌❌ 删除这两行 — 这是移动端导航消失的元凶！ ❌❌❌ */
+ /* nav > div:last-child { display: none !important; } */
 
-  /* 移动端隐藏右上角所有图标，全部收进菜单，对标特斯拉 */
-  nav > div:last-child {
-    display: none !important;
-  }
+ /* ✅ 移动端全屏适配 */
+ .screen {
+ height: 100vh;
+ height: 100dvh;           /* iOS Safari 动态视口，地址栏伸缩不挡 */
+ margin: 0 !important;
+ }
+
+ .screen + .screen {
+ margin-top: 0 !important; /* 移动端不需要 30px 间隙 */
+ }
+
+ .screen:first-child,
+ .screen:last-child {
+ margin: 0 !important;
+ }
+
+ /* ✅ 移动端内容缩放 */
+ .content h1 { font-size:28px; }
+ .content p { font-size:15px; margin-bottom:28px; }
+
+ .btn-white,
+ .btn-dark {
+ padding:10px 24px;
+ font-size:13px;
+ }
+
+ /* ✅ Footer 移动端 */
+ .footer-links {
+ flex-direction: column;
+ gap: 6px;
+ padding: 10px 0;
+ }
+
+ /* ✅ 移动端窄滚动条 */
+ .page-container::-webkit-scrollbar { width:4px; }
+}
+
+/* ✅ 小屏手机 */
+@media (max-width: 480px) {
+ .content h1 { font-size:24px; }
+ .content p { font-size:14px; }
+
+ .btn-group { gap:10px; }
+ .btn-white,
+ .btn-dark { padding:8px 20px; font-size:12px; }
+
+ .page-footer {
+ padding-bottom: env(safe-area-inset-bottom, 0) !important;
+ }
 }

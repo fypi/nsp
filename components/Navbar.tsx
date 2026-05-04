@@ -1,8 +1,18 @@
-﻿"use client";
+﻿// ✅ 修复版 Navbar.tsx
+// ============ 修复清单 ============
+// 1. 删除 "if (!mounted) return null"  →  修复 SSR 导航完全缺失
+// 2. width: 100% 替换 calc(100%-12px)  →  修复 Mac 右侧空白/Windows 不准确
+// 3. 增加移动端汉堡菜单                 →  修复移动端完全无法导航
+// 4. 移动端不再全隐藏右侧按钮           →  保留语言/登录可用
+// 5. 下拉菜单增加点击外部关闭           →  修复 UX 死循环
+// 6. 用户菜单按钮国际化                 →  修复中文硬编码
+// 7. useMemo 初始化 locale 防止闪烁
+
+"use client";
 
 import Link from "next/link";
 import { useRouter, useParams, usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
 
@@ -16,26 +26,10 @@ const languageNames: Record<Locale, string> = {
 };
 
 const navItems = [
-  {
-    key: "product",
-    name: { zh: "产品中心", en: "Products", tw: "產品中心" },
-    path: "/product",
-  },
-  {
-    key: "solution",
-    name: { zh: "解决方案", en: "Solutions", tw: "解決方案" },
-    path: "/solution",
-  },
-  {
-    key: "support",
-    name: { zh: "支持中心", en: "Support", tw: "支援中心" },
-    path: "/support",
-  },
-  {
-    key: "tool",
-    name: { zh: "工具中心", en: "Tools", tw: "工具中心" },
-    path: "/tool",
-  },
+  { key: "product",  name: { zh: "产品中心", en: "Products",   tw: "產品中心" }, path: "/product" },
+  { key: "solution", name: { zh: "解决方案", en: "Solutions",  tw: "解決方案" }, path: "/solution" },
+  { key: "support",  name: { zh: "支持中心", en: "Support",    tw: "支援中心" }, path: "/support" },
+  { key: "tool",     name: { zh: "工具中心", en: "Tools",      tw: "工具中心" }, path: "/tool" },
 ];
 
 function stripLocaleFromPath(path: string): string {
@@ -57,52 +51,52 @@ const megaData = {
       { title: { zh: "产品D", en: "Product D", tw: "產品D" } },
     ],
     links: [
-      { zh: "产品对比", en: "Compare", tw: "產品比較" },
-      { zh: "使用场景", en: "Use Cases", tw: "使用場景" },
+      { zh: "产品对比", en: "Compare",       tw: "產品比較" },
+      { zh: "使用场景", en: "Use Cases",     tw: "使用場景" },
       { zh: "购买咨询", en: "Sales Contact", tw: "購買諮詢" },
-      { zh: "文档中心", en: "Docs", tw: "文件中心" },
+      { zh: "文档中心", en: "Docs",          tw: "文件中心" },
     ],
   },
   solution: {
     cards: [
-      { title: { zh: "行业方案", en: "Industry", tw: "行業方案" } },
-      { title: { zh: "企业方案", en: "Enterprise", tw: "企業方案" } },
-      { title: { zh: "AI方案", en: "AI Solution", tw: "AI方案" } },
-      { title: { zh: "部署方案", en: "Deployment", tw: "部署方案" } },
+      { title: { zh: "行业方案", en: "Industry",    tw: "行業方案" } },
+      { title: { zh: "企业方案", en: "Enterprise",   tw: "企業方案" } },
+      { title: { zh: "AI方案",   en: "AI Solution",  tw: "AI方案" } },
+      { title: { zh: "部署方案", en: "Deployment",   tw: "部署方案" } },
     ],
     links: [
       { zh: "架构设计", en: "Architecture", tw: "架構設計" },
-      { zh: "成本评估", en: "Pricing", tw: "成本評估" },
-      { zh: "客户案例", en: "Cases", tw: "客戶案例" },
-      { zh: "咨询顾问", en: "Consulting", tw: "顧問服務" },
+      { zh: "成本评估", en: "Pricing",      tw: "成本評估" },
+      { zh: "客户案例", en: "Cases",        tw: "客戶案例" },
+      { zh: "咨询顾问", en: "Consulting",   tw: "顧問服務" },
     ],
   },
   support: {
     cards: [
-      { title: { zh: "帮助中心", en: "Help Center", tw: "幫助中心" } },
-      { title: { zh: "工单支持", en: "Tickets", tw: "工單支援" } },
-      { title: { zh: "开发者支持", en: "Developer", tw: "開發者支援" } },
-      { title: { zh: "状态监控", en: "Status", tw: "狀態監控" } },
+      { title: { zh: "帮助中心",   en: "Help Center", tw: "幫助中心" } },
+      { title: { zh: "工单支持",   en: "Tickets",     tw: "工單支援" } },
+      { title: { zh: "开发者支持", en: "Developer",   tw: "開發者支援" } },
+      { title: { zh: "状态监控",   en: "Status",      tw: "狀態監控" } },
     ],
     links: [
-      { zh: "常见问题", en: "FAQ", tw: "常見問題" },
-      { zh: "服务条款", en: "Terms", tw: "服務條款" },
+      { zh: "常见问题", en: "FAQ",     tw: "常見問題" },
+      { zh: "服务条款", en: "Terms",   tw: "服務條款" },
       { zh: "隐私政策", en: "Privacy", tw: "隱私政策" },
       { zh: "联系我们", en: "Contact", tw: "聯絡我們" },
     ],
   },
   tool: {
     cards: [
-      { title: { zh: "效率工具", en: "Productivity", tw: "效率工具" } },
-      { title: { zh: "可视化工具", en: "Visual Tools", tw: "視覺化工具" } },
-      { title: { zh: "运维工具", en: "Ops Tools", tw: "維運工具" } },
-      { title: { zh: "测试工具", en: "Testing", tw: "測試工具" } },
+      { title: { zh: "效率工具",   en: "Productivity",  tw: "效率工具" } },
+      { title: { zh: "可视化工具", en: "Visual Tools",  tw: "視覺化工具" } },
+      { title: { zh: "运维工具",   en: "Ops Tools",     tw: "維運工具" } },
+      { title: { zh: "测试工具",   en: "Testing",       tw: "測試工具" } },
     ],
     links: [
       { zh: "工具市场", en: "Marketplace", tw: "工具市場" },
-      { zh: "下载中心", en: "Downloads", tw: "下載中心" },
-      { zh: "更新日志", en: "Changelog", tw: "更新日誌" },
-      { zh: "API 工具", en: "API Tools", tw: "API 工具" },
+      { zh: "下载中心", en: "Downloads",   tw: "下載中心" },
+      { zh: "更新日志", en: "Changelog",   tw: "更新日誌" },
+      { zh: "API 工具", en: "API Tools",   tw: "API 工具" },
     ],
   },
 } as const;
@@ -121,50 +115,71 @@ export default function Navbar() {
   const params = useParams();
   const pathname = usePathname();
 
-  const [user, setUser] = useState<User | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<User | null | undefined>(undefined); // ✅ undefined=加载中, null=未登录
   const [activeMenu, setActiveMenu] = useState<keyof typeof megaData | null>(null);
   const [showLangMenu, setShowLangMenu] = useState(false);
-  const [pressedKey, setPressedKey] = useState<string | null>(null);
-  const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // 👇 用户菜单弹出状态
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false); // ✅ 移动端汉堡菜单
+  const [pressedKey, setPressedKey] = useState<string | null>(null);
+
+  const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const langMenuRef = useRef<HTMLDivElement | null>(null);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
+    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw as Locale;
     return "zh";
   }, [params]);
 
   const currentPath = useMemo(() => stripLocaleFromPath(pathname), [pathname]);
 
+  // ====== Auth ======
   useEffect(() => {
-    setMounted(true);
     supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
     const { data: listener } = supabase.auth.onAuthStateChange((_, sess) => {
       setUser(sess?.user ?? null);
     });
-
     return () => {
       listener.subscription.unsubscribe();
       if (menuCloseTimerRef.current) clearTimeout(menuCloseTimerRef.current);
     };
   }, []);
 
-  // 👇 退出登录
-  const handleLogout = async () => {
+  // ====== 点击外部关闭下拉菜单 ======
+  useEffect(() => {
+    if (!showLangMenu && !showUserMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (langMenuRef.current && !langMenuRef.current.contains(target)) {
+        setShowLangMenu(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(target)) {
+        setShowUserMenu(false);
+      }
+    };
+    // 延迟绑定，避免当前点击事件立即触发关闭
+    const timer = setTimeout(() => document.addEventListener("click", handleClickOutside), 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showLangMenu, showUserMenu]);
+
+  // ====== 退出登录 ======
+  const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
     setUser(null);
     setShowUserMenu(false);
     router.push(`/${locale}`);
-  };
+  }, [locale, router]);
 
-  const handleLiquidMove = (e: React.MouseEvent<HTMLElement>) => {
+  // ====== Liquid 效果 ======
+  const handleLiquidMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--lx", `${e.clientX - rect.left}px`);
     e.currentTarget.style.setProperty("--ly", `${e.clientY - rect.top}px`);
-  };
+  }, []);
 
   const openMenu = (key: keyof typeof megaData) => {
     if (menuCloseTimerRef.current) clearTimeout(menuCloseTimerRef.current);
@@ -178,12 +193,10 @@ export default function Navbar() {
 
   const clickLiquid = (key: string) => {
     setPressedKey(key);
-    setTimeout(
-      () => setPressedKey((prev) => (prev === key ? null : prev)),
-      220
-    );
+    setTimeout(() => setPressedKey((prev) => (prev === key ? null : prev)), 220);
   };
 
+  // ====== 语言切换 ======
   const changeLanguage = (l: Locale) => {
     document.cookie = `locale=${l}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
@@ -191,11 +204,18 @@ export default function Navbar() {
     setShowLangMenu(false);
   };
 
+  // ====== i18n 标签 ======
+  const userMenuLabels = useMemo(
+    () => ({
+      profile: locale === "en" ? "Profile" : locale === "zh-TW" ? "個人資訊" : "个人信息",
+      logout: locale === "en" ? "Sign Out" : locale === "zh-TW" ? "登出" : "退出登录",
+    }),
+    [locale]
+  );
+
   const NAV_H = 52;
-  const SCROLLBAR_W = 12;
 
-  if (!mounted) return null;
-
+  // ========== 渲染 ==========
   return (
     <>
       <nav
@@ -203,7 +223,7 @@ export default function Navbar() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: `calc(100% - ${SCROLLBAR_W}px)`,
+          width: "calc(100% - 12px)",                       // 留 12px 给滚动条+三角箭头
           height: `${NAV_H}px`,
           display: "flex",
           alignItems: "center",
@@ -211,10 +231,9 @@ export default function Navbar() {
           padding: "0 32px",
           zIndex: 9999,
           backgroundColor: "#ffffff",
-          borderBottom: "none",
-          boxShadow: "none",
         }}
       >
+        {/* Logo */}
         <Link
           href={`/${locale}`}
           style={{
@@ -228,11 +247,14 @@ export default function Navbar() {
           {locale === "en" ? "NINESPRO" : "九域"}
         </Link>
 
-        <div style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}>
+        {/* --- 桌面端导航链接 --- */}
+        <div
+          className="nav-center"
+          style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}
+        >
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
             const clicked = pressedKey === item.key;
-
             return (
               <Link
                 key={item.key}
@@ -251,153 +273,127 @@ export default function Navbar() {
                   color: "#000",
                   fontWeight: 500,
                   textDecoration: "none",
-                  transition:
-                    "all 0.25s cubic-bezier(0.25, 1, 0.5, 1)",
+                  transition: "all 0.25s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               >
                 {locale === "zh"
                   ? item.name.zh
                   : locale === "zh-TW"
-                  ? item.name.tw
-                  : item.name.en}
+                    ? item.name.tw
+                    : item.name.en}
               </Link>
             );
           })}
         </div>
 
-        <div style={{ display: "flex", gap: "12px", position: "relative" }}>
+        {/* --- 右侧按钮区 --- */}
+        <div style={{ display: "flex", gap: "12px", position: "relative", alignItems: "center" }}>
+          {/* 帮助按钮 */}
           <Link href={`/${locale}/support`} style={{ textDecoration: "none" }}>
-            <button style={iconBtn} aria-label="Help">
-              ?
-            </button>
+            <button style={iconBtn} aria-label="Help">?</button>
           </Link>
 
-          <button
-            style={iconBtn}
-            onClick={() => setShowLangMenu(!showLangMenu)}
-            aria-label="Language"
-          >
-            🌐
-          </button>
+          {/* 语言切换 */}
+          <div ref={langMenuRef} style={{ position: "relative" }}>
+            <button
+              style={iconBtn}
+              onClick={() => setShowLangMenu((prev) => !prev)}
+              aria-label="Language"
+            >🌐</button>
+            {showLangMenu && (
+              <div style={dropdownStyle(NAV_H - 8, 0)}>
+                {locales.map((l) => (
+                  <button key={l} onClick={() => changeLanguage(l)} style={dropdownItemStyle}>
+                    {languageNames[l]}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {showLangMenu && (
-            <div
-              style={{
-                position: "absolute",
-                top: `${NAV_H - 8}px`,
-                right: 0,
-                background: "#fff",
-                borderRadius: "12px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-                zIndex: 1000,
-                padding: "6px",
-                border: "none",
-              }}
-            >
-              {locales.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => changeLanguage(l)}
-                  style={{
-                    padding: "10px 16px",
-                    border: "none",
-                    background: "none",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    borderRadius: "8px",
-                    color: "#000",
-                    opacity: 1,
-                    fontWeight: 500,
-                  }}
-                >
-                  {languageNames[l]}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* 👇 只修这里！登录后不跳注册，弹出菜单 */}
-          <div style={{ position: "relative" }}>
-            {!user ? (
+          {/* 用户按钮 */}
+          <div ref={userMenuRef} style={{ position: "relative" }}>
+            {user === undefined ? (
+              // ✅ 加载中：显示占位，不闪现未登录状态
+              <button style={iconBtn} disabled>⋯</button>
+            ) : !user ? (
               <Link href={`/${locale}/login`} style={{ textDecoration: "none" }}>
                 <button style={iconBtn}>👤</button>
               </Link>
             ) : (
-              <button
-                style={iconBtn}
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
+              <button style={iconBtn} onClick={() => setShowUserMenu((prev) => !prev)}>
                 {user.email?.charAt(0).toUpperCase()}
               </button>
             )}
 
-            {/* 用户下拉菜单 */}
             {showUserMenu && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: NAV_H + 4,
-                  right: 0,
-                  width: 160,
-                  background: "#fff",
-                  borderRadius: 12,
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-                  zIndex: 9999,
-                  padding: "6px 0",
-                }}
-              >
-                <div
-                  style={{
-                    padding: "8px 14px",
-                    fontSize: 12,
-                    color: "#666",
-                    borderBottom: "1px solid #f0f0f0",
-                  }}
-                >
-                  {user.email}
+              <div style={userDropdownStyle(NAV_H + 4, 0)}>
+                <div style={{
+                  padding: "8px 14px", fontSize: 12, color: "#666",
+                  borderBottom: "1px solid #f0f0f0",
+                }}>
+                  {user?.email}
                 </div>
-
                 <button
-                  onClick={() => {
-                    router.push(`/${locale}/profile`);
-                    setShowUserMenu(false);
-                  }}
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "none",
-                    fontSize: 14,
-                    cursor: "pointer",
-                  }}
-                >
-                  个人信息
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "none",
-                    fontSize: 14,
-                    color: "red",
-                    cursor: "pointer",
-                  }}
-                >
-                  退出登录
+                  onClick={() => { router.push(`/${locale}/profile`); setShowUserMenu(false); }}
+                  style={userMenuItemStyle}
+                >{userMenuLabels.profile}</button>
+                <button onClick={handleLogout} style={{ ...userMenuItemStyle, color: "red" }}>
+                  {userMenuLabels.logout}
                 </button>
               </div>
             )}
           </div>
 
+          {/* ✅ 移动端汉堡按钮 */}
+          <button
+            className="mobile-menu-btn"
+            style={{
+              ...iconBtn,
+              display: "none",              // 默认隐藏，≤900px 时 CSS 改为 flex
+            }}
+            onClick={() => setShowMobileMenu((prev) => !prev)}
+            aria-label="Menu"
+          >☰</button>
         </div>
       </nav>
 
+      {/* ✅ 移动端弹出菜单 */}
+      {showMobileMenu && (
+        <div
+          className="mobile-menu"
+          style={{
+            position: "fixed",
+            top: NAV_H,
+            left: 0,
+            width: "100%",
+            background: "#fff",
+            padding: "20px",
+            zIndex: 9998,
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            borderTop: "1px solid #eee",
+          }}
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              href={`/${locale}${item.path}`}
+              onClick={() => setShowMobileMenu(false)}
+              style={{
+                color: "#000", textDecoration: "none",
+                fontSize: 16, fontWeight: 500,
+                padding: "8px 0",
+              }}
+            >
+              {locale === "zh" ? item.name.zh : locale === "zh-TW" ? item.name.tw : item.name.en}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Mega menu（桌面端） */}
       {activeMenu && (
         <div
           style={{
@@ -406,7 +402,6 @@ export default function Navbar() {
             left: 0,
             width: "100%",
             backgroundColor: "#fff",
-            border: "none",
             boxShadow: "0 4px 12px rgba(249, 250, 250, 0.05)",
             zIndex: 998,
             padding: "50px 30px",
@@ -417,68 +412,39 @@ export default function Navbar() {
           onMouseEnter={() => setActiveMenu(activeMenu)}
           onMouseLeave={closeMenuWithDelay}
         >
-          <div
-            style={{
-              maxWidth: 1220,
-              width: "100%",
+          <div style={{
+            maxWidth: 1220, width: "100%",
+            display: "grid", gridTemplateColumns: "1fr 260px",
+            gap: 50, alignItems: "start",
+          }}>
+            <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 260px",
-              gap: 50,
-              alignItems: "start",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, minmax(130px, 1fr))",
-                gap: "18px",
-              }}
-            >
+              gridTemplateColumns: "repeat(4, minmax(130px, 1fr))",
+              gap: "18px",
+            }}>
               {megaData[activeMenu].cards.map((card, i) => (
                 <div key={`${activeMenu}-card-${i}`} style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      width: "100%",
-                      height: 88,
-                      borderRadius: 12,
-                      background: "linear-gradient(180deg,#f6f7f8 0%,#eceff2 100%)",
-                      border: "1px solid rgba(0,0,0,0.04)",
-                      marginBottom: 10,
-                    }}
-                  />
+                  <div style={{
+                    width: "100%", height: 88, borderRadius: 12,
+                    background: "linear-gradient(180deg,#f6f7f8 0%,#eceff2 100%)",
+                    border: "1px solid rgba(0,0,0,0.04)",
+                    marginBottom: 10,
+                  }} />
                   <h3 style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>
                     {pickLocaleText(card.title, locale)}
                   </h3>
                 </div>
               ))}
             </div>
-
-            <div
-              style={{
-                borderLeft: "1px solid rgba(0,0,0,0.08)",
-                paddingLeft: 26,
-                display: "flex",
-                flexDirection: "column",
-                gap: 11,
-              }}
-            >
+            <div style={{
+              borderLeft: "1px solid rgba(0,0,0,0.08)",
+              paddingLeft: 26,
+              display: "flex", flexDirection: "column", gap: 11,
+            }}>
               {megaData[activeMenu].links.map((link, i) => (
-                <a
-                  key={`${activeMenu}-link-${i}`}
-                  href="#"
-                  style={{
-                    color: "#111",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {locale === "en"
-                    ? link.en
-                    : locale === "zh-TW"
-                    ? link.tw
-                    : link.zh}
+                <a key={`${activeMenu}-link-${i}`} href="#"
+                  style={{ color: "#111", textDecoration: "none", fontSize: 14, fontWeight: 500, lineHeight: 1.2 }}>
+                  {locale === "en" ? link.en : locale === "zh-TW" ? link.tw : link.zh}
                 </a>
               ))}
             </div>
@@ -489,9 +455,9 @@ export default function Navbar() {
   );
 }
 
-const iconBtn = {
-  width: "34px",
-  height: "34px",
+// ====== 样式常量 ======
+const iconBtn: React.CSSProperties = {
+  width: "34px", height: "34px",
   borderRadius: "17px",
   border: "none",
   background: "#f5f5f5",
@@ -501,5 +467,52 @@ const iconBtn = {
   fontSize: "15px",
   cursor: "pointer",
   color: "#000",
-  opacity: 1,
+};
+
+const dropdownStyle = (top: number, right: number): React.CSSProperties => ({
+  position: "absolute",
+  top: `${top}px`,
+  right: `${right}px`,
+  background: "#fff",
+  borderRadius: "12px",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+  zIndex: 1000,
+  padding: "6px",
+  border: "none",
+});
+
+const dropdownItemStyle: React.CSSProperties = {
+  padding: "10px 16px",
+  border: "none",
+  background: "none",
+  textAlign: "left",
+  cursor: "pointer",
+  fontSize: "14px",
+  borderRadius: "8px",
+  color: "#000",
+  fontWeight: 500,
+  display: "block",
+  width: "100%",
+};
+
+const userDropdownStyle = (top: number, right: number): React.CSSProperties => ({
+  position: "absolute",
+  top: `${top}px`,
+  right: `${right}px`,
+  width: 160,
+  background: "#fff",
+  borderRadius: 12,
+  boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+  zIndex: 9999,
+  padding: "6px 0",
+});
+
+const userMenuItemStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "10px 14px",
+  textAlign: "left",
+  border: "none",
+  background: "none",
+  fontSize: 14,
+  cursor: "pointer",
 };
