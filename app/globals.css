@@ -24,6 +24,7 @@ html,body {
 /* 海报/首屏大区块 */
 .screen {
   height:100vh;
+  min-height:100vh;
   margin:0; /* 关键：screen 自己不再加上下外边距，避免多屏之间出现大面积空白 */
   background-size:cover;
   background-position:center;
@@ -31,6 +32,14 @@ html,body {
   align-items:center;
   justify-content:center;
   position:relative;
+}
+
+/* 🔧 修复 iOS 地址栏：优先使用 svh，回退到 vh */
+@supports (height: 100svh) {
+  .screen {
+    height: 100svh;
+    min-height: 100svh;
+  }
 }
 
 /* =========================
@@ -70,9 +79,17 @@ html,body {
 .content h1 { font-size:44px; font-weight:600; margin-bottom:10px; }
 .content p  { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:40px; }
 
+/* 🔧 响应式 hero 文字 */
+@media (max-width: 640px) {
+  .content h1 { font-size: 32px; }
+  .content p  { font-size: 15px; margin-bottom: 28px; }
+  .content { padding: 0 16px; }
+}
+
 .btn-group { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
 
 .btn-white {
+  display:inline-block;
   background:#fff;
   color:#000;
   padding:12px 32px;
@@ -81,9 +98,11 @@ html,body {
   font-size:14px;
   font-weight:500;
   cursor:pointer;
+  text-decoration:none;
 }
 
 .btn-dark {
+  display:inline-block;
   background:rgba(255,255,255,0.15);
   color:#fff;
   padding:12px 32px;
@@ -93,6 +112,16 @@ html,body {
   font-weight:500;
   backdrop-filter:blur(10px);
   cursor:pointer;
+  text-decoration:none;
+}
+
+/* 🔧 移动端按钮缩小 */
+@media (max-width: 480px) {
+  .btn-white, .btn-dark {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+  .btn-group { gap: 10px; }
 }
 
 /* ===== 你的滚动条：保持原样，不修改 ===== */
@@ -222,7 +251,7 @@ a,button,[role="button"] {
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgba255,255,255,0.48) 0%,
+    rgba(255,255,255,0.48) 0%,
     rgba(255,255,255,0.16) 35%,
     rgba(255,255,255,0) 72%
   );
@@ -263,11 +292,17 @@ a,button,[role="button"] {
 .teslaIconBtn:active{
   transform: translateY(1px);
 }
+
 /* ===== 移动端适配 ===== */
 
 /* 默认隐藏汉堡按钮 */
 .mobile-menu-btn {
   display: none;
+}
+
+/* 默认隐藏移动端图标区 */
+.nav-icons-mobile {
+  display: none !important;
 }
 
 /* 手机/平板 */
@@ -281,6 +316,16 @@ a,button,[role="button"] {
   /* 隐藏中间导航 */
   .nav-center {
     display: none !important;
+  }
+
+  /* 🔧 修复：隐藏桌面图标区，而不是 nav > div:last-child */
+  .nav-icons-desktop {
+    display: none !important;
+  }
+
+  /* 🔧 修复：显示移动端图标区 */
+  .nav-icons-mobile {
+    display: flex !important;
   }
 
   /* 手机菜单 */
@@ -297,9 +342,201 @@ a,button,[role="button"] {
     gap: 10px;
     border-top: 1px solid #eee;
   }
+}
 
-  /* 移动端隐藏右上角所有图标，全部收进菜单，对标特斯拉 */
-  nav > div:last-child {
-    display: none !important;
+/* 🔧 修复：移动端导航栏收窄 padding */
+@media (max-width: 640px) {
+  nav {
+    padding: 0 16px !important;
+    width: 100% !important;
   }
+}
+
+/* ===== 子页面统一样式 ===== */
+.subpage-main {
+  min-height: 100vh;
+  padding-top: 80px;
+  padding-bottom: 60px;
+  background: #fff;
+}
+
+.subpage-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.subpage-hero {
+  text-align: center;
+  padding: 60px 0 40px;
+}
+
+.subpage-hero h1 {
+  font-size: 40px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.subpage-hero p {
+  font-size: 18px;
+  color: #666;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* 🔧 响应式子页面标题 */
+@media (max-width: 640px) {
+  .subpage-hero h1 { font-size: 28px; }
+  .subpage-hero p  { font-size: 15px; }
+  .subpage-container { padding: 0 16px; }
+}
+
+.subpage-section {
+  margin-top: 40px;
+}
+
+.subpage-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.subpage-section p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.card {
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #eee;
+}
+
+.card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ===== 登录注册表单样式 ===== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 24px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 32px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+.auth-box h1 {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 28px;
+  color: #111;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form label {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.auth-form input {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.auth-form input:focus {
+  border-color: #111;
+}
+
+.auth-form button[type="submit"] {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+
+.auth-form button[type="submit"]:hover {
+  opacity: 0.85;
+}
+
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+.auth-links a {
+  color: #555;
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+/* ===== 免责声明 ===== */
+.disclaimer-box {
+  background: #fff9e6;
+  border: 1px solid #f0e0a0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 32px;
+}
+
+.disclaimer-box p {
+  font-size: 13px;
+  color: #886600;
+  line-height: 1.6;
+  margin: 0;
 }

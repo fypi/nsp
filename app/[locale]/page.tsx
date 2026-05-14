@@ -1,13 +1,35 @@
 ﻿"use client";
 
-import Navbar from "@/components/Navbar";
 import { useParams } from "next/navigation";
+
+type Locale = "zh" | "zh-TW" | "en";
+
+type HomeSection = {
+  title: string;
+  subtitle: string;
+  image: string;
+  btn1: string;
+  btn2: string;
+  link1: string;
+  link2: string;
+  footer?: {
+    copyright: string;
+    privacy: string;
+    contact: string;
+    help: string;
+  };
+};
 
 export default function Home() {
   const params = useParams();
-  const locale = typeof params?.locale === "string" ? params.locale : "zh";
+  const rawLocale = params?.locale;
 
-  const data = {
+  const locale: Locale =
+    rawLocale === "en" || rawLocale === "zh-TW" || rawLocale === "zh"
+      ? rawLocale
+      : "zh";
+
+  const data: Record<Locale, HomeSection[]> = {
     zh: [
       {
         title: "九域",
@@ -15,8 +37,10 @@ export default function Home() {
         image: "/images/hero-1.jpg",
         btn1: "开始使用",
         btn2: "了解更多",
+        link1: "/tool",
+        link2: "/product",
         footer: {
-          copyright: "九域 © 2026 九域 版权所有 | 最终解释权归九域所有",
+          copyright: "九域 © 2026 版权所有",
           privacy: "隐私与法律",
           contact: "联系方式",
           help: "帮助中心",
@@ -28,13 +52,17 @@ export default function Home() {
         image: "/images/hero-2.jpg",
         btn1: "浏览产品",
         btn2: "定制方案",
+        link1: "/product",
+        link2: "/solution",
       },
       {
         title: "全能工具",
-        subtitle: "永久免费 · 持续更新",
+        subtitle: "公开可用 · 持续更新",
         image: "/images/hero-3.jpg",
         btn1: "立即体验",
         btn2: "帮助中心",
+        link1: "/tool",
+        link2: "/help",
       },
     ],
     "zh-TW": [
@@ -44,8 +72,10 @@ export default function Home() {
         image: "/images/hero-1.jpg",
         btn1: "開始使用",
         btn2: "了解更多",
+        link1: "/tool",
+        link2: "/product",
         footer: {
-          copyright: "九域 © 2026 九域 版權所有 | 最終解釋權歸九域所有",
+          copyright: "九域 © 2026 版權所有",
           privacy: "隱私與法律",
           contact: "聯絡方式",
           help: "說明中心",
@@ -57,13 +87,17 @@ export default function Home() {
         image: "/images/hero-2.jpg",
         btn1: "瀏覽產品",
         btn2: "定制方案",
+        link1: "/product",
+        link2: "/solution",
       },
       {
         title: "全能工具",
-        subtitle: "永久免費 · 持續更新",
+        subtitle: "公開可用 · 持續更新",
         image: "/images/hero-3.jpg",
         btn1: "立即體驗",
         btn2: "幫助中心",
+        link1: "/tool",
+        link2: "/help",
       },
     ],
     en: [
@@ -73,8 +107,10 @@ export default function Home() {
         image: "/images/hero-1.jpg",
         btn1: "Get Started",
         btn2: "Learn More",
+        link1: "/tool",
+        link2: "/product",
         footer: {
-          copyright: "NinesPro © 2026 NinesPro All Rights Reserved",
+          copyright: "NinesPro © 2026 All Rights Reserved",
           privacy: "Privacy & Legal",
           contact: "Contact",
           help: "Help Center",
@@ -86,23 +122,26 @@ export default function Home() {
         image: "/images/hero-2.jpg",
         btn1: "Browse Products",
         btn2: "Custom Solutions",
+        link1: "/product",
+        link2: "/solution",
       },
       {
         title: "All-Purpose Tools",
-        subtitle: "Free Forever · Continuous Updates",
+        subtitle: "Open Access · Continuous Updates",
         image: "/images/hero-3.jpg",
         btn1: "Try Now",
         btn2: "Help Center",
+        link1: "/tool",
+        link2: "/help",
       },
     ],
   };
 
-  const sections = data[locale] || data.zh;
-  const footer = sections[0].footer;
+  const sections = data[locale];
+  const footer = sections[0]?.footer;
 
   return (
     <div className="page-wrapper">
-
       <div className="page-container">
         {sections.map((item, index) => (
           <section
@@ -117,8 +156,12 @@ export default function Home() {
               <p>{item.subtitle}</p>
 
               <div className="btn-group">
-                <button className="btn-white">{item.btn1}</button>
-                <button className="btn-dark">{item.btn2}</button>
+                <a href={`/${locale}${item.link1}`} className="btn-white">
+                  {item.btn1}
+                </a>
+                <a href={`/${locale}${item.link2}`} className="btn-dark">
+                  {item.btn2}
+                </a>
               </div>
             </div>
           </section>
