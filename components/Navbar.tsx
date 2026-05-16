@@ -1,8 +1,19 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useRouter, useParams, usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import {
+  useRouter,
+  useParams,
+  usePathname,
+  useSearchParams,
+} from "next/navigation";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { supabase } from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
 
@@ -48,61 +59,292 @@ function stripLocaleFromPath(path: string): string {
   return path;
 }
 
+function isPublicTool(route: string) {
+  return [
+    "/tool/data-converter",
+    "/tool/text-formatter",
+  ].includes(route);
+}
+
 const megaData = {
   product: {
     cards: [
-      { title: { zh: "产品A", en: "Product A", tw: "產品A" } },
-      { title: { zh: "产品B", en: "Product B", tw: "產品B" } },
-      { title: { zh: "产品C", en: "Product C", tw: "產品C" } },
-      { title: { zh: "产品D", en: "Product D", tw: "產品D" } },
+      {
+        title: { zh: "智能投研", en: "Research Intelligence", tw: "智能投研" },
+        desc: {
+          zh: "研究、筛选、追踪，一套更轻的投研入口。",
+          en: "A lighter entry for research, screening, and tracking.",
+          tw: "研究、篩選、追蹤，一套更輕的投研入口。",
+        },
+        badge: "🔐",
+        route: "/product",
+      },
+      {
+        title: { zh: "技术服务", en: "Tech Services", tw: "技術服務" },
+        desc: {
+          zh: "网站、网络、系统与自动化的工程落地。",
+          en: "Execution across web, network, systems, and automation.",
+          tw: "網站、網路、系統與自動化的工程落地。",
+        },
+        badge: "💼",
+        route: "/solution",
+      },
+      {
+        title: { zh: "AI 工具", en: "AI Tools", tw: "AI 工具" },
+        desc: {
+          zh: "从内容到效率，逐步接入可直接使用的工具。",
+          en: "Usable tools across content and productivity workflows.",
+          tw: "從內容到效率，逐步接入可直接使用的工具。",
+        },
+        badge: "🔓",
+        route: "/tool",
+      },
+      {
+        title: { zh: "定制服务", en: "Custom Build", tw: "定制服務" },
+        desc: {
+          zh: "有明确需求，直接做成能跑的系统。",
+          en: "When the need is clear, we build systems that run.",
+          tw: "有明確需求，就直接做成能跑的系統。",
+        },
+        badge: "💼",
+        route: "/contact",
+      },
     ],
     links: [
-      { zh: "产品对比", en: "Compare", tw: "產品比較" },
-      { zh: "使用场景", en: "Use Cases", tw: "使用場景" },
-      { zh: "购买咨询", en: "Sales Contact", tw: "購買諮詢" },
-      { zh: "文档中心", en: "Docs", tw: "文件中心" },
+      {
+        zh: "产品总览",
+        en: "Overview",
+        tw: "產品總覽",
+        route: "/product",
+      },
+      {
+        zh: "工具中心",
+        en: "Tool Center",
+        tw: "工具中心",
+        route: "/tool",
+      },
+      {
+        zh: "解决方案",
+        en: "Solutions",
+        tw: "解決方案",
+        route: "/solution",
+      },
+      {
+        zh: "联系咨询",
+        en: "Contact",
+        tw: "聯絡諮詢",
+        route: "/contact",
+      },
     ],
   },
   solution: {
     cards: [
-      { title: { zh: "行业方案", en: "Industry", tw: "行業方案" } },
-      { title: { zh: "企业方案", en: "Enterprise", tw: "企業方案" } },
-      { title: { zh: "AI方案", en: "AI Solution", tw: "AI方案" } },
-      { title: { zh: "部署方案", en: "Deployment", tw: "部署方案" } },
+      {
+        title: { zh: "投研方案", en: "Research Solutions", tw: "投研方案" },
+        desc: {
+          zh: "把信息流变成可持续跟踪的研究框架。",
+          en: "Turn information flow into a sustainable research framework.",
+          tw: "把資訊流變成可持續追蹤的研究框架。",
+        },
+        badge: "💼",
+        route: "/solution",
+      },
+      {
+        title: { zh: "技术服务", en: "Engineering", tw: "技術服務" },
+        desc: {
+          zh: "网站、网络、自动化，一体化落地。",
+          en: "Web, network, and automation delivery in one stream.",
+          tw: "網站、網路、自動化，一體化落地。",
+        },
+        badge: "💼",
+        route: "/solution",
+      },
+      {
+        title: { zh: "AI 自动化", en: "AI Automation", tw: "AI 自動化" },
+        desc: {
+          zh: "让重复动作变成自动流程。",
+          en: "Turn repetitive actions into automated workflows.",
+          tw: "讓重複動作變成自動流程。",
+        },
+        badge: "💼",
+        route: "/solution",
+      },
+      {
+        title: { zh: "部署与运维", en: "Deploy & Ops", tw: "部署與維運" },
+        desc: {
+          zh: "从上线到维护，减少折返和踩坑。",
+          en: "From launch to maintenance, with fewer reruns.",
+          tw: "從上線到維護，減少折返和踩坑。",
+        },
+        badge: "💼",
+        route: "/support",
+      },
     ],
     links: [
-      { zh: "架构设计", en: "Architecture", tw: "架構設計" },
-      { zh: "成本评估", en: "Pricing", tw: "成本評估" },
-      { zh: "客户案例", en: "Cases", tw: "客戶案例" },
-      { zh: "咨询顾问", en: "Consulting", tw: "顧問服務" },
+      {
+        zh: "方案总览",
+        en: "All Solutions",
+        tw: "方案總覽",
+        route: "/solution",
+      },
+      {
+        zh: "支持中心",
+        en: "Support",
+        tw: "支援中心",
+        route: "/support",
+      },
+      {
+        zh: "帮助中心",
+        en: "Help Center",
+        tw: "幫助中心",
+        route: "/help",
+      },
+      {
+        zh: "联系咨询",
+        en: "Contact",
+        tw: "聯絡諮詢",
+        route: "/contact",
+      },
     ],
   },
   support: {
     cards: [
-      { title: { zh: "帮助中心", en: "Help Center", tw: "幫助中心" } },
-      { title: { zh: "工单支持", en: "Tickets", tw: "工單支援" } },
-      { title: { zh: "开发者支持", en: "Developer", tw: "開發者支援" } },
-      { title: { zh: "状态监控", en: "Status", tw: "狀態監控" } },
+      {
+        title: { zh: "帮助中心", en: "Help Center", tw: "幫助中心" },
+        desc: {
+          zh: "快速搞清怎么用、去哪找、哪里反馈。",
+          en: "Quickly find how to use, where to go, and how to ask.",
+          tw: "快速搞清怎麼用、去哪找、哪裡反饋。",
+        },
+        badge: "🔓",
+        route: "/help",
+      },
+      {
+        title: { zh: "常见问题", en: "FAQ", tw: "常見問題" },
+        desc: {
+          zh: "先把最常见的问题讲透。",
+          en: "Cover the most common questions first.",
+          tw: "先把最常見的問題講透。",
+        },
+        badge: "🔓",
+        route: "/support",
+      },
+      {
+        title: { zh: "隐私与法律", en: "Privacy & Legal", tw: "隱私與法律" },
+        desc: {
+          zh: "隐私、条款、免责声明放在这里。",
+          en: "Privacy, terms, and disclaimer live here.",
+          tw: "隱私、條款、免責聲明放在這裡。",
+        },
+        badge: "🔓",
+        route: "/privacy",
+      },
+      {
+        title: { zh: "联系方式", en: "Contact", tw: "聯絡方式" },
+        desc: {
+          zh: "合作、咨询、反馈，统一入口。",
+          en: "A single entry for cooperation, questions, and feedback.",
+          tw: "合作、諮詢、反饋，統一入口。",
+        },
+        badge: "🔓",
+        route: "/contact",
+      },
     ],
     links: [
-      { zh: "常见问题", en: "FAQ", tw: "常見問題" },
-      { zh: "服务条款", en: "Terms", tw: "服務條款" },
-      { zh: "隐私政策", en: "Privacy", tw: "隱私政策" },
-      { zh: "联系我们", en: "Contact", tw: "聯絡我們" },
+      {
+        zh: "支持中心",
+        en: "Support Center",
+        tw: "支援中心",
+        route: "/support",
+      },
+      {
+        zh: "帮助中心",
+        en: "Help Center",
+        tw: "幫助中心",
+        route: "/help",
+      },
+      {
+        zh: "隐私与法律",
+        en: "Privacy & Legal",
+        tw: "隱私與法律",
+        route: "/privacy",
+      },
+      {
+        zh: "联系九域",
+        en: "Contact Us",
+        tw: "聯絡九域",
+        route: "/contact",
+      },
     ],
   },
   tool: {
     cards: [
-      { title: { zh: "效率工具", en: "Productivity", tw: "效率工具" } },
-      { title: { zh: "可视化工具", en: "Visual Tools", tw: "視覺化工具" } },
-      { title: { zh: "运维工具", en: "Ops Tools", tw: "維運工具" } },
-      { title: { zh: "测试工具", en: "Testing", tw: "測試工具" } },
+      {
+        title: { zh: "数据转换器", en: "Data Converter", tw: "資料轉換器" },
+        desc: {
+          zh: "格式转换，公开可用，直接打开就能试。",
+          en: "Format conversion, publicly available, open and try.",
+          tw: "格式轉換，公開可用，打開就能試。",
+        },
+        badge: "🔓",
+        route: "/tool/data-converter",
+      },
+      {
+        title: { zh: "文本格式化", en: "Text Formatter", tw: "文字格式化" },
+        desc: {
+          zh: "文本清洗与整理，公开可用。",
+          en: "Text cleanup and formatting, publicly available.",
+          tw: "文字清洗與整理，公開可用。",
+        },
+        badge: "🔓",
+        route: "/tool/text-formatter",
+      },
+      {
+        title: { zh: "AI 工作台", en: "AI Workspace", tw: "AI 工作台" },
+        desc: {
+          zh: "更多工具登录后解锁。",
+          en: "More tools unlock after login.",
+          tw: "更多工具登入後解鎖。",
+        },
+        badge: "🔐",
+        route: "/tool/ai-workspace",
+      },
+      {
+        title: { zh: "网络检测", en: "Network Check", tw: "網路檢測" },
+        desc: {
+          zh: "登录后可用的诊断能力。",
+          en: "Diagnostic capabilities available after login.",
+          tw: "登入後可用的診斷能力。",
+        },
+        badge: "🔐",
+        route: "/tool/network-check",
+      },
     ],
     links: [
-      { zh: "工具市场", en: "Marketplace", tw: "工具市場" },
-      { zh: "下载中心", en: "Downloads", tw: "下載中心" },
-      { zh: "更新日志", en: "Changelog", tw: "更新日誌" },
-      { zh: "API 工具", en: "API Tools", tw: "API 工具" },
+      {
+        zh: "公开工具",
+        en: "Public Tools",
+        tw: "公開工具",
+        route: "/tool",
+      },
+      {
+        zh: "登录后工具",
+        en: "Member Tools",
+        tw: "登入後工具",
+        route: "/login-required",
+      },
+      {
+        zh: "更新日志",
+        en: "Changelog",
+        tw: "更新日誌",
+        route: "/tool",
+      },
+      {
+        zh: "定制服务",
+        en: "Custom Service",
+        tw: "定制服務",
+        route: "/contact",
+      },
     ],
   },
 } as const;
@@ -116,25 +358,67 @@ function pickLocaleText(
   return text.zh;
 }
 
+function glassStyle(mode: "default" | "hover" | "active"): CSSProperties {
+  if (mode === "active") {
+    return {
+      background: "rgba(255,255,255,0.62)",
+      border: "1px solid rgba(126,177,231,0.92)",
+      backdropFilter: "blur(14px) saturate(150%)",
+      WebkitBackdropFilter: "blur(14px) saturate(150%)",
+      boxShadow:
+        "0 10px 24px rgba(16,24,40,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
+      color: "#0f1720",
+      transform: "translateY(-1px) scale(1.04)",
+    };
+  }
+
+  if (mode === "hover") {
+    return {
+      background: "rgba(255,255,255,0.40)",
+      border: "1px solid rgba(255,255,255,0.68)",
+      backdropFilter: "blur(12px) saturate(135%)",
+      WebkitBackdropFilter: "blur(12px) saturate(135%)",
+      boxShadow:
+        "0 8px 18px rgba(16,24,40,0.08), inset 0 1px 0 rgba(255,255,255,0.85)",
+      color: "#111",
+      transform: "translateY(-1px)",
+    };
+  }
+
+  return {
+    background: "transparent",
+    border: "1px solid transparent",
+    color: "#111",
+    transform: "none",
+  };
+}
+
 export default function Navbar() {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<keyof typeof megaData | null>(null);
+  const [activeMenu, setActiveMenu] = useState<keyof typeof megaData | null>(
+    null
+  );
   const [showLangMenu, setShowLangMenu] = useState(false);
-  const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
   const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navAreaRef = useRef<HTMLDivElement | null>(null);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw;
+    if (typeof raw === "string" && locales.includes(raw as Locale)) {
+      return raw as Locale;
+    }
     return "zh";
   }, [params]);
 
@@ -165,6 +449,8 @@ export default function Navbar() {
         setShowLangMenu(false);
         setShowUserMenu(false);
         setMobileOpen(false);
+        setHoveredNav(null);
+        setHoveredIcon(null);
       }
     };
 
@@ -177,7 +463,9 @@ export default function Navbar() {
     setShowLangMenu(false);
     setShowUserMenu(false);
     setMobileOpen(false);
-  }, [pathname]);
+    setHoveredNav(null);
+    setHoveredIcon(null);
+  }, [pathname, searchParams]);
 
   const clearCloseTimer = () => {
     if (menuCloseTimerRef.current) {
@@ -189,20 +477,15 @@ export default function Navbar() {
   const openMenu = (key: keyof typeof megaData) => {
     clearCloseTimer();
     setActiveMenu(key);
+    setHoveredNav(key);
   };
 
   const closeMenuWithDelay = () => {
     clearCloseTimer();
     menuCloseTimerRef.current = setTimeout(() => {
       setActiveMenu(null);
+      setHoveredNav(null);
     }, 180);
-  };
-
-  const clickLiquid = (key: string) => {
-    setPressedKey(key);
-    setTimeout(() => {
-      setPressedKey((prev) => (prev === key ? null : prev));
-    }, 220);
   };
 
   const changeLanguage = (l: Locale) => {
@@ -221,10 +504,18 @@ export default function Navbar() {
     router.push(`/${locale}`);
   };
 
-  const handleLiquidMove = (e: React.MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--lx", `${e.clientX - rect.left}px`);
-    e.currentTarget.style.setProperty("--ly", `${e.clientY - rect.top}px`);
+  const handleToolRoute = (route: string) => {
+    if (isPublicTool(route)) {
+      router.push(`/${locale}${route}`);
+      return;
+    }
+
+    if (!user) {
+      router.push(`/${locale}/login?next=${encodeURIComponent(`/${locale}${route}`)}`);
+      return;
+    }
+
+    router.push(`/${locale}${route}`);
   };
 
   const NAV_H = 52;
@@ -245,9 +536,12 @@ export default function Navbar() {
           justifyContent: "space-between",
           padding: "0 32px",
           zIndex: 9999,
-          backgroundColor: "#ffffff",
-          borderBottom: "none",
-          boxShadow: "none",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 100%)",
+          backdropFilter: "blur(18px) saturate(140%)",
+          WebkitBackdropFilter: "blur(18px) saturate(140%)",
+          borderBottom: "1px solid rgba(255,255,255,0.65)",
+          boxShadow: "0 8px 30px rgba(15,23,42,0.05)",
         }}
       >
         <Link
@@ -265,30 +559,31 @@ export default function Navbar() {
 
         <div
           className="nav-center"
-          style={{ display: "flex", gap: "6px", fontSize: "15px", color: "#000" }}
+          style={{ display: "flex", gap: "8px", fontSize: "15px", color: "#000" }}
         >
           {navItems.map((item) => {
             const isActive = currentPath === item.path;
-            const clicked = pressedKey === item.key;
+            const isHover = hoveredNav === item.key;
+            const glass = isActive
+              ? glassStyle("active")
+              : isHover
+              ? glassStyle("hover")
+              : glassStyle("default");
 
             return (
               <Link
                 key={item.key}
                 href={`/${locale}${item.path}`}
-                className={`nav-link liquid-interactive ${
-                  isActive ? "liquid-glass nav-active" : ""
-                } ${clicked ? "liquid-clicked" : ""}`}
-                onMouseMove={isActive ? handleLiquidMove : undefined}
                 onMouseEnter={() => openMenu(item.key)}
-                onClick={() => clickLiquid(item.key)}
                 style={{
                   padding: "7px 13px",
-                  borderRadius: "10px",
+                  borderRadius: "12px",
                   cursor: "pointer",
-                  color: "#000",
-                  fontWeight: 500,
+                  fontWeight: isActive ? 700 : 500,
                   textDecoration: "none",
-                  transition: "all 0.25s cubic-bezier(0.25, 1, 0.5, 1)",
+                  transition: "all 0.22s ease",
+                  position: "relative",
+                  ...glass,
                 }}
               >
                 {locale === "zh"
@@ -307,14 +602,25 @@ export default function Navbar() {
         >
           <Link
             href={`/${locale}/support`}
-            style={{ ...iconBtn, textDecoration: "none" }}
+            onMouseEnter={() => setHoveredIcon("help")}
+            onMouseLeave={() => setHoveredIcon((v) => (v === "help" ? null : v))}
+            style={{
+              ...iconBtn,
+              ...(hoveredIcon === "help" ? glassStyle("hover") : glassStyle("default")),
+              textDecoration: "none",
+            }}
             aria-label="Help"
           >
             <span>?</span>
           </Link>
 
           <button
-            style={iconBtn}
+            style={{
+              ...iconBtn,
+              ...(hoveredIcon === "lang" ? glassStyle("hover") : glassStyle("default")),
+            }}
+            onMouseEnter={() => setHoveredIcon("lang")}
+            onMouseLeave={() => setHoveredIcon((v) => (v === "lang" ? null : v))}
             onClick={() => isReady && setShowLangMenu(!showLangMenu)}
             aria-label="Language"
             type="button"
@@ -328,12 +634,14 @@ export default function Navbar() {
                 position: "absolute",
                 top: `${NAV_H - 8}px`,
                 right: 0,
-                background: "#fff",
-                borderRadius: "12px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                background: "rgba(255,255,255,0.78)",
+                backdropFilter: "blur(16px) saturate(140%)",
+                WebkitBackdropFilter: "blur(16px) saturate(140%)",
+                borderRadius: "14px",
+                boxShadow: "0 12px 28px rgba(0,0,0,0.10)",
                 zIndex: 1000,
                 padding: "6px",
-                border: "none",
+                border: "1px solid rgba(255,255,255,0.72)",
               }}
             >
               {locales.map((l) => (
@@ -348,9 +656,8 @@ export default function Navbar() {
                     textAlign: "left",
                     cursor: "pointer",
                     fontSize: "14px",
-                    borderRadius: "8px",
+                    borderRadius: "10px",
                     color: "#000",
-                    opacity: 1,
                     fontWeight: 500,
                     display: "block",
                     width: "100%",
@@ -368,14 +675,27 @@ export default function Navbar() {
             ) : !user ? (
               <Link
                 href={`/${locale}/login`}
-                style={{ ...iconBtn, textDecoration: "none" }}
+                onMouseEnter={() => setHoveredIcon("login")}
+                onMouseLeave={() => setHoveredIcon((v) => (v === "login" ? null : v))}
+                style={{
+                  ...iconBtn,
+                  ...(hoveredIcon === "login"
+                    ? glassStyle("hover")
+                    : glassStyle("default")),
+                  textDecoration: "none",
+                }}
                 aria-label="Login"
               >
                 <span>👤</span>
               </Link>
             ) : (
               <button
-                style={iconBtn}
+                style={{
+                  ...iconBtn,
+                  ...(hoveredIcon === "user" ? glassStyle("hover") : glassStyle("default")),
+                }}
+                onMouseEnter={() => setHoveredIcon("user")}
+                onMouseLeave={() => setHoveredIcon((v) => (v === "user" ? null : v))}
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 type="button"
               >
@@ -390,11 +710,14 @@ export default function Navbar() {
                   top: NAV_H + 4,
                   right: 0,
                   width: 160,
-                  background: "#fff",
-                  borderRadius: 12,
+                  background: "rgba(255,255,255,0.82)",
+                  backdropFilter: "blur(16px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(16px) saturate(140%)",
+                  borderRadius: 14,
                   boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
                   zIndex: 9999,
                   padding: "6px 0",
+                  border: "1px solid rgba(255,255,255,0.75)",
                 }}
               >
                 <div
@@ -456,14 +779,7 @@ export default function Navbar() {
             gap: "8px",
           }}
         >
-          <Link
-            href={`/${locale}/login`}
-            style={{ ...iconBtn, textDecoration: "none" }}
-            aria-label="Login"
-          >
-            <span>⋯</span>
-          </Link>
-
+          {/* 移动端删掉冗余 ⋯ 登录，只保留汉堡菜单 */}
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -472,8 +788,13 @@ export default function Navbar() {
               width: "34px",
               height: "34px",
               borderRadius: "17px",
-              border: "1px solid rgba(0,0,0,0.08)",
-              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.7)",
+              background: mobileOpen
+                ? "rgba(255,255,255,0.52)"
+                : "rgba(255,255,255,0.28)",
+              backdropFilter: "blur(14px) saturate(140%)",
+              WebkitBackdropFilter: "blur(14px) saturate(140%)",
+              boxShadow: "0 8px 18px rgba(16,24,40,0.08)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -496,14 +817,16 @@ export default function Navbar() {
             top: `${NAV_H}px`,
             left: 0,
             width: "100%",
-            background: "#fff",
+            background: "rgba(255,255,255,0.82)",
+            backdropFilter: "blur(18px) saturate(140%)",
+            WebkitBackdropFilter: "blur(18px) saturate(140%)",
             padding: "20px",
             zIndex: 9998,
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-            borderTop: "1px solid #eee",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+            borderTop: "1px solid rgba(255,255,255,0.65)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
           }}
         >
           {navItems.map((item) => (
@@ -513,11 +836,13 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               style={{
                 padding: "12px 16px",
-                borderRadius: "10px",
+                borderRadius: "12px",
                 textDecoration: "none",
                 color: "#111",
                 fontSize: "15px",
                 fontWeight: 500,
+                background: "rgba(255,255,255,0.35)",
+                border: "1px solid rgba(255,255,255,0.7)",
               }}
             >
               {locale === "zh"
@@ -533,11 +858,13 @@ export default function Navbar() {
             onClick={() => setMobileOpen(false)}
             style={{
               padding: "12px 16px",
-              borderRadius: "10px",
+              borderRadius: "12px",
               textDecoration: "none",
               color: "#111",
               fontSize: "15px",
               fontWeight: 500,
+              background: "rgba(255,255,255,0.35)",
+              border: "1px solid rgba(255,255,255,0.7)",
             }}
           >
             {locale === "en" ? "Login" : locale === "zh-TW" ? "登入" : "登录"}
@@ -560,7 +887,7 @@ export default function Navbar() {
                 style={{
                   padding: "8px 12px",
                   border: "1px solid #eee",
-                  borderRadius: "8px",
+                  borderRadius: "10px",
                   background: locale === l ? "#111" : "#fff",
                   color: locale === l ? "#fff" : "#111",
                   fontSize: "13px",
@@ -584,9 +911,11 @@ export default function Navbar() {
             top: `${NAV_H}px`,
             left: 0,
             width: "100%",
-            backgroundColor: "#fff",
+            background: "rgba(255,255,255,0.84)",
+            backdropFilter: "blur(20px) saturate(145%)",
+            WebkitBackdropFilter: "blur(20px) saturate(145%)",
             border: "none",
-            boxShadow: "0 4px 12px rgba(249, 250, 250, 0.05)",
+            boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
             zIndex: 998,
             padding: "50px 30px",
             display: "flex",
@@ -611,23 +940,103 @@ export default function Navbar() {
                 gap: "18px",
               }}
             >
-              {megaData[activeMenu].cards.map((card, i) => (
-                <div key={`${activeMenu}-card-${i}`} style={{ textAlign: "center" }}>
+              {megaData[activeMenu].cards.map((card, i) => {
+                const href = `/${locale}${card.route}`;
+                const title = pickLocaleText(card.title, locale);
+                const desc = pickLocaleText(card.desc, locale);
+
+                const content = (
                   <div
                     style={{
                       width: "100%",
-                      height: 88,
-                      borderRadius: 12,
-                      background: "linear-gradient(180deg,#f6f7f8 0%,#eceff2 100%)",
-                      border: "1px solid rgba(0,0,0,0.04)",
-                      marginBottom: 10,
+                      borderRadius: 16,
+                      padding: 14,
+                      background: "rgba(255,255,255,0.34)",
+                      border: "1px solid rgba(255,255,255,0.72)",
+                      boxShadow:
+                        "0 10px 22px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.82)",
+                      transition: "all .22s ease",
+                      minHeight: 132,
                     }}
-                  />
-                  <h3 style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>
-                    {pickLocaleText(card.title, locale)}
-                  </h3>
-                </div>
-              ))}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 10,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: "#111",
+                          padding: "4px 8px",
+                          borderRadius: 999,
+                          background: "rgba(255,255,255,0.55)",
+                          border: "1px solid rgba(255,255,255,0.7)",
+                        }}
+                      >
+                        {card.badge}
+                      </span>
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: "#000",
+                        marginBottom: 8,
+                      }}
+                    >
+                      {title}
+                    </h3>
+
+                    <p
+                      style={{
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                        color: "#4b5563",
+                        margin: 0,
+                      }}
+                    >
+                      {desc}
+                    </p>
+                  </div>
+                );
+
+                if (activeMenu === "tool") {
+                  return (
+                    <button
+                      key={`${activeMenu}-card-${i}`}
+                      type="button"
+                      onClick={() => handleToolRoute(card.route)}
+                      style={{
+                        textAlign: "left",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {content}
+                    </button>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={`${activeMenu}-card-${i}`}
+                    href={href}
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
+                    {content}
+                  </Link>
+                );
+              })}
             </div>
 
             <div
@@ -639,25 +1048,50 @@ export default function Navbar() {
                 gap: 11,
               }}
             >
-              {megaData[activeMenu].links.map((link, i) => (
-                <a
-                  key={`${activeMenu}-link-${i}`}
-                  href="#"
-                  style={{
-                    color: "#111",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {locale === "en"
-                    ? link.en
-                    : locale === "zh-TW"
-                    ? link.tw
-                    : link.zh}
-                </a>
-              ))}
+              {megaData[activeMenu].links.map((link, i) => {
+                const label =
+                  locale === "en" ? link.en : locale === "zh-TW" ? link.tw : link.zh;
+
+                if (activeMenu === "tool" && link.route === "/login-required") {
+                  return (
+                    <button
+                      key={`${activeMenu}-link-${i}`}
+                      type="button"
+                      onClick={() => handleToolRoute("/tool/ai-workspace")}
+                      style={{
+                        color: "#111",
+                        textDecoration: "none",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        lineHeight: 1.2,
+                        border: "none",
+                        background: "none",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        padding: 0,
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={`${activeMenu}-link-${i}`}
+                    href={`/${locale}${link.route}`}
+                    style={{
+                      color: "#111",
+                      textDecoration: "none",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -670,8 +1104,8 @@ const iconBtn: CSSProperties = {
   width: "34px",
   height: "34px",
   borderRadius: "17px",
-  border: "none",
-  background: "#f5f5f5",
+  border: "1px solid transparent",
+  background: "transparent",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -679,4 +1113,5 @@ const iconBtn: CSSProperties = {
   cursor: "pointer",
   color: "#000",
   opacity: 1,
+  transition: "all .22s ease",
 };

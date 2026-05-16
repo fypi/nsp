@@ -1,34 +1,38 @@
-"use client";
-import Navbar from "@/components/Navbar";
-import { useParams } from "next/navigation";
-
 export default function ContactPage() {
-  const { locale } = useParams();
-  const texts = {
-    zh: {
-      title: "联系方式",
-      desc: "客服邮箱：support@ninespro.com",
-    },
-    "zh-TW": {
-      title: "聯絡方式",
-      desc: "客服郵箱：support@ninespro.com",
-    },
-    en: {
-      title: "Contact",
-      desc: "Email: support@ninespro.com",
-    },
-  };
-  const t = texts[locale as keyof typeof texts] || texts.zh;
-
   return (
-    <div className="page-wrapper">
-      <Navbar />
-      <div className="page-container" style={{ padding: "80px 20px" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto", color: "#000" }}>
-          <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>{t.title}</h1>
-          <p style={{ lineHeight: "1.7" }}>{t.desc}</p>
+    <main className="subpage-main">
+      <div className="subpage-container">
+        <div className="subpage-hero">
+          <h1>联系方式</h1>
+          <p>有问题、有想法、想合作，随时找我们。</p>
         </div>
+
+        <section className="subpage-section">
+          <div className="card-grid">
+            <div className="card">
+              <h3>邮件联系</h3>
+              <p>
+                商务、技术、内容相关的问题，统一发邮件至
+                hello@ninespro.com，我们会尽快回复。
+              </p>
+            </div>
+
+            <div className="card">
+              <h3>回复时间</h3>
+              <p>
+                通常 1-2 个工作日内回复。紧急情况请在标题注明【紧急】。
+              </p>
+            </div>
+
+            <div className="card">
+              <h3>其他渠道</h3>
+              <p>
+                如需更直接的沟通，请通过支持中心提交反馈，我们会安排专人对接。
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

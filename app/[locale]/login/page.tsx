@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -33,7 +33,11 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     setLoading(false);
 
     if (error) {
@@ -41,7 +45,8 @@ export default function LoginPage() {
       return;
     }
 
-    const target = nextPath && nextPath.startsWith("/") ? nextPath : `/${locale}`;
+    const target =
+      nextPath && nextPath.startsWith("/") ? nextPath : `/${locale}`;
     router.replace(target);
   };
 
@@ -70,7 +75,11 @@ export default function LoginPage() {
 
         <form
           onSubmit={onSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+          }}
         >
           <div>
             <label
@@ -107,7 +116,11 @@ export default function LoginPage() {
                 marginBottom: "6px",
               }}
             >
-              {locale === "en" ? "Password" : locale === "zh-TW" ? "密碼" : "密码"}
+              {locale === "en"
+                ? "Password"
+                : locale === "zh-TW"
+                ? "密碼"
+                : "密码"}
             </label>
             <input
               style={{
@@ -127,7 +140,13 @@ export default function LoginPage() {
           </div>
 
           {errorMsg && (
-            <div style={{ color: "#dc2626", fontSize: "13px", textAlign: "center" }}>
+            <div
+              style={{
+                color: "#dc2626",
+                fontSize: "13px",
+                textAlign: "center",
+              }}
+            >
               {errorMsg}
             </div>
           )}
@@ -174,7 +193,11 @@ export default function LoginPage() {
               ? "註冊帳號"
               : "注册账号"}
           </Link>
-          <Link href={`/${locale}/forgot-password`} style={{ color: "#007bff" }}>
+
+          <Link
+            href={`/${locale}/forgot-password`}
+            style={{ color: "#007bff" }}
+          >
             {locale === "en"
               ? "Forgot password?"
               : locale === "zh-TW"
