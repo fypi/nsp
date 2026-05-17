@@ -13,7 +13,7 @@ export default function ContactPage() {
               <h3>邮件联系</h3>
               <p>
                 商务、技术、内容相关的问题，统一发邮件至
-                hello@ninespro.com，我们会尽快回复。
+                one@ninespro.com，我们会尽快回复。
               </p>
             </div>
 
