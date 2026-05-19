@@ -540,3 +540,37 @@ a,button,[role="button"] {
   line-height: 1.6;
   margin: 0;
 }
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.contact-input,
+.contact-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+
+.contact-textarea {
+  height: 140px;
+  resize: vertical;
+}
+
+.contact-button {
+  background: #111;
+  color: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.contact-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
