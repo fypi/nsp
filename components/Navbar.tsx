@@ -52,17 +52,21 @@ const navItems = [
 function stripLocaleFromPath(path: string): string {
   const parts = path.split("/");
   const maybeLocale = parts[1];
+
   if (locales.includes(maybeLocale as Locale)) {
     const rest = "/" + parts.slice(2).join("/");
     return rest === "/" ? "/" : rest;
   }
+
   return path;
 }
 
 function isPublicTool(route: string) {
   return [
-    "/tool/data-converter",
-    "/tool/text-formatter",
+    "/tool/json-formatter",
+    "/tool/text-diff",
+    "/tool/compound-interest",
+    "/tool/base64",
   ].includes(route);
 }
 
@@ -111,30 +115,10 @@ const megaData = {
       },
     ],
     links: [
-      {
-        zh: "产品总览",
-        en: "Overview",
-        tw: "產品總覽",
-        route: "/product",
-      },
-      {
-        zh: "工具中心",
-        en: "Tool Center",
-        tw: "工具中心",
-        route: "/tool",
-      },
-      {
-        zh: "解决方案",
-        en: "Solutions",
-        tw: "解決方案",
-        route: "/solution",
-      },
-      {
-        zh: "联系咨询",
-        en: "Contact",
-        tw: "聯絡諮詢",
-        route: "/contact",
-      },
+      { zh: "产品总览", en: "Overview", tw: "產品總覽", route: "/product" },
+      { zh: "工具中心", en: "Tool Center", tw: "工具中心", route: "/tool" },
+      { zh: "解决方案", en: "Solutions", tw: "解決方案", route: "/solution" },
+      { zh: "联系咨询", en: "Contact", tw: "聯絡諮詢", route: "/contact" },
     ],
   },
   solution: {
@@ -152,9 +136,9 @@ const megaData = {
       {
         title: { zh: "技术服务", en: "Engineering", tw: "技術服務" },
         desc: {
-          zh: "网站、网络、自动化，一体化落地。",
-          en: "Web, network, and automation delivery in one stream.",
-          tw: "網站、網路、自動化，一體化落地。",
+          zh: "网站、网络、自动化，一起做下来。",
+          en: "Web, network, and automation delivered together.",
+          tw: "網站、網路、自動化，一起做下來。",
         },
         badge: "💼",
         route: "/solution",
@@ -181,30 +165,10 @@ const megaData = {
       },
     ],
     links: [
-      {
-        zh: "方案总览",
-        en: "All Solutions",
-        tw: "方案總覽",
-        route: "/solution",
-      },
-      {
-        zh: "支持中心",
-        en: "Support",
-        tw: "支援中心",
-        route: "/support",
-      },
-      {
-        zh: "帮助中心",
-        en: "Help Center",
-        tw: "幫助中心",
-        route: "/help",
-      },
-      {
-        zh: "联系咨询",
-        en: "Contact",
-        tw: "聯絡諮詢",
-        route: "/contact",
-      },
+      { zh: "方案总览", en: "All Solutions", tw: "方案總覽", route: "/solution" },
+      { zh: "支持中心", en: "Support", tw: "支援中心", route: "/support" },
+      { zh: "帮助中心", en: "Help Center", tw: "幫助中心", route: "/help" },
+      { zh: "联系咨询", en: "Contact", tw: "聯絡諮詢", route: "/contact" },
     ],
   },
   support: {
@@ -251,100 +215,61 @@ const megaData = {
       },
     ],
     links: [
-      {
-        zh: "支持中心",
-        en: "Support Center",
-        tw: "支援中心",
-        route: "/support",
-      },
-      {
-        zh: "帮助中心",
-        en: "Help Center",
-        tw: "幫助中心",
-        route: "/help",
-      },
-      {
-        zh: "隐私与法律",
-        en: "Privacy & Legal",
-        tw: "隱私與法律",
-        route: "/privacy",
-      },
-      {
-        zh: "联系九域",
-        en: "Contact Us",
-        tw: "聯絡九域",
-        route: "/contact",
-      },
+      { zh: "支持中心", en: "Support Center", tw: "支援中心", route: "/support" },
+      { zh: "帮助中心", en: "Help Center", tw: "幫助中心", route: "/help" },
+      { zh: "隐私与法律", en: "Privacy & Legal", tw: "隱私與法律", route: "/privacy" },
+      { zh: "联系九域", en: "Contact Us", tw: "聯絡九域", route: "/contact" },
     ],
   },
   tool: {
     cards: [
       {
-        title: { zh: "数据转换器", en: "Data Converter", tw: "資料轉換器" },
+        title: { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化" },
         desc: {
-          zh: "格式转换，公开可用，直接打开就能试。",
-          en: "Format conversion, publicly available, open and try.",
-          tw: "格式轉換，公開可用，打開就能試。",
+          zh: "格式化、压缩和校验 JSON，公开可用。",
+          en: "Format, minify, and validate JSON. Publicly available.",
+          tw: "格式化、壓縮和校驗 JSON，公開可用。",
         },
         badge: "🔓",
-        route: "/tool/data-converter",
+        route: "/tool/json-formatter",
       },
       {
-        title: { zh: "文本格式化", en: "Text Formatter", tw: "文字格式化" },
+        title: { zh: "文本对比", en: "Text Diff", tw: "文字對比" },
         desc: {
-          zh: "文本清洗与整理，公开可用。",
-          en: "Text cleanup and formatting, publicly available.",
-          tw: "文字清洗與整理，公開可用。",
+          zh: "对比两段文本差异，公开可用。",
+          en: "Compare differences between two texts. Publicly available.",
+          tw: "對比兩段文字差異，公開可用。",
         },
         badge: "🔓",
-        route: "/tool/text-formatter",
+        route: "/tool/text-diff",
       },
       {
-        title: { zh: "AI 工作台", en: "AI Workspace", tw: "AI 工作台" },
+        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
         desc: {
-          zh: "更多工具登录后解锁。",
-          en: "More tools unlock after login.",
-          tw: "更多工具登入後解鎖。",
+          zh: "计算长期收益与复利增长，公开可用。",
+          en: "Calculate long-term returns and compound growth. Publicly available.",
+          tw: "計算長期收益與複利增長，公開可用。",
         },
-        badge: "🔐",
-        route: "/tool/ai-workspace",
+        badge: "🔓",
+        route: "/tool/compound-interest",
       },
       {
-        title: { zh: "网络检测", en: "Network Check", tw: "網路檢測" },
+        title: { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具" },
         desc: {
-          zh: "登录后可用的诊断能力。",
-          en: "Diagnostic capabilities available after login.",
-          tw: "登入後可用的診斷能力。",
+          zh: "Base64 编码与解码，公开可用。",
+          en: "Base64 encode and decode. Publicly available.",
+          tw: "Base64 編碼與解碼，公開可用。",
         },
-        badge: "🔐",
-        route: "/tool/network-check",
+        badge: "🔓",
+        route: "/tool/base64",
       },
     ],
     links: [
-      {
-        zh: "公开工具",
-        en: "Public Tools",
-        tw: "公開工具",
-        route: "/tool",
-      },
-      {
-        zh: "登录后工具",
-        en: "Member Tools",
-        tw: "登入後工具",
-        route: "/login-required",
-      },
-      {
-        zh: "更新日志",
-        en: "Changelog",
-        tw: "更新日誌",
-        route: "/tool",
-      },
-      {
-        zh: "定制服务",
-        en: "Custom Service",
-        tw: "定制服務",
-        route: "/contact",
-      },
+      { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化", route: "/tool/json-formatter" },
+      { zh: "文本对比", en: "Text Diff", tw: "文字對比", route: "/tool/text-diff" },
+      { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器", route: "/tool/compound-interest" },
+      { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具", route: "/tool/base64" },
+      { zh: "Markdown 预览", en: "Markdown Preview", tw: "Markdown 預覽", route: "/tool/markdown-preview" },
     ],
   },
 } as const;
@@ -358,28 +283,29 @@ function pickLocaleText(
   return text.zh;
 }
 
-function glassStyle(mode: "default" | "hover" | "active"): CSSProperties {
+function pickNavText(
+  text: { zh: string; en: string; tw: string },
+  locale: Locale
+) {
+  if (locale === "en") return text.en;
+  if (locale === "zh-TW") return text.tw;
+  return text.zh;
+}
+
+function navPillStyle(mode: "default" | "hover" | "active"): CSSProperties {
   if (mode === "active") {
     return {
-      background: "rgba(255,255,255,0.62)",
-      border: "1px solid rgba(126,177,231,0.92)",
-      backdropFilter: "blur(14px) saturate(150%)",
-      WebkitBackdropFilter: "blur(14px) saturate(150%)",
-      boxShadow:
-        "0 10px 24px rgba(16,24,40,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
-      color: "#0f1720",
-      transform: "translateY(-1px) scale(1.04)",
+      background: "#f5f5f5",
+      border: "1px solid #e8e8e8",
+      color: "#111",
+      transform: "translateY(-1px)",
     };
   }
 
   if (mode === "hover") {
     return {
-      background: "rgba(255,255,255,0.40)",
-      border: "1px solid rgba(255,255,255,0.68)",
-      backdropFilter: "blur(12px) saturate(135%)",
-      WebkitBackdropFilter: "blur(12px) saturate(135%)",
-      boxShadow:
-        "0 8px 18px rgba(16,24,40,0.08), inset 0 1px 0 rgba(255,255,255,0.85)",
+      background: "#f7f7f7",
+      border: "1px solid #eeeeee",
       color: "#111",
       transform: "translateY(-1px)",
     };
@@ -401,9 +327,13 @@ export default function Navbar() {
 
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   const [activeMenu, setActiveMenu] = useState<keyof typeof megaData | null>(
     null
   );
+  const [lastMenu, setLastMenu] = useState<keyof typeof megaData>("product");
+
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -411,8 +341,8 @@ export default function Navbar() {
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
-  const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navAreaRef = useRef<HTMLDivElement | null>(null);
+  const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const locale: Locale = useMemo(() => {
     const raw = params?.locale;
@@ -424,8 +354,22 @@ export default function Navbar() {
 
   const currentPath = useMemo(() => stripLocaleFromPath(pathname), [pathname]);
 
+  const NAV_H = 52;
+  const SCROLLBAR_W = 12;
+
+  const isReady = mounted;
+  const isMegaOpen = activeMenu !== null && !isMobile;
+  const currentMega = megaData[activeMenu ?? lastMenu];
+
   useEffect(() => {
     setMounted(true);
+
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+
+    updateIsMobile();
+    window.addEventListener("resize", updateIsMobile);
 
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user ?? null);
@@ -436,6 +380,7 @@ export default function Navbar() {
     });
 
     return () => {
+      window.removeEventListener("resize", updateIsMobile);
       listener.subscription.unsubscribe();
       if (menuCloseTimerRef.current) clearTimeout(menuCloseTimerRef.current);
     };
@@ -444,13 +389,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (navAreaRef.current && !navAreaRef.current.contains(e.target as Node)) {
-        if (menuCloseTimerRef.current) clearTimeout(menuCloseTimerRef.current);
-        setActiveMenu(null);
-        setShowLangMenu(false);
-        setShowUserMenu(false);
-        setMobileOpen(false);
-        setHoveredNav(null);
-        setHoveredIcon(null);
+        closeAll();
       }
     };
 
@@ -459,12 +398,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setActiveMenu(null);
-    setShowLangMenu(false);
-    setShowUserMenu(false);
-    setMobileOpen(false);
-    setHoveredNav(null);
-    setHoveredIcon(null);
+    closeAll();
   }, [pathname, searchParams]);
 
   const clearCloseTimer = () => {
@@ -475,9 +409,14 @@ export default function Navbar() {
   };
 
   const openMenu = (key: keyof typeof megaData) => {
+    if (isMobile) return;
+
     clearCloseTimer();
     setActiveMenu(key);
+    setLastMenu(key);
     setHoveredNav(key);
+    setShowLangMenu(false);
+    setShowUserMenu(false);
   };
 
   const closeMenuWithDelay = () => {
@@ -485,16 +424,24 @@ export default function Navbar() {
     menuCloseTimerRef.current = setTimeout(() => {
       setActiveMenu(null);
       setHoveredNav(null);
-    }, 180);
+    }, 160);
+  };
+
+  const closeAll = () => {
+    clearCloseTimer();
+    setActiveMenu(null);
+    setShowLangMenu(false);
+    setShowUserMenu(false);
+    setMobileOpen(false);
+    setHoveredNav(null);
+    setHoveredIcon(null);
   };
 
   const changeLanguage = (l: Locale) => {
     document.cookie = `locale=${l}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
     router.push(`/${l}${basePath === "/" ? "" : basePath}`);
-    setShowLangMenu(false);
-    setMobileOpen(false);
-    setActiveMenu(null);
+    closeAll();
   };
 
   const handleLogout = async () => {
@@ -505,47 +452,67 @@ export default function Navbar() {
   };
 
   const handleToolRoute = (route: string) => {
+    closeAll();
+
     if (isPublicTool(route)) {
       router.push(`/${locale}${route}`);
       return;
     }
 
     if (!user) {
-      router.push(`/${locale}/login?next=${encodeURIComponent(`/${locale}${route}`)}`);
+      router.push(
+        `/${locale}/login?next=${encodeURIComponent(`/${locale}${route}`)}`
+      );
       return;
     }
 
     router.push(`/${locale}${route}`);
   };
 
-  const NAV_H = 52;
-  const SCROLLBAR_W = 12;
-  const isReady = mounted;
-
   return (
-    <div ref={navAreaRef} onMouseLeave={closeMenuWithDelay}>
+    <div ref={navAreaRef}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: `${NAV_H}px`,
+          left: 0,
+          right: SCROLLBAR_W,
+          bottom: 0,
+          background: "rgba(0,0,0,0.045)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          opacity: isMegaOpen ? 1 : 0,
+          visibility: isMegaOpen ? "visible" : "hidden",
+          pointerEvents: "none",
+          zIndex: 9996,
+          transition: "opacity 160ms ease, visibility 160ms ease",
+        }}
+      />
+
       <nav
+        onMouseEnter={clearCloseTimer}
+        onMouseLeave={closeMenuWithDelay}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: `calc(100% - ${SCROLLBAR_W}px)`,
+          right: SCROLLBAR_W,
+          width: "auto",
           height: `${NAV_H}px`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 32px",
-          zIndex: 9999,
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 100%)",
-          backdropFilter: "blur(18px) saturate(140%)",
-          WebkitBackdropFilter: "blur(18px) saturate(140%)",
-          borderBottom: "1px solid rgba(255,255,255,0.65)",
-          boxShadow: "0 8px 30px rgba(15,23,42,0.05)",
+          padding: isMobile ? "0 16px" : "0 32px",
+          zIndex: 10000,
+          background: "#ffffff",
+          borderBottom: "none",
+          boxShadow: "none",
         }}
       >
         <Link
           href={`/${locale}`}
+          onClick={closeAll}
           style={{
             fontSize: "20px",
             fontWeight: 600,
@@ -554,278 +521,488 @@ export default function Navbar() {
             whiteSpace: "nowrap",
           }}
         >
-          {locale === "en" ? "NINESPRO" : "九域"}
+          {locale === "en" ? "NinesPro" : "九域"}
         </Link>
 
-        <div
-          className="nav-center"
-          style={{ display: "flex", gap: "8px", fontSize: "15px", color: "#000" }}
-        >
-          {navItems.map((item) => {
-            const isActive = currentPath === item.path;
-            const isHover = hoveredNav === item.key;
-            const glass = isActive
-              ? glassStyle("active")
-              : isHover
-              ? glassStyle("hover")
-              : glassStyle("default");
-
-            return (
-              <Link
-                key={item.key}
-                href={`/${locale}${item.path}`}
-                onMouseEnter={() => openMenu(item.key)}
-                style={{
-                  padding: "7px 13px",
-                  borderRadius: "12px",
-                  cursor: "pointer",
-                  fontWeight: isActive ? 700 : 500,
-                  textDecoration: "none",
-                  transition: "all 0.22s ease",
-                  position: "relative",
-                  ...glass,
-                }}
-              >
-                {locale === "zh"
-                  ? item.name.zh
-                  : locale === "zh-TW"
-                  ? item.name.tw
-                  : item.name.en}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div
-          className="nav-icons-desktop"
-          style={{ display: "flex", gap: "12px", position: "relative" }}
-        >
-          <Link
-            href={`/${locale}/support`}
-            onMouseEnter={() => setHoveredIcon("help")}
-            onMouseLeave={() => setHoveredIcon((v) => (v === "help" ? null : v))}
+        {!isMobile && (
+          <div
+            className="nav-center"
             style={{
-              ...iconBtn,
-              ...(hoveredIcon === "help" ? glassStyle("hover") : glassStyle("default")),
-              textDecoration: "none",
+              display: "flex",
+              gap: "8px",
+              fontSize: "15px",
+              color: "#000",
             }}
-            aria-label="Help"
           >
-            <span>?</span>
-          </Link>
+            {navItems.map((item) => {
+              const isActive = currentPath === item.path;
+              const isHover = hoveredNav === item.key;
 
-          <button
-            style={{
-              ...iconBtn,
-              ...(hoveredIcon === "lang" ? glassStyle("hover") : glassStyle("default")),
-            }}
-            onMouseEnter={() => setHoveredIcon("lang")}
-            onMouseLeave={() => setHoveredIcon((v) => (v === "lang" ? null : v))}
-            onClick={() => isReady && setShowLangMenu(!showLangMenu)}
-            aria-label="Language"
-            type="button"
-          >
-            🌐
-          </button>
+              const pill = isActive
+                ? navPillStyle("active")
+                : isHover
+                ? navPillStyle("hover")
+                : navPillStyle("default");
 
-          {showLangMenu && (
-            <div
-              style={{
-                position: "absolute",
-                top: `${NAV_H - 8}px`,
-                right: 0,
-                background: "rgba(255,255,255,0.78)",
-                backdropFilter: "blur(16px) saturate(140%)",
-                WebkitBackdropFilter: "blur(16px) saturate(140%)",
-                borderRadius: "14px",
-                boxShadow: "0 12px 28px rgba(0,0,0,0.10)",
-                zIndex: 1000,
-                padding: "6px",
-                border: "1px solid rgba(255,255,255,0.72)",
-              }}
-            >
-              {locales.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => changeLanguage(l)}
-                  type="button"
+              return (
+                <Link
+                  key={item.key}
+                  href={`/${locale}${item.path}`}
+                  onMouseEnter={() => openMenu(item.key)}
                   style={{
-                    padding: "10px 16px",
-                    border: "none",
-                    background: "none",
-                    textAlign: "left",
+                    padding: "7px 13px",
+                    borderRadius: "12px",
                     cursor: "pointer",
-                    fontSize: "14px",
-                    borderRadius: "10px",
-                    color: "#000",
-                    fontWeight: 500,
-                    display: "block",
-                    width: "100%",
+                    fontWeight: isActive ? 700 : 500,
+                    textDecoration: "none",
+                    transition: "all 0.18s ease",
+                    position: "relative",
+                    ...pill,
                   }}
                 >
-                  {languageNames[l]}
-                </button>
-              ))}
-            </div>
-          )}
+                  {pickNavText(item.name, locale)}
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
-          <div style={{ position: "relative" }}>
-            {!isReady ? (
-              <span style={iconBtn}>⋯</span>
-            ) : !user ? (
-              <Link
-                href={`/${locale}/login`}
-                onMouseEnter={() => setHoveredIcon("login")}
-                onMouseLeave={() => setHoveredIcon((v) => (v === "login" ? null : v))}
-                style={{
-                  ...iconBtn,
-                  ...(hoveredIcon === "login"
-                    ? glassStyle("hover")
-                    : glassStyle("default")),
-                  textDecoration: "none",
-                }}
-                aria-label="Login"
-              >
-                <span>👤</span>
-              </Link>
-            ) : (
-              <button
-                style={{
-                  ...iconBtn,
-                  ...(hoveredIcon === "user" ? glassStyle("hover") : glassStyle("default")),
-                }}
-                onMouseEnter={() => setHoveredIcon("user")}
-                onMouseLeave={() => setHoveredIcon((v) => (v === "user" ? null : v))}
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                type="button"
-              >
-                {user.email?.charAt(0).toUpperCase()}
-              </button>
-            )}
+        {!isMobile && (
+          <div
+            className="nav-icons-desktop"
+            style={{ display: "flex", gap: "12px", position: "relative" }}
+          >
+            <Link
+              href={`/${locale}/support`}
+              onClick={closeAll}
+              onMouseEnter={() => setHoveredIcon("help")}
+              onMouseLeave={() =>
+                setHoveredIcon((v) => (v === "help" ? null : v))
+              }
+              style={{
+                ...iconBtn,
+                ...(hoveredIcon === "help"
+                  ? navPillStyle("hover")
+                  : navPillStyle("default")),
+                textDecoration: "none",
+              }}
+              aria-label="Help"
+            >
+              <span>?</span>
+            </Link>
 
-            {showUserMenu && (
+            <button
+              style={{
+                ...iconBtn,
+                ...(hoveredIcon === "lang"
+                  ? navPillStyle("hover")
+                  : navPillStyle("default")),
+              }}
+              onMouseEnter={() => setHoveredIcon("lang")}
+              onMouseLeave={() =>
+                setHoveredIcon((v) => (v === "lang" ? null : v))
+              }
+              onClick={() => {
+                if (!isReady) return;
+                setShowLangMenu((v) => !v);
+                setShowUserMenu(false);
+                setActiveMenu(null);
+              }}
+              aria-label="Language"
+              type="button"
+            >
+              🌐
+            </button>
+
+            {showLangMenu && (
               <div
                 style={{
                   position: "absolute",
-                  top: NAV_H + 4,
-                  right: 0,
-                  width: 160,
-                  background: "rgba(255,255,255,0.82)",
-                  backdropFilter: "blur(16px) saturate(140%)",
-                  WebkitBackdropFilter: "blur(16px) saturate(140%)",
-                  borderRadius: 14,
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-                  zIndex: 9999,
-                  padding: "6px 0",
-                  border: "1px solid rgba(255,255,255,0.75)",
+                  top: `${NAV_H - 4}px`,
+                  right: 46,
+                  background: "#ffffff",
+                  borderRadius: "14px",
+                  boxShadow: "0 12px 28px rgba(0,0,0,0.10)",
+                  zIndex: 10002,
+                  padding: "6px",
+                  border: "1px solid #eeeeee",
                 }}
               >
-                <div
-                  style={{
-                    padding: "8px 14px",
-                    fontSize: 12,
-                    color: "#666",
-                    borderBottom: "1px solid #f0f0f0",
-                  }}
-                >
-                  {user.email}
-                </div>
-
-                <button
-                  onClick={() => {
-                    router.push(`/${locale}/profile`);
-                    setShowUserMenu(false);
-                  }}
-                  type="button"
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "none",
-                    fontSize: 14,
-                    cursor: "pointer",
-                  }}
-                >
-                  个人信息
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                  type="button"
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    textAlign: "left",
-                    border: "none",
-                    background: "none",
-                    fontSize: 14,
-                    color: "red",
-                    cursor: "pointer",
-                  }}
-                >
-                  退出登录
-                </button>
+                {locales.map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => changeLanguage(l)}
+                    type="button"
+                    style={{
+                      padding: "10px 16px",
+                      border: "none",
+                      background: locale === l ? "#f5f5f5" : "transparent",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      borderRadius: "10px",
+                      color: "#000",
+                      fontWeight: 500,
+                      display: "block",
+                      width: "100%",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {languageNames[l]}
+                  </button>
+                ))}
               </div>
             )}
-          </div>
-        </div>
 
-        <div
-          className="nav-icons-mobile"
-          style={{
-            display: "none",
-            alignItems: "center",
-            gap: "8px",
-          }}
-        >
-          {/* 移动端删掉冗余 ⋯ 登录，只保留汉堡菜单 */}
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            type="button"
+            <div style={{ position: "relative" }}>
+              {!isReady ? (
+                <span style={iconBtn}>⋯</span>
+              ) : !user ? (
+                <Link
+                  href={`/${locale}/login`}
+                  onClick={closeAll}
+                  onMouseEnter={() => setHoveredIcon("login")}
+                  onMouseLeave={() =>
+                    setHoveredIcon((v) => (v === "login" ? null : v))
+                  }
+                  style={{
+                    ...iconBtn,
+                    ...(hoveredIcon === "login"
+                      ? navPillStyle("hover")
+                      : navPillStyle("default")),
+                    textDecoration: "none",
+                  }}
+                  aria-label="Login"
+                >
+                  <span>👤</span>
+                </Link>
+              ) : (
+                <button
+                  style={{
+                    ...iconBtn,
+                    ...(hoveredIcon === "user"
+                      ? navPillStyle("hover")
+                      : navPillStyle("default")),
+                  }}
+                  onMouseEnter={() => setHoveredIcon("user")}
+                  onMouseLeave={() =>
+                    setHoveredIcon((v) => (v === "user" ? null : v))
+                  }
+                  onClick={() => {
+                    setShowUserMenu((v) => !v);
+                    setShowLangMenu(false);
+                    setActiveMenu(null);
+                  }}
+                  type="button"
+                >
+                  {user.email?.charAt(0).toUpperCase()}
+                </button>
+              )}
+
+              {showUserMenu && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: NAV_H - 4,
+                    right: 0,
+                    width: 190,
+                    background: "#ffffff",
+                    borderRadius: 14,
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                    zIndex: 10002,
+                    padding: "6px 0",
+                    border: "1px solid #eeeeee",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 14px",
+                      fontSize: 12,
+                      color: "#666",
+                      borderBottom: "1px solid #f0f0f0",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {user.email}
+                  </div>
+
+                  <button
+                    onClick={handleLogout}
+                    type="button"
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      textAlign: "left",
+                      border: "none",
+                      background: "transparent",
+                      fontSize: 14,
+                      color: "#d11a2a",
+                      cursor: "pointer",
+                    }}
+                  >
+                    退出登录
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {isMobile && (
+          <div
+            className="nav-icons-mobile"
             style={{
-              width: "34px",
-              height: "34px",
-              borderRadius: "17px",
-              border: "1px solid rgba(255,255,255,0.7)",
-              background: mobileOpen
-                ? "rgba(255,255,255,0.52)"
-                : "rgba(255,255,255,0.28)",
-              backdropFilter: "blur(14px) saturate(140%)",
-              WebkitBackdropFilter: "blur(14px) saturate(140%)",
-              boxShadow: "0 8px 18px rgba(16,24,40,0.08)",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              fontSize: "15px",
-              cursor: "pointer",
-              color: "#111",
+              gap: "8px",
             }}
-            aria-label="Menu"
           >
-            {mobileOpen ? "✕" : "☰"}
-          </button>
-        </div>
+            <button
+              className="mobile-menu-btn"
+              onClick={() => {
+                setMobileOpen((v) => !v);
+                setActiveMenu(null);
+                setShowLangMenu(false);
+                setShowUserMenu(false);
+              }}
+              type="button"
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "17px",
+                border: "1px solid #eeeeee",
+                background: mobileOpen ? "#f5f5f5" : "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "15px",
+                cursor: "pointer",
+                color: "#111",
+                transition: "all .18s ease",
+              }}
+              aria-label="Menu"
+            >
+              {mobileOpen ? "✕" : "☰"}
+            </button>
+          </div>
+        )}
       </nav>
 
-      {mobileOpen && (
+      <div
+        onMouseEnter={clearCloseTimer}
+        onMouseLeave={closeMenuWithDelay}
+        style={{
+          position: "fixed",
+          top: `${NAV_H}px`,
+          left: 0,
+          right: SCROLLBAR_W,
+          width: "auto",
+          background: "#ffffff",
+          border: "none",
+          boxShadow: "none",
+          zIndex: 9999,
+          padding: "54px 48px 56px",
+          display: isMobile ? "none" : "flex",
+          justifyContent: "center",
+          opacity: isMegaOpen ? 1 : 0,
+          visibility: isMegaOpen ? "visible" : "hidden",
+          transform: isMegaOpen ? "translateY(0)" : "translateY(-8px)",
+          pointerEvents: isMegaOpen ? "auto" : "none",
+          transition:
+            "opacity 160ms ease, visibility 160ms ease, transform 160ms ease",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1220,
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: "1fr 240px",
+            gap: 54,
+            alignItems: "start",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, minmax(130px, 1fr))",
+              gap: "22px",
+            }}
+          >
+            {currentMega.cards.map((card, i) => {
+              const title = pickLocaleText(card.title, locale);
+              const desc = pickLocaleText(card.desc, locale);
+
+              const content = (
+                <div
+                  style={{
+                    width: "100%",
+                    borderRadius: 16,
+                    padding: 16,
+                    background: "#ffffff",
+                    border: "1px solid #eeeeee",
+                    boxShadow: "none",
+                    transition: "all .18s ease",
+                    minHeight: 142,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 12,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "#111",
+                        padding: "4px 8px",
+                        borderRadius: 999,
+                        background: "#f6f6f6",
+                        border: "1px solid #eeeeee",
+                      }}
+                    >
+                      {card.badge}
+                    </span>
+                  </div>
+
+                  <h3
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: "#000",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {title}
+                  </h3>
+
+                  <p
+                    style={{
+                      fontSize: 12,
+                      lineHeight: 1.55,
+                      color: "#4b5563",
+                      margin: 0,
+                    }}
+                  >
+                    {desc}
+                  </p>
+                </div>
+              );
+
+              if ((activeMenu ?? lastMenu) === "tool") {
+                return (
+                  <button
+                    key={`mega-card-${i}`}
+                    type="button"
+                    onClick={() => handleToolRoute(card.route)}
+                    style={{
+                      textAlign: "left",
+                      background: "transparent",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {content}
+                  </button>
+                );
+              }
+
+              return (
+                <Link
+                  key={`mega-card-${i}`}
+                  href={`/${locale}${card.route}`}
+                  onClick={closeAll}
+                  style={{
+                    textDecoration: "none",
+                  }}
+                >
+                  {content}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div
+            style={{
+              borderLeft: "none",
+              paddingLeft: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+          >
+            {currentMega.links.map((link, i) => {
+              const label =
+                locale === "en" ? link.en : locale === "zh-TW" ? link.tw : link.zh;
+
+              if ((activeMenu ?? lastMenu) === "tool") {
+                return (
+                  <button
+                    key={`mega-link-${i}`}
+                    type="button"
+                    onClick={() => handleToolRoute(link.route)}
+                    style={{
+                      color: "#111",
+                      textDecoration: "none",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      lineHeight: 1.2,
+                      border: "none",
+                      background: "transparent",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              }
+
+              return (
+                <Link
+                  key={`mega-link-${i}`}
+                  href={`/${locale}${link.route}`}
+                  onClick={closeAll}
+                  style={{
+                    color: "#111",
+                    textDecoration: "none",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {mobileOpen && isMobile && (
         <div
           className="mobile-menu"
           style={{
             position: "fixed",
             top: `${NAV_H}px`,
             left: 0,
-            width: "100%",
-            background: "rgba(255,255,255,0.82)",
-            backdropFilter: "blur(18px) saturate(140%)",
-            WebkitBackdropFilter: "blur(18px) saturate(140%)",
+            right: SCROLLBAR_W,
+            width: "auto",
+            background: "#ffffff",
             padding: "20px",
-            zIndex: 9998,
+            zIndex: 9999,
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-            borderTop: "1px solid rgba(255,255,255,0.65)",
+            borderTop: "none",
             boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
           }}
         >
@@ -833,46 +1010,62 @@ export default function Navbar() {
             <Link
               key={item.key}
               href={`/${locale}${item.path}`}
-              onClick={() => setMobileOpen(false)}
+              onClick={closeAll}
               style={{
                 padding: "12px 16px",
-                borderRadius: "12px",
+                borderRadius: "10px",
                 textDecoration: "none",
                 color: "#111",
                 fontSize: "15px",
                 fontWeight: 500,
-                background: "rgba(255,255,255,0.35)",
-                border: "1px solid rgba(255,255,255,0.7)",
+                background: "#f5f5f5",
               }}
             >
-              {locale === "zh"
-                ? item.name.zh
-                : locale === "zh-TW"
-                ? item.name.tw
-                : item.name.en}
+              {pickNavText(item.name, locale)}
             </Link>
           ))}
 
-          <Link
-            href={`/${locale}/login`}
-            onClick={() => setMobileOpen(false)}
-            style={{
-              padding: "12px 16px",
-              borderRadius: "12px",
-              textDecoration: "none",
-              color: "#111",
-              fontSize: "15px",
-              fontWeight: 500,
-              background: "rgba(255,255,255,0.35)",
-              border: "1px solid rgba(255,255,255,0.7)",
-            }}
-          >
-            {locale === "en" ? "Login" : locale === "zh-TW" ? "登入" : "登录"}
-          </Link>
+          {!user && (
+            <Link
+              href={`/${locale}/login`}
+              onClick={closeAll}
+              style={{
+                padding: "12px 16px",
+                borderRadius: "10px",
+                textDecoration: "none",
+                color: "#111",
+                fontSize: "15px",
+                fontWeight: 500,
+                background: "#f5f5f5",
+              }}
+            >
+              {locale === "en" ? "Login" : locale === "zh-TW" ? "登入" : "登录"}
+            </Link>
+          )}
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              type="button"
+              style={{
+                padding: "12px 16px",
+                borderRadius: "10px",
+                border: "none",
+                textAlign: "left",
+                color: "#d11a2a",
+                fontSize: "15px",
+                fontWeight: 500,
+                background: "#f5f5f5",
+                cursor: "pointer",
+              }}
+            >
+              退出登录
+            </button>
+          )}
 
           <div
             style={{
-              borderTop: "1px solid #eee",
+              borderTop: "1px solid #eeeeee",
               paddingTop: "10px",
               marginTop: "6px",
               display: "flex",
@@ -886,10 +1079,10 @@ export default function Navbar() {
                 type="button"
                 style={{
                   padding: "8px 12px",
-                  border: "1px solid #eee",
-                  borderRadius: "10px",
-                  background: locale === l ? "#111" : "#fff",
-                  color: locale === l ? "#fff" : "#111",
+                  border: "1px solid #eeeeee",
+                  borderRadius: "8px",
+                  background: locale === l ? "#111" : "#ffffff",
+                  color: locale === l ? "#ffffff" : "#111",
                   fontSize: "13px",
                   cursor: "pointer",
                   fontWeight: 500,
@@ -898,201 +1091,6 @@ export default function Navbar() {
                 {languageNames[l]}
               </button>
             ))}
-          </div>
-        </div>
-      )}
-
-      {activeMenu && (
-        <div
-          onMouseEnter={clearCloseTimer}
-          onMouseLeave={closeMenuWithDelay}
-          style={{
-            position: "fixed",
-            top: `${NAV_H}px`,
-            left: 0,
-            width: "100%",
-            background: "rgba(255,255,255,0.84)",
-            backdropFilter: "blur(20px) saturate(145%)",
-            WebkitBackdropFilter: "blur(20px) saturate(145%)",
-            border: "none",
-            boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
-            zIndex: 998,
-            padding: "50px 30px",
-            display: "flex",
-            justifyContent: "center",
-            gap: "50px",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 1220,
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: "1fr 260px",
-              gap: 50,
-              alignItems: "start",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, minmax(130px, 1fr))",
-                gap: "18px",
-              }}
-            >
-              {megaData[activeMenu].cards.map((card, i) => {
-                const href = `/${locale}${card.route}`;
-                const title = pickLocaleText(card.title, locale);
-                const desc = pickLocaleText(card.desc, locale);
-
-                const content = (
-                  <div
-                    style={{
-                      width: "100%",
-                      borderRadius: 16,
-                      padding: 14,
-                      background: "rgba(255,255,255,0.34)",
-                      border: "1px solid rgba(255,255,255,0.72)",
-                      boxShadow:
-                        "0 10px 22px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.82)",
-                      transition: "all .22s ease",
-                      minHeight: 132,
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 10,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 700,
-                          color: "#111",
-                          padding: "4px 8px",
-                          borderRadius: 999,
-                          background: "rgba(255,255,255,0.55)",
-                          border: "1px solid rgba(255,255,255,0.7)",
-                        }}
-                      >
-                        {card.badge}
-                      </span>
-                    </div>
-
-                    <h3
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 700,
-                        color: "#000",
-                        marginBottom: 8,
-                      }}
-                    >
-                      {title}
-                    </h3>
-
-                    <p
-                      style={{
-                        fontSize: 12,
-                        lineHeight: 1.5,
-                        color: "#4b5563",
-                        margin: 0,
-                      }}
-                    >
-                      {desc}
-                    </p>
-                  </div>
-                );
-
-                if (activeMenu === "tool") {
-                  return (
-                    <button
-                      key={`${activeMenu}-card-${i}`}
-                      type="button"
-                      onClick={() => handleToolRoute(card.route)}
-                      style={{
-                        textAlign: "left",
-                        background: "none",
-                        border: "none",
-                        padding: 0,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {content}
-                    </button>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={`${activeMenu}-card-${i}`}
-                    href={href}
-                    style={{
-                      textDecoration: "none",
-                    }}
-                  >
-                    {content}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div
-              style={{
-                borderLeft: "1px solid rgba(0,0,0,0.08)",
-                paddingLeft: 26,
-                display: "flex",
-                flexDirection: "column",
-                gap: 11,
-              }}
-            >
-              {megaData[activeMenu].links.map((link, i) => {
-                const label =
-                  locale === "en" ? link.en : locale === "zh-TW" ? link.tw : link.zh;
-
-                if (activeMenu === "tool" && link.route === "/login-required") {
-                  return (
-                    <button
-                      key={`${activeMenu}-link-${i}`}
-                      type="button"
-                      onClick={() => handleToolRoute("/tool/ai-workspace")}
-                      style={{
-                        color: "#111",
-                        textDecoration: "none",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        lineHeight: 1.2,
-                        border: "none",
-                        background: "none",
-                        textAlign: "left",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
-                    >
-                      {label}
-                    </button>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={`${activeMenu}-link-${i}`}
-                    href={`/${locale}${link.route}`}
-                    style={{
-                      color: "#111",
-                      textDecoration: "none",
-                      fontSize: 14,
-                      fontWeight: 500,
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
         </div>
       )}
@@ -1113,5 +1111,5 @@ const iconBtn: CSSProperties = {
   cursor: "pointer",
   color: "#000",
   opacity: 1,
-  transition: "all .22s ease",
+  transition: "all .18s ease",
 };
