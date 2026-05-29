@@ -18,14 +18,14 @@ html,body {
   height:100%;
   overflow-y:scroll;
   scroll-behavior:smooth;
-  padding-bottom:1px; /* 这里控制底部留白节奏 */
+  padding-bottom:1px;
 }
 
 /* 海报/首屏大区块 */
 .screen {
   height:100vh;
   min-height:100vh;
-  margin:0; /* 关键：screen 自己不再加上下外边距，避免多屏之间出现大面积空白 */
+  margin:0;
   background-size:cover;
   background-position:center;
   display:flex;
@@ -44,28 +44,24 @@ html,body {
 
 /* =========================
   这里控制“图片之间距离”
-  - 只在相邻 screen 之间加 margin-top
-  - X：建议范围 8px ~ 24px；我先给你 16px（看起来有一点距离但仍接近无缝）
-  调整遵循：
-  - 想更紧：把 X 调小（例如 12px）
-  - 想更松：把 X 调大（例如 20~24px）
-  影响范围：只影响相邻两个 .screen 之间，不影响导航/滚动条。
   ========================= */
 .screen + .screen {
-  margin-top:30px; /* X = 16px */
+  margin-top:30px;
 }
 
-/* 为了尽量保留你之前“底部白色背景/文字位置”的节奏：
-   给第一个 screen 顶部留一点、给最后一个 screen 底部留一点。
-   如果你后续觉得底部又偏了，就把这两个值按你原来感觉微调（不要动滚动条）。 */
 .screen:first-child {
   margin-top:30px;
 }
+
 .screen:last-child {
   margin-bottom:30px;
 }
 
-.overlay { position:absolute; inset:0; background:rgba(0,0,0,0.3); }
+.overlay {
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+}
 
 .content {
   position:relative;
@@ -76,8 +72,17 @@ html,body {
   padding:0 20px;
 }
 
-.content h1 { font-size:44px; font-weight:600; margin-bottom:10px; }
-.content p  { font-size:18px; color:rgba(255,255,255,0.85); margin-bottom:40px; }
+.content h1 {
+  font-size:44px;
+  font-weight:600;
+  margin-bottom:10px;
+}
+
+.content p {
+  font-size:18px;
+  color:rgba(255,255,255,0.85);
+  margin-bottom:40px;
+}
 
 /* 🔧 响应式 hero 文字 */
 @media (max-width: 640px) {
@@ -86,7 +91,12 @@ html,body {
   .content { padding: 0 16px; }
 }
 
-.btn-group { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.btn-group {
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
 
 .btn-white {
   display:inline-block;
@@ -117,23 +127,37 @@ html,body {
 
 /* 🔧 移动端按钮缩小 */
 @media (max-width: 480px) {
-  .btn-white, .btn-dark {
+  .btn-white,
+  .btn-dark {
     padding: 10px 24px;
     font-size: 13px;
   }
-  .btn-group { gap: 10px; }
+
+  .btn-group {
+    gap: 10px;
+  }
 }
 
 /* ===== 你的滚动条：保持原样，不修改 ===== */
-.page-container::-webkit-scrollbar { width:12px; }
-.page-container::-webkit-scrollbar-track { background:#fff; }
+.page-container::-webkit-scrollbar {
+  width:12px;
+}
+
+.page-container::-webkit-scrollbar-track {
+  background:#fff;
+}
+
 .page-container::-webkit-scrollbar-thumb {
   background:#888;
   border-radius:6px;
   border:2.5px solid transparent;
   background-clip:content-box;
 }
-.page-container::-webkit-scrollbar-button { display:none; }
+
+.page-container::-webkit-scrollbar-button {
+  display:none;
+}
+
 .page-container::-webkit-scrollbar-button:vertical:start:decrement {
   display:block;
   width:12px;
@@ -144,6 +168,7 @@ html,body {
   background-position:center;
   background-size:16px;
 }
+
 .page-container::-webkit-scrollbar-button:vertical:end:increment {
   display:block;
   width:12px;
@@ -176,10 +201,19 @@ html,body {
   padding:0;
 }
 
-.footer-links a { color:#333; text-decoration:none; margin:0 5px; }
-.footer-links a:hover { text-decoration:underline; }
+.footer-links a {
+  color:#333;
+  text-decoration:none;
+  margin:0 5px;
+}
 
-a,button,[role="button"] {
+.footer-links a:hover {
+  text-decoration:underline;
+}
+
+a,
+button,
+[role="button"] {
   position:relative;
   border-radius:8px;
   transition:all .2s ease;
@@ -269,8 +303,9 @@ a,button,[role="button"] {
   45% { transform: scale(1.09); }
   100% { transform: scale(1.05); }
 }
+
 /* 右上角特斯拉风格小圆圈：只有圆圈本体，不强制透明背景/液态 */
-.teslaIconBtn{
+.teslaIconBtn {
   width: 30px;
   height: 30px;
   border-radius: 15px;
@@ -285,11 +320,11 @@ a,button,[role="button"] {
   padding: 0;
 }
 
-.teslaIconBtn:hover{
+.teslaIconBtn:hover {
   background: rgba(0,0,0,0.04);
 }
 
-.teslaIconBtn:active{
+.teslaIconBtn:active {
   transform: translateY(1px);
 }
 
@@ -305,35 +340,28 @@ a,button,[role="button"] {
   display: none !important;
 }
 
-/* 手机/平板 */
-@media (max-width: 900px) {
-
-  /* 显示三条线 */
+/* 手机/平板/窄桌面窗口 */
+@media (max-width: 1180px) {
   .mobile-menu-btn {
     display: flex !important;
   }
 
-  /* 隐藏中间导航 */
   .nav-center {
     display: none !important;
   }
 
-  /* 🔧 修复：隐藏桌面图标区，而不是 nav > div:last-child */
   .nav-icons-desktop {
     display: none !important;
   }
 
-  /* 🔧 修复：显示移动端图标区 */
   .nav-icons-mobile {
     display: flex !important;
   }
 
-  /* 手机菜单 */
   .mobile-menu {
     position: fixed;
     top: 52px;
     left: 0;
-    width: 100%;
     background: #fff;
     padding: 20px;
     z-index: 9998;
@@ -344,11 +372,10 @@ a,button,[role="button"] {
   }
 }
 
-/* 🔧 修复：移动端导航栏收窄 padding */
+/* 🔧 移动端导航栏只收窄 padding，不强制 width，避免盖住右侧滚动条 */
 @media (max-width: 640px) {
   nav {
     padding: 0 16px !important;
-    width: 100% !important;
   }
 }
 
@@ -388,9 +415,17 @@ a,button,[role="button"] {
 
 /* 🔧 响应式子页面标题 */
 @media (max-width: 640px) {
-  .subpage-hero h1 { font-size: 28px; }
-  .subpage-hero p  { font-size: 15px; }
-  .subpage-container { padding: 0 16px; }
+  .subpage-hero h1 {
+    font-size: 28px;
+  }
+
+  .subpage-hero p {
+    font-size: 15px;
+  }
+
+  .subpage-container {
+    padding: 0 16px;
+  }
 }
 
 .subpage-section {
@@ -540,6 +575,7 @@ a,button,[role="button"] {
   line-height: 1.6;
   margin: 0;
 }
+
 .contact-form {
   display: flex;
   flex-direction: column;

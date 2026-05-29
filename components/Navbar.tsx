@@ -365,7 +365,7 @@ export default function Navbar() {
     setMounted(true);
 
     const updateIsMobile = () => {
-      setIsMobile(window.innerWidth <= 900);
+      setIsMobile(window.innerWidth <= 1180);
     };
 
     updateIsMobile();
