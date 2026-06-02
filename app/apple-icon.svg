@@ -1,0 +1,19 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NinesPro 九域 Apple Icon">
+  <rect width="180" height="180" rx="40" fill="#0B1220"/>
+
+  <g transform="translate(42 42)">
+    <circle cx="11" cy="11" r="7.5" fill="white" opacity="0.74"/>
+    <circle cx="48" cy="11" r="7.5" fill="white" opacity="0.74"/>
+    <circle cx="85" cy="11" r="7.5" fill="white" opacity="0.74"/>
+
+    <circle cx="11" cy="48" r="7.5" fill="white" opacity="0.74"/>
+    <circle cx="48" cy="48" r="10" fill="#7DD3FC"/>
+    <circle cx="85" cy="48" r="7.5" fill="white" opacity="0.74"/>
+
+    <circle cx="11" cy="85" r="7.5" fill="white" opacity="0.74"/>
+    <circle cx="48" cy="85" r="7.5" fill="white" opacity="0.74"/>
+    <circle cx="85" cy="85" r="7.5" fill="white" opacity="0.74"/>
+
+    <path d="M48 24L54.5 41.5L72 48L54.5 54.5L48 72L41.5 54.5L24 48L41.5 41.5L48 24Z" fill="white"/>
+  </g>
+</svg>

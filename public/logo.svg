@@ -1,0 +1,36 @@
+<svg width="720" height="180" viewBox="0 0 720 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NinesPro 九域 Logo">
+  <rect width="720" height="180" rx="32" fill="white"/>
+
+  <g transform="translate(48 42)">
+    <rect x="0" y="0" width="96" height="96" rx="24" fill="#0B1220"/>
+
+    <g transform="translate(22 22)">
+      <circle cx="6" cy="6" r="4.5" fill="white" opacity="0.72"/>
+      <circle cx="26" cy="6" r="4.5" fill="white" opacity="0.72"/>
+      <circle cx="46" cy="6" r="4.5" fill="white" opacity="0.72"/>
+
+      <circle cx="6" cy="26" r="4.5" fill="white" opacity="0.72"/>
+      <circle cx="26" cy="26" r="6" fill="#7DD3FC"/>
+      <circle cx="46" cy="26" r="4.5" fill="white" opacity="0.72"/>
+
+      <circle cx="6" cy="46" r="4.5" fill="white" opacity="0.72"/>
+      <circle cx="26" cy="46" r="4.5" fill="white" opacity="0.72"/>
+      <circle cx="46" cy="46" r="4.5" fill="white" opacity="0.72"/>
+
+      <path d="M26 12.5L29.1 22.9L39.5 26L29.1 29.1L26 39.5L22.9 29.1L12.5 26L22.9 22.9L26 12.5Z" fill="white"/>
+    </g>
+  </g>
+
+  <g transform="translate(174 48)">
+    <text x="0" y="38" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="38" font-weight="750" fill="#0B1220" letter-spacing="-1.2">
+      NinesPro
+    </text>
+
+    <text x="2" y="88" font-family="'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="34" font-weight="700" fill="#111827" letter-spacing="4">
+      九域
+    </text>
+
+    <rect x="0" y="108" width="352" height="1.5" rx="0.75" fill="#E5E7EB"/>
+    <circle cx="372" cy="108.75" r="4" fill="#7DD3FC"/>
+  </g>
+</svg>
