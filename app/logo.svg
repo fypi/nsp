@@ -1,0 +1,43 @@
+<svg width="260" height="64" viewBox="0 0 260 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NinesPro 九域">
+  <rect width="260" height="64" fill="transparent"/>
+
+  <g fill="#111827">
+    <text
+      x="0"
+      y="39"
+      font-family="Inter, Arial, Helvetica, sans-serif"
+      font-size="34"
+      font-weight="800"
+      letter-spacing="-1.8"
+    >
+      NinesPro
+    </text>
+  </g>
+
+  <text
+    x="3"
+    y="56"
+    font-family="Inter, Arial, Helvetica, sans-serif"
+    font-size="12"
+    font-weight="600"
+    letter-spacing="2.4"
+    fill="#64748B"
+  >
+    九域
+  </text>
+
+  <path
+    d="M245 15
+       L248.2 23.8
+       L257 27
+       L248.2 30.2
+       L245 39
+       L241.8 30.2
+       L233 27
+       L241.8 23.8
+       Z"
+    fill="#38BDF8"
+  />
+
+  <circle cx="245" cy="27" r="2.2" fill="#0EA5E9"/>
+</svg>
