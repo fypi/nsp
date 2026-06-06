@@ -1,40 +1,61 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { useState } from "react";
+
+type Locale = "en" | "zh" | "zh-TW";
 
 type BrandLogoProps = {
-  locale?: string;
+  locale?: Locale;
   compact?: boolean;
+  className?: string;
 };
+
+const logoSources = [
+  "/brand/logo-wordmark.svg",
+  "/brand/logo-wordmark.png",
+  "/brand/logo-black.png",
+  "/brand/logo-white.png",
+];
 
 export default function BrandLogo({
   locale = "zh",
   compact = false,
+  className,
 }: BrandLogoProps) {
+  const [sourceIndex, setSourceIndex] = useState(0);
+
   const href = `/${locale}`;
+  const src = logoSources[sourceIndex] ?? "/brand/logo-wordmark.png";
 
   return (
     <Link
       href={href}
-      aria-label={locale === "en" ? "NinesPro Home" : "九域首页"}
+      aria-label="NinesPro Home"
+      className={className}
       style={{
         display: "inline-flex",
         alignItems: "center",
-        textDecoration: "none",
+        height: compact ? 34 : 38,
+        minWidth: compact ? 116 : 148,
         color: "#111827",
-        whiteSpace: "nowrap",
-        height: compact ? 30 : 34,
+        textDecoration: "none",
+        flexShrink: 0,
       }}
     >
-      <Image
-        src="/brand/logo-wordmark.png"
+      <img
+        src={src}
         alt="NinesPro"
-        width={compact ? 128 : 150}
-        height={compact ? 35 : 42}
-        priority
+        onError={() => {
+          setSourceIndex((current) =>
+            current < logoSources.length - 1 ? current + 1 : current
+          );
+        }}
         style={{
-          width: compact ? 128 : 150,
-          height: "auto",
           display: "block",
+          width: compact ? 116 : 148,
+          height: "auto",
+          maxHeight: compact ? 28 : 32,
           objectFit: "contain",
         }}
       />

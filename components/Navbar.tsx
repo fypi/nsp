@@ -16,6 +16,7 @@ import {
 } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
+import BrandLogo from "@/components/BrandLogo";
 
 const locales = ["en", "zh", "zh-TW"] as const;
 type Locale = (typeof locales)[number];
@@ -510,19 +511,8 @@ export default function Navbar() {
           boxShadow: "none",
         }}
       >
-        <Link
-          href={`/${locale}`}
-          onClick={closeAll}
-          style={{
-            fontSize: "20px",
-            fontWeight: 600,
-            color: "#000",
-            textDecoration: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {locale === "en" ? "NinesPro" : "九域"}
-        </Link>
+       <BrandLogo locale={locale} compact={isMobile} />
+
 
         {!isMobile && (
           <div
