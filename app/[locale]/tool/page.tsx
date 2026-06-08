@@ -1,5 +1,12 @@
 import Link from "next/link";
 
+type ToolItem = {
+  title: string;
+  desc: string;
+  href?: string;
+  status: "public" | "login" | "soon" | "custom";
+};
+
 export default function ToolPage({
   params,
 }: {
@@ -7,130 +14,249 @@ export default function ToolPage({
 }) {
   const locale = params?.locale || "zh";
 
+  const publicTools: ToolItem[] = [
+    {
+      title: "JSON 格式化",
+      desc: "格式化、压缩和校验 JSON，适合接口调试、配置检查和数据整理。",
+      href: `/${locale}/tool/json-formatter`,
+      status: "public",
+    },
+    {
+      title: "文本对比",
+      desc: "对比两段文本差异，适合文案修改、配置变更和代码片段检查。",
+      href: `/${locale}/tool/text-diff`,
+      status: "public",
+    },
+    {
+      title: "复利计算器",
+      desc: "计算长期收益、定投增长和复利变化，仅作学习和参考。",
+      href: `/${locale}/tool/compound-interest`,
+      status: "public",
+    },
+    {
+      title: "Base64 工具",
+      desc: "Base64 编码与解码，支持常见文本处理场景。",
+      href: `/${locale}/tool/base64`,
+      status: "public",
+    },
+  ];
+
+  const loginTools: ToolItem[] = [
+    {
+      title: "Markdown 预览",
+      desc: "编写 Markdown 并实时预览，适合文档、说明和内容草稿。",
+      href: `/${locale}/tool/markdown-preview`,
+      status: "login",
+    },
+  ];
+
+  const comingSoonTools: ToolItem[] = [
+    {
+      title: "JSON 转 TypeScript",
+      desc: "根据 JSON 自动生成 TypeScript 类型，减少手写结构的重复工作。",
+      status: "soon",
+    },
+    {
+      title: "JWT 解码器",
+      desc: "快速查看 JWT Header 与 Payload，便于接口调试和登录排查。",
+      status: "soon",
+    },
+    {
+      title: "正则测试器",
+      desc: "测试正则表达式匹配结果，适合文本清洗和表单校验。",
+      status: "soon",
+    },
+    {
+      title: "Cron 表达式解析器",
+      desc: "解析 Cron 表达式的执行时间，减少定时任务配置错误。",
+      status: "soon",
+    },
+    {
+      title: "URL 编码/解码",
+      desc: "处理 URL 参数、查询字符串和特殊字符编码。",
+      status: "soon",
+    },
+    {
+      title: "文本清洗工具",
+      desc: "清理多余空格、换行、重复内容和常见格式问题。",
+      status: "soon",
+    },
+    {
+      title: "图片压缩",
+      desc: "压缩常见图片格式，降低网页和内容素材体积。",
+      status: "soon",
+    },
+    {
+      title: "PDF 合并",
+      desc: "合并多个 PDF 文件，适合文档整理和资料归档。",
+      status: "soon",
+    },
+    {
+      title: "贷款计算器",
+      desc: "计算月供、利息和还款结构，仅作学习和参考。",
+      status: "soon",
+    },
+    {
+      title: "HTTP Header 检查器",
+      desc: "查看网页响应头，辅助排查缓存、安全和部署配置。",
+      status: "soon",
+    },
+  ];
+
+  const customServices: ToolItem[] = [
+    {
+      title: "企业文书体系",
+      desc: "围绕合同、流程、模板和内部规范，搭建可持续维护的文书系统。",
+      href: `/${locale}/contact`,
+      status: "custom",
+    },
+    {
+      title: "课程学习系统",
+      desc: "为课程、训练营、内部学习场景搭建学习计划和内容管理能力。",
+      href: `/${locale}/contact`,
+      status: "custom",
+    },
+    {
+      title: "内部知识库",
+      desc: "把分散资料、流程和经验沉淀成可查询、可复用的知识库。",
+      href: `/${locale}/contact`,
+      status: "custom",
+    },
+    {
+      title: "AI 自动化工作流",
+      desc: "把重复操作接成自动流程，减少人工搬运和低价值重复劳动。",
+      href: `/${locale}/contact`,
+      status: "custom",
+    },
+  ];
+
   return (
     <main className="subpage-main">
       <div className="subpage-container">
         <div className="subpage-hero">
           <h1>工具中心</h1>
           <p>
-            拿去用。一部分工具公开可用，打开就能用；更多工具登录账号后解锁；
-            遇到不够用的，定制服务联系我们。
+            工具、文书、学习和知识，一处打开。当前只保留真实可用入口，
+            未完成的能力不再挂空链接。
           </p>
         </div>
 
         <section className="subpage-section">
-          <h2>🔓 公开工具</h2>
-          <p>下面这些工具不用登录，直接打开就能用。</p>
+          <h2>🔓 公开可用</h2>
+          <p>不用登录，打开就能用。下面这些是当前已经接好的真实工具。</p>
+
           <div className="card-grid">
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>🔓 公开</div>
-              <h3>数据转换器</h3>
-              <p>常见格式之间的快速转换，省去重复劳动。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/tool/data-converter`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  打开使用 →
-                </Link>
-              </p>
-            </div>
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>🔓 公开</div>
-              <h3>文本格式化</h3>
-              <p>格式化、清洗、整理，让文字工作更高效。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/tool/text-formatter`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  打开使用 →
-                </Link>
-              </p>
-            </div>
+            {publicTools.map((tool) => (
+              <ToolCard key={tool.title} tool={tool} locale={locale} />
+            ))}
           </div>
         </section>
 
         <section className="subpage-section">
           <h2>🔐 注册后可用</h2>
-          <p>下面这些工具需要登录账号。注册免费，工具也免费用，账号还能保存历史和个人设置。</p>
+          <p>
+            这些工具需要登录后使用，后续会逐步支持保存历史、导出和个人设置。
+          </p>
+
           <div className="card-grid">
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>🔐 注册</div>
-              <h3>AI 工作台</h3>
-              <p>更多 AI 能力的集成入口，登录后解锁完整功能。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/login?next=${encodeURIComponent(`/${locale}/tool/ai-workspace`)}`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  登录后使用 →
-                </Link>
-              </p>
-            </div>
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>🔐 注册</div>
-              <h3>网络检测</h3>
-              <p>基础网络诊断与配置检查，登录后可用。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/login?next=${encodeURIComponent(`/${locale}/tool/network-check`)}`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  登录后使用 →
-                </Link>
-              </p>
-            </div>
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>🔐 注册</div>
-              <h3>计算辅助</h3>
-              <p>投资与技术场景中常用的计算模型和辅助工具。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/login`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  登录后使用 →
-                </Link>
-              </p>
-            </div>
+            {loginTools.map((tool) => (
+              <ToolCard key={tool.title} tool={tool} locale={locale} />
+            ))}
+          </div>
+        </section>
+
+        <section className="subpage-section">
+          <h2>🧭 即将上线</h2>
+          <p>
+            下面这些工具已经进入排期。未完成前只展示方向，不挂 404 入口。
+          </p>
+
+          <div className="card-grid">
+            {comingSoonTools.map((tool) => (
+              <ToolCard key={tool.title} tool={tool} locale={locale} />
+            ))}
           </div>
         </section>
 
         <section className="subpage-section">
           <h2>💼 定制服务</h2>
+          <p>
+            标准工具解决不了的场景，可以按实际业务做成专用系统或自动化流程。
+          </p>
+
           <div className="card-grid">
-            <div className="card">
-              <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>💼 定制</div>
-              <h3>定制工具开发</h3>
-              <p>有具体业务场景但现成工具不够用？我们可以按需开发，独立部署。</p>
-              <p style={{ marginTop: 8 }}>
-                <Link
-                  href={`/${locale}/contact`}
-                  style={{ color: "#111", fontWeight: 500 }}
-                >
-                  联系我们 →
-                </Link>
-              </p>
-            </div>
+            {customServices.map((tool) => (
+              <ToolCard key={tool.title} tool={tool} locale={locale} />
+            ))}
           </div>
         </section>
 
         <section className="subpage-section">
-          <h2>使用说明</h2>
+          <h2>工具分层</h2>
           <p>
-            工具中心持续更新，公开工具直接用，注册工具登录后解锁，定制工具按需沟通。
-            部分工具涉及数据计算，结果仅供参考，请结合实际情况判断。
+            当前采用分层开放：基础工具公开可用；需要保存、导出、批量处理和个人记录的能力，
+            登录后逐步开放；企业流程、内部系统和 AI 自动化按定制服务处理。
           </p>
         </section>
 
         <div className="disclaimer-box">
           <p>
-            <strong>提示：</strong>工具中心所有工具的计算结果仅供参考，不构成专业建议。
-            涉及投资、技术决策时，请自行核实和判断。
+            <strong>提示：</strong>
+            工具中心内容仅供学习、计算、格式处理和效率辅助，不构成投资建议、
+            法律意见、财务意见或专业服务承诺。涉及关键场景时，请结合实际情况自行核验。
           </p>
         </div>
       </div>
     </main>
+  );
+}
+
+function ToolCard({
+  tool,
+  locale,
+}: {
+  tool: ToolItem;
+  locale: string;
+}) {
+  const badgeMap: Record<ToolItem["status"], string> = {
+    public: "🔓 公开",
+    login: "🔐 登录",
+    soon: "🧭 即将上线",
+    custom: "💼 定制",
+  };
+
+  const actionText: Record<ToolItem["status"], string> = {
+    public: "打开工具 →",
+    login: "登录后使用 →",
+    soon: "等待上线",
+    custom: "联系咨询 →",
+  };
+
+  const href =
+    tool.status === "login" && tool.href
+      ? `/${locale}/login?next=${encodeURIComponent(tool.href)}`
+      : tool.href;
+
+  return (
+    <div className="card">
+      <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>
+        {badgeMap[tool.status]}
+      </div>
+
+      <h3>{tool.title}</h3>
+      <p>{tool.desc}</p>
+
+      <p style={{ marginTop: 8 }}>
+        {href ? (
+          <Link href={href} style={{ color: "#111", fontWeight: 500 }}>
+            {actionText[tool.status]}
+          </Link>
+        ) : (
+          <span style={{ color: "#777", fontWeight: 500 }}>
+            {actionText[tool.status]}
+          </span>
+        )}
+      </p>
+    </div>
   );
 }
