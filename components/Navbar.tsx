@@ -357,6 +357,7 @@ export default function Navbar() {
 
   const NAV_H = 52;
   const SCROLLBAR_W = 12;
+  const fixedRight = isMobile ? 0 : SCROLLBAR_W;
 
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
@@ -478,7 +479,7 @@ export default function Navbar() {
           position: "fixed",
           top: `${NAV_H}px`,
           left: 0,
-          right: SCROLLBAR_W,
+          right: fixedRight,
           bottom: 0,
           background: "rgba(0,0,0,0.045)",
           backdropFilter: "blur(3px)",
@@ -498,7 +499,7 @@ export default function Navbar() {
           position: "fixed",
           top: 0,
           left: 0,
-          right: SCROLLBAR_W,
+          right: fixedRight,
           width: "auto",
           height: `${NAV_H}px`,
           display: "flex",
@@ -511,8 +512,7 @@ export default function Navbar() {
           boxShadow: "none",
         }}
       >
-       <BrandLogo locale={locale} compact={isMobile} />
-
+        <BrandLogo locale={locale} compact={isMobile} />
 
         {!isMobile && (
           <div
@@ -787,7 +787,7 @@ export default function Navbar() {
           position: "fixed",
           top: `${NAV_H}px`,
           left: 0,
-          right: SCROLLBAR_W,
+          right: fixedRight,
           width: "auto",
           background: "#ffffff",
           border: "none",
@@ -984,7 +984,7 @@ export default function Navbar() {
             position: "fixed",
             top: `${NAV_H}px`,
             left: 0,
-            right: SCROLLBAR_W,
+            right: fixedRight,
             width: "auto",
             background: "#ffffff",
             padding: "20px",
