@@ -19,7 +19,7 @@ export default function ProductPage({
   const productLines: ProductLine[] = [
     {
       title: "智能投研",
-      desc: "面向股票、基金、行业和资产配置的研究辅助能力，帮助把信息整理成可跟踪的判断框架。",
+      desc: "面向股票、基金、行业和资产配置的研究辅助能力。",
       scenes: ["研究资料整理", "标的跟踪", "风险提示与复盘"],
       href: `/${locale}/solution`,
       action: "查看方案 →",
@@ -27,7 +27,7 @@ export default function ProductPage({
     },
     {
       title: "网络与系统工程",
-      desc: "网站、网络、部署、自动化和内部系统的工程落地，从需求到上线一起做下来。",
+      desc: "网站、网络、部署、自动化和内部系统的工程落地。",
       scenes: ["官网与业务站点", "网络与部署排障", "自动化流程搭建"],
       href: `/${locale}/solution`,
       action: "了解能力 →",
@@ -35,7 +35,7 @@ export default function ProductPage({
     },
     {
       title: "AI 产品与 Agent",
-      desc: "把 AI 接入具体业务流程，形成能执行、能协作、能持续迭代的 Agent 和工具系统。",
+      desc: "把 AI 接入具体业务流程，形成可执行的 Agent 系统。",
       scenes: ["AI 助手工作流", "多 Agent 协作", "业务流程自动化"],
       href: `/${locale}/solution`,
       action: "查看方案 →",
@@ -43,7 +43,7 @@ export default function ProductPage({
     },
     {
       title: "文书与知识工具",
-      desc: "围绕文书模板、学习资料、知识整理和内容生成，构建长期可复用的知识工具。",
+      desc: "围绕文书模板、学习资料、知识整理和内容生成。",
       scenes: ["文书模板", "知识库整理", "学习与内容辅助"],
       href: `/${locale}/tool`,
       action: "查看工具 →",
@@ -51,7 +51,7 @@ export default function ProductPage({
     },
     {
       title: "金融计算与决策辅助",
-      desc: "提供计算、对比和记录能力，用于学习、测算和辅助判断，不替代专业意见。",
+      desc: "提供计算、对比和记录能力，用于学习、测算和辅助判断。",
       scenes: ["复利与收益测算", "方案对比", "风险提示"],
       href: `/${locale}/tool/compound-interest`,
       action: "查看示例 →",
@@ -59,7 +59,7 @@ export default function ProductPage({
     },
     {
       title: "定制服务",
-      desc: "针对明确业务场景，定制网站、工具、系统、自动化和内部流程能力。",
+      desc: "针对明确业务场景，定制网站、工具、系统和自动化流程。",
       scenes: ["企业工具系统", "内部流程自动化", "专项项目落地"],
       href: `/${locale}/contact`,
       action: "联系咨询 →",
@@ -68,39 +68,119 @@ export default function ProductPage({
   ];
 
   return (
-    <main className="subpage-main" style={{ paddingBottom: 120 }}>
-      <div className="subpage-container">
-        <div className="subpage-hero">
-          <h1>产品中心</h1>
-          <p>
+    <main
+      className="subpage-main"
+      style={{
+        paddingTop: 56,
+        paddingBottom: 120,
+      }}
+    >
+      <div
+        className="subpage-container"
+        style={{
+          maxWidth: 1040,
+        }}
+      >
+        <div
+          className="subpage-hero"
+          style={{
+            padding: "34px 0 30px",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: 36,
+              marginBottom: 12,
+            }}
+          >
+            产品中心
+          </h1>
+
+          <p
+            style={{
+              maxWidth: 620,
+              fontSize: 16,
+              lineHeight: 1.65,
+            }}
+          >
             产品中心展示九域正在建设的能力矩阵：投研、工程、AI、文书知识、
             金融计算和定制服务。这里讲方向和场景；能直接使用的小工具，统一放在工具中心。
           </p>
         </div>
 
-        <section className="subpage-section">
-          <h2>能力矩阵</h2>
-          <p>
+        <section
+          className="subpage-section"
+          style={{
+            marginTop: 20,
+          }}
+        >
+          <h2
+            style={{
+              marginBottom: 10,
+            }}
+          >
+            能力矩阵
+          </h2>
+
+          <p
+            style={{
+              marginBottom: 16,
+            }}
+          >
             每条产品线都围绕一个目标：把复杂问题拆成能理解、能执行、能持续迭代的系统。
           </p>
 
-          <div className="card-grid">
+          <div
+            className="card-grid"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 16,
+              marginTop: 16,
+            }}
+          >
             {productLines.map((item) => (
-              <div className="card" key={item.title}>
-                <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>
+              <div
+                className="card"
+                key={item.title}
+                style={{
+                  padding: 20,
+                  minHeight: 0,
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: 6,
+                    fontSize: 12,
+                    color: "#666",
+                  }}
+                >
                   {item.badge}
                 </div>
 
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
+                <h3
+                  style={{
+                    marginBottom: 8,
+                  }}
+                >
+                  {item.title}
+                </h3>
+
+                <p
+                  style={{
+                    marginBottom: 8,
+                  }}
+                >
+                  {item.desc}
+                </p>
 
                 <ul
                   style={{
-                    marginTop: 12,
+                    marginTop: 8,
+                    marginBottom: 8,
                     paddingLeft: 18,
                     color: "#555",
                     fontSize: 14,
-                    lineHeight: 1.7,
+                    lineHeight: 1.55,
                   }}
                 >
                   {item.scenes.map((scene) => (
@@ -108,7 +188,7 @@ export default function ProductPage({
                   ))}
                 </ul>
 
-                <p style={{ marginTop: 12 }}>
+                <p style={{ marginTop: 8, marginBottom: 0 }}>
                   <Link
                     href={item.href}
                     style={{ color: "#111", fontWeight: 600 }}
@@ -121,7 +201,12 @@ export default function ProductPage({
           </div>
         </section>
 
-        <section className="subpage-section">
+        <section
+          className="subpage-section"
+          style={{
+            marginTop: 34,
+          }}
+        >
           <h2>产品与工具的区别</h2>
           <p>
             产品中心讲的是长期能力和业务方向；工具中心放的是可以直接打开使用的具体工具。
@@ -139,7 +224,12 @@ export default function ProductPage({
           </p>
         </section>
 
-        <section className="subpage-section">
+        <section
+          className="subpage-section"
+          style={{
+            marginTop: 28,
+          }}
+        >
           <h2>当前开放方式</h2>
           <p>
             九域采用分层开放：基础工具公开可用；需要保存历史、批量处理、导出和个性化配置的能力，
@@ -147,7 +237,13 @@ export default function ProductPage({
           </p>
         </section>
 
-        <div className="disclaimer-box">
+        <div
+          className="disclaimer-box"
+          style={{
+            marginTop: 28,
+            marginBottom: 80,
+          }}
+        >
           <p>
             <strong>提示：</strong>
             产品中心展示的是能力方向和服务范围，不构成投资建议、法律意见、财务意见或服务承诺。

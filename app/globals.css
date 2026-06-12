@@ -610,3 +610,133 @@ button,
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* =========================================================
+   子页面滚动条最终补丁
+   目标：
+   - 不动主页 .page-container 滚动条
+   - 子页面滚动条和主页滚动条完全同款
+   - 白色轨道
+   - 灰色滑块
+   - 12px 宽度
+   - 2.5px 缝隙
+   - 上下小三角
+   - 不改 Navbar
+   ========================================================= */
+
+/* 非首页页面：
+   如果页面里没有 .page-container，说明这是子页面。
+   子页面由 html 负责滚动。
+*/
+html:not(:has(body .page-container)) {
+  background: #fff !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+}
+
+/* 子页面 body 只负责自然撑开内容，不自己画滚动条 */
+body:not(:has(.page-container)) {
+  background: #fff !important;
+  height: auto !important;
+  min-height: 100% !important;
+  overflow: visible !important;
+}
+
+/* 子页面主体允许内容完整显示 */
+body:not(:has(.page-container)) .subpage-main {
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 80px !important;
+}
+
+/* 子页面内容区域不能截断 */
+body:not(:has(.page-container)) .subpage-container,
+body:not(:has(.page-container)) .subpage-section,
+body:not(:has(.page-container)) .card-grid,
+body:not(:has(.page-container)) .card {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* 子页面 footer 可以滚出来 */
+body:not(:has(.page-container)) footer,
+body:not(:has(.page-container)) .page-footer {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
+  background: #fff !important;
+}
+
+/* =========================================================
+   子页面滚动条样式
+   这里复制主页 .page-container 原来的滚动条样式
+   注意：
+   - 这里只写 html:not(:has(...))::-webkit-scrollbar
+   - 不写 body::-webkit-scrollbar
+   - 不同时写 html 和 body
+   - 避免右侧白色区域变宽
+   ========================================================= */
+
+/* 子页面滚动条宽度：和主页一样 12px */
+html:not(:has(body .page-container))::-webkit-scrollbar {
+  width: 12px !important;
+}
+
+/* 子页面滚动条轨道：和主页一样白色 */
+html:not(:has(body .page-container))::-webkit-scrollbar-track {
+  background: #fff !important;
+}
+
+/* 子页面滚动条滑块：和主页一样灰色 + 2.5px 缝隙 */
+html:not(:has(body .page-container))::-webkit-scrollbar-thumb {
+  background: #888 !important;
+  border-radius: 6px !important;
+  border: 2.5px solid transparent !important;
+  background-clip: content-box !important;
+}
+
+/* 子页面滚动条按钮基础：先隐藏，下面上下按钮再显示 */
+html:not(:has(body .page-container))::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+/* 子页面顶部小三角：和主页一样 */
+html:not(:has(body .page-container))::-webkit-scrollbar-button:vertical:start:decrement {
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px !important;
+}
+
+/* 子页面底部小三角：和主页一样 */
+html:not(:has(body .page-container))::-webkit-scrollbar-button:vertical:end:increment {
+  display: block !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px !important;
+}
+
+/* Firefox 兼容 */
+html:not(:has(body .page-container)) {
+  scrollbar-width: auto !important;
+  scrollbar-color: #888 #fff !important;
+}
+
+/* 手机端子页面底部留白 */
+@media (max-width: 900px) {
+  body:not(:has(.page-container)) .subpage-main {
+    padding-top: 76px !important;
+    padding-bottom: 70px !important;
+  }
+}
