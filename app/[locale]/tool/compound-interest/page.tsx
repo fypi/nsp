@@ -3,10 +3,51 @@
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
 
-const texts = {
+type Frequency = "monthly" | "yearly";
+
+type ResultRow = {
+  year: number;
+  invested: number;
+  amount: number;
+  interest: number;
+};
+
+type CompoundText = {
+  title: string;
+  desc: string;
+  principal: string;
+  annualRate: string;
+  years: string;
+  monthlyContribution: string;
+  frequency: string;
+  monthly: string;
+  yearly: string;
+  calculate: string;
+  clear: string;
+  result: string;
+  finalAmount: string;
+  totalPrincipal: string;
+  totalInterest: string;
+  yearlyBreakdown: string;
+  year: string;
+  invested: string;
+  amount: string;
+  interest: string;
+  empty: string;
+  tip: string;
+};
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const texts: Record<Locale, CompoundText> = {
   zh: {
     title: "复利计算器",
     desc: "输入本金、年化收益率、年限和每月追加金额，快速估算长期复利效果。",
@@ -31,6 +72,7 @@ const texts = {
     empty: "请至少填写本金、年化收益率和投资年限",
     tip: "提示：本工具仅用于估算复利效果，不构成任何投资建议。",
   },
+
   "zh-TW": {
     title: "複利計算器",
     desc: "輸入本金、年化收益率、年限和每月追加金額，快速估算長期複利效果。",
@@ -55,6 +97,7 @@ const texts = {
     empty: "請至少填寫本金、年化收益率和投資年限",
     tip: "提示：本工具僅用於估算複利效果，不構成任何投資建議。",
   },
+
   en: {
     title: "Compound Interest Calculator",
     desc: "Estimate long-term compound growth with principal, annual return, time horizon, and monthly contribution.",
@@ -79,24 +122,13 @@ const texts = {
     empty: "Please enter at least principal, annual return, and years",
     tip: "Note: this tool is for estimation only and does not constitute investment advice.",
   },
-} as const;
-
-type ResultRow = {
-  year: number;
-  invested: number;
-  amount: number;
-  interest: number;
 };
 
 export default function CompoundInterestPage() {
   const params = useParams();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
 
   const t = texts[locale];
@@ -105,7 +137,7 @@ export default function CompoundInterestPage() {
   const [annualRate, setAnnualRate] = useState("8");
   const [years, setYears] = useState("10");
   const [monthlyContribution, setMonthlyContribution] = useState("1000");
-  const [frequency, setFrequency] = useState<"monthly" | "yearly">("monthly");
+  const [frequency, setFrequency] = useState<Frequency>("monthly");
 
   const [rows, setRows] = useState<ResultRow[]>([]);
   const [message, setMessage] = useState("");
@@ -124,13 +156,17 @@ export default function CompoundInterestPage() {
     const p = Number(principal);
     const r = Number(annualRate) / 100;
     const y = Number(years);
-    const m = Number(monthlyContribution);
+
+    // 每月追加允许为空；为空时按 0 处理
+    const m = monthlyContribution.trim() ? Number(monthlyContribution) : 0;
 
     if (
       Number.isNaN(p) ||
       Number.isNaN(r) ||
       Number.isNaN(y) ||
+      Number.isNaN(m) ||
       p < 0 ||
+      m < 0 ||
       y <= 0
     ) {
       setMessage(t.empty);
@@ -145,8 +181,8 @@ export default function CompoundInterestPage() {
     if (frequency === "monthly") {
       const monthlyRate = r / 12;
 
-      for (let year = 1; year <= y; year++) {
-        for (let month = 1; month <= 12; month++) {
+      for (let year = 1; year <= y; year += 1) {
+        for (let month = 1; month <= 12; month += 1) {
           balance = balance * (1 + monthlyRate) + m;
           invested += m;
         }
@@ -159,7 +195,7 @@ export default function CompoundInterestPage() {
         });
       }
     } else {
-      for (let year = 1; year <= y; year++) {
+      for (let year = 1; year <= y; year += 1) {
         balance = balance * (1 + r) + m * 12;
         invested += m * 12;
 
@@ -230,7 +266,9 @@ export default function CompoundInterestPage() {
             </div>
 
             <div className="card">
-              <h3 style={{ marginBottom: "12px" }}>{t.monthlyContribution}</h3>
+              <h3 style={{ marginBottom: "12px" }}>
+                {t.monthlyContribution}
+              </h3>
               <input
                 type="number"
                 value={monthlyContribution}
@@ -243,9 +281,7 @@ export default function CompoundInterestPage() {
               <h3 style={{ marginBottom: "12px" }}>{t.frequency}</h3>
               <select
                 value={frequency}
-                onChange={(e) =>
-                  setFrequency(e.target.value as "monthly" | "yearly")
-                }
+                onChange={(e) => setFrequency(e.target.value as Frequency)}
                 style={inputStyle}
               >
                 <option value="monthly">{t.monthly}</option>
@@ -265,6 +301,7 @@ export default function CompoundInterestPage() {
             <button onClick={handleCalculate} style={toolBtnPrimary}>
               {t.calculate}
             </button>
+
             <button onClick={handleClear} style={toolBtnSecondary}>
               {t.clear}
             </button>
@@ -286,6 +323,7 @@ export default function CompoundInterestPage() {
         {summary && (
           <section className="subpage-section">
             <h2>{t.result}</h2>
+
             <div className="card-grid">
               <div className="card">
                 <h3>{t.finalAmount}</h3>
@@ -294,12 +332,16 @@ export default function CompoundInterestPage() {
 
               <div className="card">
                 <h3>{t.totalPrincipal}</h3>
-                <p style={resultValueStyle}>{formatNumber(summary.invested)}</p>
+                <p style={resultValueStyle}>
+                  {formatNumber(summary.invested)}
+                </p>
               </div>
 
               <div className="card">
                 <h3>{t.totalInterest}</h3>
-                <p style={resultValueStyle}>{formatNumber(summary.interest)}</p>
+                <p style={resultValueStyle}>
+                  {formatNumber(summary.interest)}
+                </p>
               </div>
             </div>
           </section>
@@ -308,6 +350,7 @@ export default function CompoundInterestPage() {
         {rows.length > 0 && (
           <section className="subpage-section">
             <h2>{t.yearlyBreakdown}</h2>
+
             <div
               style={{
                 overflowX: "auto",
@@ -331,6 +374,7 @@ export default function CompoundInterestPage() {
                     <th style={thStyle}>{t.interest}</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {rows.map((row) => (
                     <tr key={row.year}>

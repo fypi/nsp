@@ -3,10 +3,36 @@
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
 
-const texts = {
+type JsonFormatterText = {
+  title: string;
+  desc: string;
+  input: string;
+  output: string;
+  placeholder: string;
+  format: string;
+  minify: string;
+  validate: string;
+  clear: string;
+  copy: string;
+  copied: string;
+  valid: string;
+  invalid: string;
+  empty: string;
+  copyEmpty: string;
+  tip: string;
+};
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const texts: Record<Locale, JsonFormatterText> = {
   zh: {
     title: "JSON 格式化",
     desc: "粘贴 JSON，直接格式化、压缩、校验。",
@@ -22,8 +48,10 @@ const texts = {
     valid: "JSON 有效",
     invalid: "JSON 无效：",
     empty: "请先输入 JSON 内容",
+    copyEmpty: "没有可复制的结果",
     tip: "提示：本工具仅在浏览器本地处理内容，不会上传你的数据。",
   },
+
   "zh-TW": {
     title: "JSON 格式化",
     desc: "貼上 JSON，直接格式化、壓縮、校驗。",
@@ -39,8 +67,10 @@ const texts = {
     valid: "JSON 有效",
     invalid: "JSON 無效：",
     empty: "請先輸入 JSON 內容",
+    copyEmpty: "沒有可複製的結果",
     tip: "提示：本工具只在瀏覽器本地處理內容，不會上傳你的資料。",
   },
+
   en: {
     title: "JSON Formatter",
     desc: "Paste JSON to format, minify, and validate instantly.",
@@ -56,19 +86,16 @@ const texts = {
     valid: "Valid JSON",
     invalid: "Invalid JSON:",
     empty: "Please enter JSON first",
+    copyEmpty: "There is no result to copy",
     tip: "Note: everything runs locally in your browser. No data is uploaded.",
   },
-} as const;
+};
 
 export default function JsonFormatterPage() {
   const params = useParams();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
 
   const t = texts[locale];
@@ -76,11 +103,13 @@ export default function JsonFormatterPage() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const parseJson = () => {
     if (!input.trim()) {
       setMessage(t.empty);
+      setIsError(true);
       return null;
     }
 
@@ -90,33 +119,45 @@ export default function JsonFormatterPage() {
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
       setMessage(`${t.invalid} ${msg}`);
+      setIsError(true);
       return null;
     }
   };
 
   const handleFormat = () => {
     const parsed = parseJson();
-    if (!parsed) return;
+
+    if (parsed === null) return;
+
     const result = JSON.stringify(parsed, null, 2);
+
     setOutput(result);
     setMessage(t.valid);
+    setIsError(false);
     setCopied(false);
   };
 
   const handleMinify = () => {
     const parsed = parseJson();
-    if (!parsed) return;
+
+    if (parsed === null) return;
+
     const result = JSON.stringify(parsed);
+
     setOutput(result);
     setMessage(t.valid);
+    setIsError(false);
     setCopied(false);
   };
 
   const handleValidate = () => {
     const parsed = parseJson();
-    if (!parsed) return;
+
+    if (parsed === null) return;
+
     setOutput(JSON.stringify(parsed, null, 2));
     setMessage(t.valid);
+    setIsError(false);
     setCopied(false);
   };
 
@@ -124,14 +165,26 @@ export default function JsonFormatterPage() {
     setInput("");
     setOutput("");
     setMessage("");
+    setIsError(false);
     setCopied(false);
   };
 
   const handleCopy = async () => {
-    if (!output) return;
+    if (!output) {
+      setMessage(t.copyEmpty);
+      setIsError(true);
+      return;
+    }
+
     await navigator.clipboard.writeText(output);
+
     setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
+    setMessage(t.copied);
+    setIsError(false);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 1200);
   };
 
   return (
@@ -152,24 +205,12 @@ export default function JsonFormatterPage() {
           >
             <div className="card">
               <h3 style={{ marginBottom: "12px" }}>{t.input}</h3>
+
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={t.placeholder}
-                style={{
-                  width: "100%",
-                  minHeight: "260px",
-                  border: "1px solid #ddd",
-                  borderRadius: "12px",
-                  padding: "14px",
-                  fontSize: "14px",
-                  lineHeight: 1.6,
-                  resize: "vertical",
-                  fontFamily:
-                    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                  boxSizing: "border-box",
-                  outline: "none",
-                }}
+                style={textareaStyle}
               />
             </div>
 
@@ -180,34 +221,23 @@ export default function JsonFormatterPage() {
                 flexWrap: "wrap",
               }}
             >
-              <button
-                onClick={handleFormat}
-                style={toolBtnPrimary}
-              >
+              <button onClick={handleFormat} style={toolBtnPrimary}>
                 {t.format}
               </button>
-              <button
-                onClick={handleMinify}
-                style={toolBtnSecondary}
-              >
+
+              <button onClick={handleMinify} style={toolBtnSecondary}>
                 {t.minify}
               </button>
-              <button
-                onClick={handleValidate}
-                style={toolBtnSecondary}
-              >
+
+              <button onClick={handleValidate} style={toolBtnSecondary}>
                 {t.validate}
               </button>
-              <button
-                onClick={handleClear}
-                style={toolBtnSecondary}
-              >
+
+              <button onClick={handleClear} style={toolBtnSecondary}>
                 {t.clear}
               </button>
-              <button
-                onClick={handleCopy}
-                style={toolBtnSecondary}
-              >
+
+              <button onClick={handleCopy} style={toolBtnSecondary}>
                 {copied ? t.copied : t.copy}
               </button>
             </div>
@@ -216,7 +246,7 @@ export default function JsonFormatterPage() {
               <div
                 style={{
                   fontSize: "14px",
-                  color: message.startsWith(t.invalid) ? "#c00" : "#0a7a2f",
+                  color: isError ? "#c00" : "#0a7a2f",
                 }}
               >
                 {message}
@@ -225,22 +255,12 @@ export default function JsonFormatterPage() {
 
             <div className="card">
               <h3 style={{ marginBottom: "12px" }}>{t.output}</h3>
+
               <textarea
                 value={output}
                 readOnly
                 style={{
-                  width: "100%",
-                  minHeight: "260px",
-                  border: "1px solid #ddd",
-                  borderRadius: "12px",
-                  padding: "14px",
-                  fontSize: "14px",
-                  lineHeight: 1.6,
-                  resize: "vertical",
-                  fontFamily:
-                    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                  boxSizing: "border-box",
-                  outline: "none",
+                  ...textareaStyle,
                   background: "#fafafa",
                 }}
               />
@@ -255,6 +275,21 @@ export default function JsonFormatterPage() {
     </main>
   );
 }
+
+const textareaStyle: React.CSSProperties = {
+  width: "100%",
+  minHeight: "260px",
+  border: "1px solid #ddd",
+  borderRadius: "12px",
+  padding: "14px",
+  fontSize: "14px",
+  lineHeight: 1.6,
+  resize: "vertical",
+  fontFamily:
+    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+  boxSizing: "border-box",
+  outline: "none",
+};
 
 const toolBtnPrimary: React.CSSProperties = {
   padding: "10px 16px",

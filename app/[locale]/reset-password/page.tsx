@@ -5,27 +5,133 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
+
+type ResetPasswordText = {
+  title: string;
+
+  checkingLink: string;
+  invalidLink: string;
+
+  newPasswordLabel: string;
+  newPasswordPlaceholder: string;
+
+  confirmPasswordLabel: string;
+  confirmPasswordPlaceholder: string;
+
+  emptyPassword: string;
+  passwordTooShort: string;
+  passwordMismatch: string;
+  updateFailed: string;
+
+  updatePassword: string;
+  updating: string;
+
+  successMessage: string;
+  backToLogin: string;
+};
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const resetPasswordText: Record<Locale, ResetPasswordText> = {
+  zh: {
+    title: "设置新密码",
+
+    checkingLink: "正在验证重置链接...",
+    invalidLink: "重置链接无效或已过期，请重新申请。",
+
+    newPasswordLabel: "新密码",
+    newPasswordPlaceholder: "请输入新密码",
+
+    confirmPasswordLabel: "确认密码",
+    confirmPasswordPlaceholder: "请再次输入新密码",
+
+    emptyPassword: "请填写两个密码字段。",
+    passwordTooShort: "密码至少需要 6 位。",
+    passwordMismatch: "两次输入的密码不一致。",
+    updateFailed: "密码更新失败，请稍后再试。",
+
+    updatePassword: "更新密码",
+    updating: "更新中...",
+
+    successMessage: "密码重置成功，正在跳转登录...",
+    backToLogin: "返回登录",
+  },
+
+  "zh-TW": {
+    title: "設定新密碼",
+
+    checkingLink: "正在驗證重設連結...",
+    invalidLink: "重設連結無效或已過期，請重新申請。",
+
+    newPasswordLabel: "新密碼",
+    newPasswordPlaceholder: "請輸入新密碼",
+
+    confirmPasswordLabel: "確認密碼",
+    confirmPasswordPlaceholder: "請再次輸入新密碼",
+
+    emptyPassword: "請填寫兩個密碼欄位。",
+    passwordTooShort: "密碼至少需要 6 位。",
+    passwordMismatch: "兩次輸入的密碼不一致。",
+    updateFailed: "密碼更新失敗，請稍後再試。",
+
+    updatePassword: "更新密碼",
+    updating: "更新中...",
+
+    successMessage: "密碼重設成功，正在跳轉登入...",
+    backToLogin: "返回登入",
+  },
+
+  en: {
+    title: "Set New Password",
+
+    checkingLink: "Checking reset link...",
+    invalidLink: "Reset link is invalid or expired. Please request a new one.",
+
+    newPasswordLabel: "New Password",
+    newPasswordPlaceholder: "Enter new password",
+
+    confirmPasswordLabel: "Confirm Password",
+    confirmPasswordPlaceholder: "Enter new password again",
+
+    emptyPassword: "Please fill in both password fields.",
+    passwordTooShort: "Password must be at least 6 characters.",
+    passwordMismatch: "Passwords do not match.",
+    updateFailed: "Failed to update password. Please try again later.",
+
+    updatePassword: "Update password",
+    updating: "Updating...",
+
+    successMessage: "Password reset successful. Redirecting to login...",
+    backToLogin: "Back to login",
+  },
+};
 
 export default function ResetPasswordPage() {
   const params = useParams();
   const router = useRouter();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
+
+  const t = resetPasswordText[locale];
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
+
   const [canReset, setCanReset] = useState(false);
 
   useEffect(() => {
@@ -40,13 +146,7 @@ export default function ResetPasswordPage() {
         setCanReset(true);
       } else {
         setCanReset(false);
-        setErrorMsg(
-          locale === "en"
-            ? "Reset link is invalid or expired. Please request a new one."
-            : locale === "zh-TW"
-            ? "重設連結無效或已過期，請重新申請。"
-            : "重置链接无效或已过期，请重新申请。"
-        );
+        setErrorMsg(t.invalidLink);
       }
 
       setCheckingSession(false);
@@ -69,9 +169,9 @@ export default function ResetPasswordPage() {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [locale]);
+  }, [t.invalidLink]);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!canReset) return;
@@ -80,35 +180,17 @@ export default function ResetPasswordPage() {
     setInfoMsg(null);
 
     if (!password || !confirmPassword) {
-      setErrorMsg(
-        locale === "en"
-          ? "Please fill in both password fields."
-          : locale === "zh-TW"
-          ? "請填寫兩個密碼欄位。"
-          : "请填写两个密码字段。"
-      );
+      setErrorMsg(t.emptyPassword);
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg(
-        locale === "en"
-          ? "Password must be at least 6 characters."
-          : locale === "zh-TW"
-          ? "密碼至少需要 6 位。"
-          : "密码至少需要 6 位。"
-      );
+      setErrorMsg(t.passwordTooShort);
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMsg(
-        locale === "en"
-          ? "Passwords do not match."
-          : locale === "zh-TW"
-          ? "兩次輸入的密碼不一致。"
-          : "两次输入的密码不一致。"
-      );
+      setErrorMsg(t.passwordMismatch);
       return;
     }
 
@@ -121,17 +203,11 @@ export default function ResetPasswordPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      setErrorMsg(t.updateFailed);
       return;
     }
 
-    setInfoMsg(
-      locale === "en"
-        ? "Password reset successful. Redirecting to login..."
-        : locale === "zh-TW"
-        ? "密碼重設成功，正在跳轉登入..."
-        : "密码重置成功，正在跳转登录..."
-    );
+    setInfoMsg(t.successMessage);
 
     setTimeout(() => {
       router.replace(`/${locale}/login`);
@@ -158,11 +234,7 @@ export default function ResetPasswordPage() {
             marginBottom: "24px",
           }}
         >
-          {locale === "en"
-            ? "Set New Password"
-            : locale === "zh-TW"
-            ? "設定新密碼"
-            : "设置新密码"}
+          {t.title}
         </h1>
 
         {checkingSession ? (
@@ -173,11 +245,7 @@ export default function ResetPasswordPage() {
               color: "#666",
             }}
           >
-            {locale === "en"
-              ? "Checking reset link..."
-              : locale === "zh-TW"
-              ? "正在驗證重設連結..."
-              : "正在验证重置链接..."}
+            {t.checkingLink}
           </p>
         ) : (
           <>
@@ -197,18 +265,17 @@ export default function ResetPasswordPage() {
                     marginBottom: "6px",
                   }}
                 >
-                  {locale === "en"
-                    ? "New Password"
-                    : locale === "zh-TW"
-                    ? "新密碼"
-                    : "新密码"}
+                  {t.newPasswordLabel}
                 </label>
+
                 <input
                   type="password"
                   required
                   value={password}
+                  placeholder={t.newPasswordPlaceholder}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={!canReset || loading}
+                  autoComplete="new-password"
                   style={{
                     width: "100%",
                     border: "1px solid #ddd",
@@ -230,18 +297,17 @@ export default function ResetPasswordPage() {
                     marginBottom: "6px",
                   }}
                 >
-                  {locale === "en"
-                    ? "Confirm Password"
-                    : locale === "zh-TW"
-                    ? "確認密碼"
-                    : "确认密码"}
+                  {t.confirmPasswordLabel}
                 </label>
+
                 <input
                   type="password"
                   required
                   value={confirmPassword}
+                  placeholder={t.confirmPasswordPlaceholder}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={!canReset || loading}
+                  autoComplete="new-password"
                   style={{
                     width: "100%",
                     border: "1px solid #ddd",
@@ -256,13 +322,27 @@ export default function ResetPasswordPage() {
               </div>
 
               {errorMsg && (
-                <p style={{ color: "red", fontSize: "13px", textAlign: "center" }}>
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "13px",
+                    textAlign: "center",
+                    lineHeight: 1.5,
+                  }}
+                >
                   {errorMsg}
                 </p>
               )}
 
               {infoMsg && (
-                <p style={{ color: "green", fontSize: "13px", textAlign: "center" }}>
+                <p
+                  style={{
+                    color: "green",
+                    fontSize: "13px",
+                    textAlign: "center",
+                    lineHeight: 1.5,
+                  }}
+                >
                   {infoMsg}
                 </p>
               )}
@@ -282,23 +362,19 @@ export default function ResetPasswordPage() {
                   opacity: !canReset || loading ? 0.7 : 1,
                 }}
               >
-                {loading
-                  ? "Loading..."
-                  : locale === "en"
-                  ? "Update password"
-                  : locale === "zh-TW"
-                  ? "更新密碼"
-                  : "更新密码"}
+                {loading ? t.updating : t.updatePassword}
               </button>
             </form>
 
-            <p style={{ marginTop: "20px", fontSize: "14px", textAlign: "center" }}>
+            <p
+              style={{
+                marginTop: "20px",
+                fontSize: "14px",
+                textAlign: "center",
+              }}
+            >
               <Link href={`/${locale}/login`} style={{ color: "#007bff" }}>
-                {locale === "en"
-                  ? "Back to login"
-                  : locale === "zh-TW"
-                  ? "返回登入"
-                  : "返回登录"}
+                {t.backToLogin}
               </Link>
             </p>
           </>

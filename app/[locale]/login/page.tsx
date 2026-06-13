@@ -5,8 +5,69 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
+
+type LoginText = {
+  title: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  signIn: string;
+  signingIn: string;
+  createAccount: string;
+  forgotPassword: string;
+  loginFailed: string;
+};
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const loginText: Record<Locale, LoginText> = {
+  zh: {
+    title: "登录",
+    emailLabel: "邮箱",
+    emailPlaceholder: "请输入邮箱",
+    passwordLabel: "密码",
+    passwordPlaceholder: "请输入密码",
+    signIn: "登录",
+    signingIn: "登录中...",
+    createAccount: "注册账号",
+    forgotPassword: "忘记密码？",
+    loginFailed: "登录失败，请检查邮箱和密码后重试。",
+  },
+
+  "zh-TW": {
+    title: "登入",
+    emailLabel: "郵箱",
+    emailPlaceholder: "請輸入郵箱",
+    passwordLabel: "密碼",
+    passwordPlaceholder: "請輸入密碼",
+    signIn: "登入",
+    signingIn: "登入中...",
+    createAccount: "註冊帳號",
+    forgotPassword: "忘記密碼？",
+    loginFailed: "登入失敗，請檢查郵箱和密碼後重試。",
+  },
+
+  en: {
+    title: "Login",
+    emailLabel: "Email",
+    emailPlaceholder: "Enter your email",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+    signIn: "Sign in",
+    signingIn: "Signing in...",
+    createAccount: "Create an account",
+    forgotPassword: "Forgot password?",
+    loginFailed: "Login failed. Please check your email and password and try again.",
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,22 +75,22 @@ export default function LoginPage() {
   const search = useSearchParams();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
+
+  const t = loginText[locale];
 
   const nextPath = search.get("next") ?? "";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setLoading(true);
     setErrorMsg(null);
 
@@ -41,12 +102,13 @@ export default function LoginPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      setErrorMsg(t.loginFailed);
       return;
     }
 
     const target =
       nextPath && nextPath.startsWith("/") ? nextPath : `/${locale}`;
+
     router.replace(target);
   };
 
@@ -70,7 +132,7 @@ export default function LoginPage() {
             textAlign: "center",
           }}
         >
-          {locale === "en" ? "Login" : locale === "zh-TW" ? "登入" : "登录"}
+          {t.title}
         </h1>
 
         <form
@@ -89,8 +151,9 @@ export default function LoginPage() {
                 marginBottom: "6px",
               }}
             >
-              {locale === "en" ? "Email" : "邮箱"}
+              {t.emailLabel}
             </label>
+
             <input
               style={{
                 width: "100%",
@@ -105,6 +168,8 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               required
+              placeholder={t.emailPlaceholder}
+              autoComplete="email"
             />
           </div>
 
@@ -116,12 +181,9 @@ export default function LoginPage() {
                 marginBottom: "6px",
               }}
             >
-              {locale === "en"
-                ? "Password"
-                : locale === "zh-TW"
-                ? "密碼"
-                : "密码"}
+              {t.passwordLabel}
             </label>
+
             <input
               style={{
                 width: "100%",
@@ -136,6 +198,8 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               required
+              placeholder={t.passwordPlaceholder}
+              autoComplete="current-password"
             />
           </div>
 
@@ -145,6 +209,7 @@ export default function LoginPage() {
                 color: "#dc2626",
                 fontSize: "13px",
                 textAlign: "center",
+                lineHeight: 1.5,
               }}
             >
               {errorMsg}
@@ -166,13 +231,7 @@ export default function LoginPage() {
             disabled={loading}
             type="submit"
           >
-            {loading
-              ? "..."
-              : locale === "en"
-              ? "Sign in"
-              : locale === "zh-TW"
-              ? "登入"
-              : "登录"}
+            {loading ? t.signingIn : t.signIn}
           </button>
         </form>
 
@@ -187,22 +246,14 @@ export default function LoginPage() {
           }}
         >
           <Link href={`/${locale}/register`} style={{ color: "#007bff" }}>
-            {locale === "en"
-              ? "Create an account"
-              : locale === "zh-TW"
-              ? "註冊帳號"
-              : "注册账号"}
+            {t.createAccount}
           </Link>
 
           <Link
             href={`/${locale}/forgot-password`}
             style={{ color: "#007bff" }}
           >
-            {locale === "en"
-              ? "Forgot password?"
-              : locale === "zh-TW"
-              ? "忘記密碼？"
-              : "忘记密码？"}
+            {t.forgotPassword}
           </Link>
         </div>
       </div>

@@ -5,28 +5,93 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
+
+type RegisterText = {
+  title: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  createAccount: string;
+  creating: string;
+  successMessage: string;
+  networkError: string;
+  registerFailed: string;
+  backToLogin: string;
+};
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const registerText: Record<Locale, RegisterText> = {
+  zh: {
+    title: "注册",
+    emailLabel: "邮箱",
+    emailPlaceholder: "请输入邮箱",
+    passwordLabel: "密码",
+    passwordPlaceholder: "请输入密码",
+    createAccount: "创建账号",
+    creating: "创建中...",
+    successMessage: "账号已创建，请到邮箱完成确认。",
+    networkError: "网络异常，请重试。",
+    registerFailed: "注册失败，请检查信息后重试。",
+    backToLogin: "返回登录",
+  },
+
+  "zh-TW": {
+    title: "註冊",
+    emailLabel: "郵箱",
+    emailPlaceholder: "請輸入郵箱",
+    passwordLabel: "密碼",
+    passwordPlaceholder: "請輸入密碼",
+    createAccount: "建立帳號",
+    creating: "建立中...",
+    successMessage: "帳號已建立，請到信箱完成確認。",
+    networkError: "網路異常，請重試。",
+    registerFailed: "註冊失敗，請檢查資訊後重試。",
+    backToLogin: "返回登入",
+  },
+
+  en: {
+    title: "Register",
+    emailLabel: "Email",
+    emailPlaceholder: "Enter your email",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+    createAccount: "Create account",
+    creating: "Creating...",
+    successMessage: "Account created. Please check your email to confirm it.",
+    networkError: "Network error. Please try again.",
+    registerFailed: "Registration failed. Please check your information and try again.",
+    backToLogin: "Back to login",
+  },
+};
 
 export default function RegisterPage() {
   const params = useParams();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
+
+  const t = registerText[locale];
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setLoading(true);
     setErrorMsg(null);
     setInfoMsg(null);
@@ -38,28 +103,19 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: redirectTo },
+        options: {
+          emailRedirectTo: redirectTo,
+        },
       });
 
       if (error) {
-        setErrorMsg(error.message);
-      } else {
-        setInfoMsg(
-          locale === "en"
-            ? "Account created. Please check your email to confirm it."
-            : locale === "zh-TW"
-            ? "帳號已建立，請到信箱完成確認。"
-            : "账号已创建，请到邮箱完成确认。"
-        );
+        setErrorMsg(t.registerFailed);
+        return;
       }
+
+      setInfoMsg(t.successMessage);
     } catch {
-      setErrorMsg(
-        locale === "en"
-          ? "Network error, please try again."
-          : locale === "zh-TW"
-          ? "網路異常，請重試"
-          : "网络异常，请重试"
-      );
+      setErrorMsg(t.networkError);
     } finally {
       setLoading(false);
     }
@@ -85,12 +141,16 @@ export default function RegisterPage() {
             marginBottom: "24px",
           }}
         >
-          {locale === "en" ? "Register" : locale === "zh-TW" ? "註冊" : "注册"}
+          {t.title}
         </h1>
 
         <form
           onSubmit={onSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+          }}
         >
           <div>
             <label
@@ -100,13 +160,16 @@ export default function RegisterPage() {
                 marginBottom: "6px",
               }}
             >
-              Email
+              {t.emailLabel}
             </label>
+
             <input
               type="email"
               required
               value={email}
+              placeholder={t.emailPlaceholder}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               style={{
                 width: "100%",
                 border: "1px solid #ddd",
@@ -127,13 +190,16 @@ export default function RegisterPage() {
                 marginBottom: "6px",
               }}
             >
-              {locale === "en" ? "Password" : locale === "zh-TW" ? "密碼" : "密码"}
+              {t.passwordLabel}
             </label>
+
             <input
               type="password"
               required
               value={password}
+              placeholder={t.passwordPlaceholder}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               style={{
                 width: "100%",
                 border: "1px solid #ddd",
@@ -147,13 +213,27 @@ export default function RegisterPage() {
           </div>
 
           {errorMsg && (
-            <p style={{ color: "red", fontSize: "13px", textAlign: "center" }}>
+            <p
+              style={{
+                color: "red",
+                fontSize: "13px",
+                textAlign: "center",
+                lineHeight: 1.5,
+              }}
+            >
               {errorMsg}
             </p>
           )}
 
           {infoMsg && (
-            <p style={{ color: "green", fontSize: "13px", textAlign: "center" }}>
+            <p
+              style={{
+                color: "green",
+                fontSize: "13px",
+                textAlign: "center",
+                lineHeight: 1.5,
+              }}
+            >
               {infoMsg}
             </p>
           )}
@@ -173,23 +253,19 @@ export default function RegisterPage() {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading
-              ? "Loading..."
-              : locale === "en"
-              ? "Create account"
-              : locale === "zh-TW"
-              ? "建立帳號"
-              : "创建账号"}
+            {loading ? t.creating : t.createAccount}
           </button>
         </form>
 
-        <p style={{ marginTop: "20px", fontSize: "14px", textAlign: "center" }}>
+        <p
+          style={{
+            marginTop: "20px",
+            fontSize: "14px",
+            textAlign: "center",
+          }}
+        >
           <Link href={`/${locale}/login`} style={{ color: "#007bff" }}>
-            {locale === "en"
-              ? "Back to login"
-              : locale === "zh-TW"
-              ? "返回登入"
-              : "返回登录"}
+            {t.backToLogin}
           </Link>
         </p>
       </div>

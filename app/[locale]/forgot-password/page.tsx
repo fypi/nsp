@@ -5,27 +5,81 @@ import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
+type Locale = "en" | "zh" | "zh-TW";
+
+type ForgotPasswordText = {
+  title: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  send: string;
+  sending: string;
+  successMessage: string;
+  errorMessage: string;
+  backToLogin: string;
+};
+
+const locales: Locale[] = ["en", "zh", "zh-TW"];
+
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+
+  return "zh";
+}
+
+const forgotPasswordText: Record<Locale, ForgotPasswordText> = {
+  zh: {
+    title: "重置密码",
+    emailLabel: "邮箱",
+    emailPlaceholder: "请输入你的邮箱",
+    send: "发送邮件",
+    sending: "发送中...",
+    successMessage: "如果该邮箱存在，你将收到重置链接。",
+    errorMessage: "发送失败，请稍后再试。",
+    backToLogin: "返回登录",
+  },
+
+  "zh-TW": {
+    title: "重設密碼",
+    emailLabel: "郵箱",
+    emailPlaceholder: "請輸入你的郵箱",
+    send: "發送郵件",
+    sending: "發送中...",
+    successMessage: "如果該郵箱存在，你將收到重設連結。",
+    errorMessage: "發送失敗，請稍後再試。",
+    backToLogin: "返回登入",
+  },
+
+  en: {
+    title: "Reset Password",
+    emailLabel: "Email",
+    emailPlaceholder: "Enter your email",
+    send: "Send email",
+    sending: "Sending...",
+    successMessage: "If the email exists, you’ll receive a reset link.",
+    errorMessage: "Failed to send reset email. Please try again later.",
+    backToLogin: "Back to login",
+  },
+};
 
 export default function ForgotPasswordPage() {
   const params = useParams();
 
   const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) {
-      return raw as Locale;
-    }
-    return "zh";
+    return normalizeLocale(params?.locale);
   }, [params]);
+
+  const t = forgotPasswordText[locale];
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setLoading(true);
     setErrorMsg(null);
     setInfoMsg(null);
@@ -40,17 +94,11 @@ export default function ForgotPasswordPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      setErrorMsg(t.errorMessage);
       return;
     }
 
-    setInfoMsg(
-      locale === "en"
-        ? "If the email exists, you’ll receive a reset link."
-        : locale === "zh-TW"
-        ? "如果該郵箱存在，你將收到重設連結。"
-        : "如果该邮箱存在，你将收到重置链接。"
-    );
+    setInfoMsg(t.successMessage);
   };
 
   return (
@@ -74,11 +122,7 @@ export default function ForgotPasswordPage() {
             marginBottom: "24px",
           }}
         >
-          {locale === "en"
-            ? "Reset Password"
-            : locale === "zh-TW"
-            ? "重設密碼"
-            : "重置密码"}
+          {t.title}
         </h1>
 
         <form
@@ -94,13 +138,14 @@ export default function ForgotPasswordPage() {
                 textAlign: "left",
               }}
             >
-              {locale === "en" ? "Email" : "邮箱"}
+              {t.emailLabel}
             </label>
 
             <input
               type="email"
               required
               value={email}
+              placeholder={t.emailPlaceholder}
               onChange={(e) => setEmail(e.target.value)}
               style={{
                 width: "100%",
@@ -142,23 +187,13 @@ export default function ForgotPasswordPage() {
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading
-              ? "Loading..."
-              : locale === "en"
-              ? "Send email"
-              : locale === "zh-TW"
-              ? "發送郵件"
-              : "发送邮件"}
+            {loading ? t.sending : t.send}
           </button>
         </form>
 
         <p style={{ marginTop: "20px", fontSize: "13px", textAlign: "center" }}>
           <Link href={`/${locale}/login`} style={{ color: "#007bff" }}>
-            {locale === "en"
-              ? "Back to login"
-              : locale === "zh-TW"
-              ? "返回登入"
-              : "返回登录"}
+            {t.backToLogin}
           </Link>
         </p>
       </div>

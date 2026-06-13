@@ -1,5 +1,6 @@
 ﻿import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/SiteFooter";
+import NetworkStatusToast from "@/components/NetworkStatusToast";
 
 export default function LocaleLayout({
   children,
@@ -11,6 +12,7 @@ export default function LocaleLayout({
       <Navbar />
       {children}
       <SiteFooter />
+      <NetworkStatusToast />
     </>
   );
 }

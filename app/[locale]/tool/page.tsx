@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 type Locale = "zh" | "zh-TW" | "en";
 
-type ToolStatus = "public" | "login" | "soon" | "custom";
+type ToolStatus = "public" | "login" | "planned" | "custom";
 
 type ToolItem = {
   title: string;
@@ -21,17 +21,17 @@ type ToolPageText = {
   publicTitle: string;
   publicDesc: string;
 
-  loginTitle: string;
-  loginDesc: string;
+  memberTitle: string;
+  memberDesc: string;
 
-  soonTitle: string;
-  soonDesc: string;
+  professionalTitle: string;
+  professionalDesc: string;
 
   customTitle: string;
   customDesc: string;
 
-  layerTitle: string;
-  layerDesc: string;
+  workflowTitle: string;
+  workflowDesc: string;
 
   disclaimerTitle: string;
   disclaimerDesc: string;
@@ -40,16 +40,14 @@ type ToolPageText = {
   actions: Record<ToolStatus, string>;
 
   publicTools: ToolItem[];
-  loginTools: ToolItem[];
-  comingSoonTools: ToolItem[];
+  memberTools: ToolItem[];
+  professionalTools: ToolItem[];
   customServices: ToolItem[];
 };
 
 function normalizeLocale(rawLocale: unknown): Locale {
   if (rawLocale === "en") return "en";
   if (rawLocale === "zh") return "zh";
-
-  // 兼容 /zh-TW 和 /zh-tw
   if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
 
   return "zh";
@@ -59,42 +57,44 @@ const toolPageText: Record<Locale, ToolPageText> = {
   zh: {
     heroTitle: "工具中心",
     heroDesc:
-      "工具、文书、学习和知识，一处打开。当前只保留真实可用入口，未完成的能力不再挂空链接。",
+      "面向开发、文档、文本、计算与自动化场景的高效工具集合。公开工具可直接使用，高级能力将逐步接入账号、历史记录和智能辅助。",
 
-    publicTitle: "🔓 公开可用",
-    publicDesc: "不用登录，打开就能用。下面这些是当前已经接好的真实工具。",
+    publicTitle: "即刻可用",
+    publicDesc:
+      "无需登录，打开即可使用。所有处理尽量在浏览器本地完成，适合快速调试、整理、计算和生成。",
 
-    loginTitle: "🔐 注册后可用",
-    loginDesc:
-      "这些工具需要登录后使用，后续会逐步支持保存历史、导出和个人设置。",
+    memberTitle: "登录后可用",
+    memberDesc:
+      "适合需要更长文本、更高频使用、历史记录和个人工作区的工具能力。",
 
-    soonTitle: "🧭 即将上线",
-    soonDesc: "下面这些工具已经进入排期。未完成前只展示方向，不挂 404 入口。",
+    professionalTitle: "专业工具规划",
+    professionalDesc:
+      "更多面向开发、数据、文档和自动化的专业工具正在建设中，后续会陆续上线为可直接使用的正式功能。",
 
-    customTitle: "💼 定制服务",
+    customTitle: "定制服务",
     customDesc:
-      "标准工具解决不了的场景，可以按实际业务做成专用系统或自动化流程。",
+      "如果标准工具无法覆盖你的业务流程，可以按实际场景定制专属工具、内部系统、知识库或 AI 自动化流程。",
 
-    layerTitle: "工具分层",
-    layerDesc:
-      "当前采用分层开放：基础工具公开可用；需要保存、导出、批量处理和个人记录的能力，登录后逐步开放；企业流程、内部系统和 AI 自动化按定制服务处理。",
+    workflowTitle: "效率工作流",
+    workflowDesc:
+      "九域工具中心的目标不是堆砌功能，而是把高频操作变成清晰、稳定、可复用的工作流：输入明确、处理快速、结果可复制、数据可控。",
 
     disclaimerTitle: "提示：",
     disclaimerDesc:
-      "工具中心内容仅供学习、计算、格式处理和效率辅助，不构成投资建议、法律意见、财务意见或专业服务承诺。涉及关键场景时，请结合实际情况自行核验。",
+      "工具结果仅供学习、效率辅助和一般信息参考。涉及投资、法律、财务、合同或关键业务决策时，请结合实际情况核验，并咨询相关专业人士。",
 
     badges: {
-      public: "🔓 公开",
-      login: "🔐 登录",
-      soon: "🧭 即将上线",
-      custom: "💼 定制",
+      public: "公开",
+      login: "登录后",
+      planned: "规划中",
+      custom: "定制",
     },
 
     actions: {
-      public: "打开工具 →",
-      login: "登录后使用 →",
-      soon: "等待上线",
-      custom: "联系咨询 →",
+      public: "打开工具",
+      login: "登录后使用",
+      planned: "即将推出",
+      custom: "联系咨询",
     },
 
     publicTools: [
@@ -106,83 +106,85 @@ const toolPageText: Record<Locale, ToolPageText> = {
       },
       {
         title: "文本对比",
-        desc: "对比两段文本差异，适合文案修改、配置变更和代码片段检查。",
+        desc: "逐行对比两段文本差异，适合文案修改、配置变更和代码片段检查。",
         href: "/tool/text-diff",
         status: "public",
       },
       {
+        title: "Base64 工具",
+        desc: "支持 Base64 编码与解码，适合常见文本转换和接口调试场景。",
+        href: "/tool/base64",
+        status: "public",
+      },
+      {
+        title: "URL 编码 / 解码",
+        desc: "处理 URL 参数、查询字符串和特殊字符编码，适合接口调试和链接整理。",
+        href: "/tool/url-codec",
+        status: "public",
+      },
+      {
         title: "复利计算器",
-        desc: "计算长期收益、定投增长和复利变化，仅作学习和参考。",
+        desc: "估算长期投入、复利增长和收益变化，仅作学习和测算参考。",
         href: "/tool/compound-interest",
         status: "public",
       },
       {
-        title: "Base64 工具",
-        desc: "Base64 编码与解码，支持常见文本处理场景。",
-        href: "/tool/base64",
+        title: "文书模板生成器",
+        desc: "根据文书类型、语气和关键信息，生成可复制的起草模板。",
+        href: "/tool/document-template",
         status: "public",
       },
     ],
 
-    loginTools: [
+    memberTools: [
       {
         title: "Markdown 预览",
-        desc: "编写 Markdown 并实时预览，适合文档、说明和内容草稿。",
+        desc: "实时预览 Markdown，适合说明文档、笔记、草稿和知识整理。",
         href: "/tool/markdown-preview",
         status: "login",
       },
     ],
 
-    comingSoonTools: [
-      {
-        title: "JSON 转 TypeScript",
-        desc: "根据 JSON 自动生成 TypeScript 类型，减少手写结构的重复工作。",
-        status: "soon",
-      },
+    professionalTools: [
       {
         title: "JWT 解码器",
-        desc: "快速查看 JWT Header 与 Payload，便于接口调试和登录排查。",
-        status: "soon",
+        desc: "解析 JWT Header、Payload 和过期时间，用于登录排查和接口调试。",
+        status: "planned",
       },
       {
         title: "正则测试器",
-        desc: "测试正则表达式匹配结果，适合文本清洗和表单校验。",
-        status: "soon",
+        desc: "测试正则表达式匹配结果，支持常见 flags、匹配统计和结果高亮。",
+        status: "planned",
       },
       {
         title: "Cron 表达式解析器",
-        desc: "解析 Cron 表达式的执行时间，减少定时任务配置错误。",
-        status: "soon",
-      },
-      {
-        title: "URL 编码/解码",
-        desc: "处理 URL 参数、查询字符串和特殊字符编码。",
-        status: "soon",
+        desc: "解析定时任务表达式，预览未来执行时间，降低配置错误。",
+        status: "planned",
       },
       {
         title: "文本清洗工具",
-        desc: "清理多余空格、换行、重复内容和常见格式问题。",
-        status: "soon",
-      },
-      {
-        title: "图片压缩",
-        desc: "压缩常见图片格式，降低网页和内容素材体积。",
-        status: "soon",
-      },
-      {
-        title: "PDF 合并",
-        desc: "合并多个 PDF 文件，适合文档整理和资料归档。",
-        status: "soon",
+        desc: "去空行、去重复、提取邮箱/链接/数字、统计字数和行数。",
+        status: "planned",
       },
       {
         title: "贷款计算器",
-        desc: "计算月供、利息和还款结构，仅作学习和参考。",
-        status: "soon",
+        desc: "计算月供、总利息和还款结构，支持等额本息与等额本金。",
+        status: "planned",
+      },
+      {
+        title: "图片压缩",
+        desc: "压缩常见图片格式，减少网页和内容素材体积。",
+        status: "planned",
+      },
+      {
+        title: "PDF 合并",
+        desc: "合并、整理和排序 PDF 文件，适合资料归档和文档处理。",
+        status: "planned",
       },
       {
         title: "HTTP Header 检查器",
-        desc: "查看网页响应头，辅助排查缓存、安全和部署配置。",
-        status: "soon",
+        desc: "查看响应头，辅助排查缓存、安全策略和部署配置。",
+        status: "planned",
       },
     ],
 
@@ -194,20 +196,20 @@ const toolPageText: Record<Locale, ToolPageText> = {
         status: "custom",
       },
       {
-        title: "课程学习系统",
-        desc: "为课程、训练营、内部学习场景搭建学习计划和内容管理能力。",
-        href: "/contact",
-        status: "custom",
-      },
-      {
         title: "内部知识库",
-        desc: "把分散资料、流程和经验沉淀成可查询、可复用的知识库。",
+        desc: "把分散资料、流程和经验沉淀成可查询、可复用的知识资产。",
         href: "/contact",
         status: "custom",
       },
       {
         title: "AI 自动化工作流",
-        desc: "把重复操作接成自动流程，减少人工搬运和低价值重复劳动。",
+        desc: "把重复操作、内容整理、数据处理和多步骤任务接成自动流程。",
+        href: "/contact",
+        status: "custom",
+      },
+      {
+        title: "专属工具系统",
+        desc: "针对明确业务场景定制网页工具、后台系统、表单流和自动化能力。",
         href: "/contact",
         status: "custom",
       },
@@ -217,42 +219,44 @@ const toolPageText: Record<Locale, ToolPageText> = {
   "zh-TW": {
     heroTitle: "工具中心",
     heroDesc:
-      "工具、文書、學習和知識，一處打開。目前只保留真實可用入口，未完成的能力不再掛空連結。",
+      "面向開發、文件、文字、計算與自動化場景的高效工具集合。公開工具可直接使用，高級能力將逐步接入帳號、歷史記錄和智能輔助。",
 
-    publicTitle: "🔓 公開可用",
-    publicDesc: "不用登入，打開就能用。以下是目前已經接好的真實工具。",
+    publicTitle: "即刻可用",
+    publicDesc:
+      "無需登入，打開即可使用。所有處理盡量在瀏覽器本地完成，適合快速調試、整理、計算和生成。",
 
-    loginTitle: "🔐 登入後可用",
-    loginDesc:
-      "這些工具需要登入後使用，後續會逐步支援保存歷史、匯出和個人設定。",
+    memberTitle: "登入後可用",
+    memberDesc:
+      "適合需要更長文字、更高頻使用、歷史記錄和個人工作區的工具能力。",
 
-    soonTitle: "🧭 即將上線",
-    soonDesc: "以下工具已經進入排期。未完成前只展示方向，不掛 404 入口。",
+    professionalTitle: "專業工具規劃",
+    professionalDesc:
+      "更多面向開發、資料、文件和自動化的專業工具正在建設中，後續會陸續上線為可直接使用的正式功能。",
 
-    customTitle: "💼 定制服務",
+    customTitle: "定制服務",
     customDesc:
-      "標準工具解決不了的場景，可以按實際業務做成專用系統或自動化流程。",
+      "如果標準工具無法覆蓋你的業務流程，可以按實際場景定制專屬工具、內部系統、知識庫或 AI 自動化流程。",
 
-    layerTitle: "工具分層",
-    layerDesc:
-      "目前採用分層開放：基礎工具公開可用；需要保存、匯出、批量處理和個人記錄的能力，登入後逐步開放；企業流程、內部系統和 AI 自動化按定制服務處理。",
+    workflowTitle: "效率工作流",
+    workflowDesc:
+      "九域工具中心的目標不是堆砌功能，而是把高頻操作變成清晰、穩定、可復用的工作流：輸入明確、處理快速、結果可複製、資料可控。",
 
     disclaimerTitle: "提示：",
     disclaimerDesc:
-      "工具中心內容僅供學習、計算、格式處理和效率輔助，不構成投資建議、法律意見、財務意見或專業服務承諾。涉及關鍵場景時，請結合實際情況自行核驗。",
+      "工具結果僅供學習、效率輔助和一般資訊參考。涉及投資、法律、財務、合同或關鍵業務決策時，請結合實際情況核驗，並諮詢相關專業人士。",
 
     badges: {
-      public: "🔓 公開",
-      login: "🔐 登入",
-      soon: "🧭 即將上線",
-      custom: "💼 定制",
+      public: "公開",
+      login: "登入後",
+      planned: "規劃中",
+      custom: "定制",
     },
 
     actions: {
-      public: "打開工具 →",
-      login: "登入後使用 →",
-      soon: "等待上線",
-      custom: "聯絡諮詢 →",
+      public: "打開工具",
+      login: "登入後使用",
+      planned: "即將推出",
+      custom: "聯絡諮詢",
     },
 
     publicTools: [
@@ -264,83 +268,85 @@ const toolPageText: Record<Locale, ToolPageText> = {
       },
       {
         title: "文字對比",
-        desc: "對比兩段文字差異，適合文案修改、配置變更和程式碼片段檢查。",
+        desc: "逐行對比兩段文字差異，適合文案修改、配置變更和程式碼片段檢查。",
         href: "/tool/text-diff",
         status: "public",
       },
       {
+        title: "Base64 工具",
+        desc: "支援 Base64 編碼與解碼，適合常見文字轉換和接口調試場景。",
+        href: "/tool/base64",
+        status: "public",
+      },
+      {
+        title: "URL 編碼 / 解碼",
+        desc: "處理 URL 參數、查詢字串和特殊字元編碼，適合接口調試和連結整理。",
+        href: "/tool/url-codec",
+        status: "public",
+      },
+      {
         title: "複利計算器",
-        desc: "計算長期收益、定投增長和複利變化，僅作學習和參考。",
+        desc: "估算長期投入、複利增長和收益變化，僅作學習和測算參考。",
         href: "/tool/compound-interest",
         status: "public",
       },
       {
-        title: "Base64 工具",
-        desc: "Base64 編碼與解碼，支援常見文字處理場景。",
-        href: "/tool/base64",
+        title: "文書模板生成器",
+        desc: "根據文書類型、語氣和關鍵資訊，生成可複製的起草模板。",
+        href: "/tool/document-template",
         status: "public",
       },
     ],
 
-    loginTools: [
+    memberTools: [
       {
         title: "Markdown 預覽",
-        desc: "編寫 Markdown 並即時預覽，適合文件、說明和內容草稿。",
+        desc: "即時預覽 Markdown，適合說明文件、筆記、草稿和知識整理。",
         href: "/tool/markdown-preview",
         status: "login",
       },
     ],
 
-    comingSoonTools: [
-      {
-        title: "JSON 轉 TypeScript",
-        desc: "根據 JSON 自動生成 TypeScript 類型，減少手寫結構的重複工作。",
-        status: "soon",
-      },
+    professionalTools: [
       {
         title: "JWT 解碼器",
-        desc: "快速查看 JWT Header 與 Payload，便於接口調試和登入排查。",
-        status: "soon",
+        desc: "解析 JWT Header、Payload 和過期時間，用於登入排查和接口調試。",
+        status: "planned",
       },
       {
         title: "正則測試器",
-        desc: "測試正則表達式匹配結果，適合文字清洗和表單校驗。",
-        status: "soon",
+        desc: "測試正則表達式匹配結果，支援常見 flags、匹配統計和結果高亮。",
+        status: "planned",
       },
       {
         title: "Cron 表達式解析器",
-        desc: "解析 Cron 表達式的執行時間，減少定時任務配置錯誤。",
-        status: "soon",
-      },
-      {
-        title: "URL 編碼/解碼",
-        desc: "處理 URL 參數、查詢字串和特殊字元編碼。",
-        status: "soon",
+        desc: "解析定時任務表達式，預覽未來執行時間，降低配置錯誤。",
+        status: "planned",
       },
       {
         title: "文字清洗工具",
-        desc: "清理多餘空格、換行、重複內容和常見格式問題。",
-        status: "soon",
-      },
-      {
-        title: "圖片壓縮",
-        desc: "壓縮常見圖片格式，降低網頁和內容素材體積。",
-        status: "soon",
-      },
-      {
-        title: "PDF 合併",
-        desc: "合併多個 PDF 文件，適合文件整理和資料歸檔。",
-        status: "soon",
+        desc: "去空行、去重複、提取郵箱/連結/數字、統計字數和行數。",
+        status: "planned",
       },
       {
         title: "貸款計算器",
-        desc: "計算月供、利息和還款結構，僅作學習和參考。",
-        status: "soon",
+        desc: "計算月供、總利息和還款結構，支援等額本息與等額本金。",
+        status: "planned",
+      },
+      {
+        title: "圖片壓縮",
+        desc: "壓縮常見圖片格式，減少網頁和內容素材體積。",
+        status: "planned",
+      },
+      {
+        title: "PDF 合併",
+        desc: "合併、整理和排序 PDF 文件，適合資料歸檔和文件處理。",
+        status: "planned",
       },
       {
         title: "HTTP Header 檢查器",
-        desc: "查看網頁響應頭，輔助排查快取、安全和部署配置。",
-        status: "soon",
+        desc: "查看響應頭，輔助排查快取、安全策略和部署配置。",
+        status: "planned",
       },
     ],
 
@@ -352,20 +358,20 @@ const toolPageText: Record<Locale, ToolPageText> = {
         status: "custom",
       },
       {
-        title: "課程學習系統",
-        desc: "為課程、訓練營、內部學習場景搭建學習計劃和內容管理能力。",
-        href: "/contact",
-        status: "custom",
-      },
-      {
         title: "內部知識庫",
-        desc: "把分散資料、流程和經驗沉澱成可查詢、可復用的知識庫。",
+        desc: "把分散資料、流程和經驗沉澱成可查詢、可復用的知識資產。",
         href: "/contact",
         status: "custom",
       },
       {
         title: "AI 自動化工作流",
-        desc: "把重複操作接成自動流程，減少人工搬運和低價值重複勞動。",
+        desc: "把重複操作、內容整理、資料處理和多步驟任務接成自動流程。",
+        href: "/contact",
+        status: "custom",
+      },
+      {
+        title: "專屬工具系統",
+        desc: "針對明確業務場景定制網頁工具、後台系統、表單流和自動化能力。",
         href: "/contact",
         status: "custom",
       },
@@ -375,44 +381,44 @@ const toolPageText: Record<Locale, ToolPageText> = {
   en: {
     heroTitle: "Tool Center",
     heroDesc:
-      "Tools, documents, learning, and knowledge in one place. Only real usable entries are listed here. Unfinished features are not linked as empty pages.",
+      "A focused toolkit for development, documents, text processing, calculation, and automation. Public tools are ready to use immediately, while advanced capabilities will gradually connect with accounts, history, and intelligent assistance.",
 
-    publicTitle: "🔓 Public Tools",
+    publicTitle: "Ready to Use",
     publicDesc:
-      "No login required. Open and use directly. These are the currently available tools.",
+      "No login required. Open and use instantly. Most processing is designed to run locally in the browser for fast debugging, cleanup, calculation, and generation.",
 
-    loginTitle: "🔐 Member Tools",
-    loginDesc:
-      "These tools require login. History, export, batch processing, and personal settings will be added gradually.",
+    memberTitle: "Available After Login",
+    memberDesc:
+      "Designed for longer content, higher-frequency usage, personal workspace, history, and advanced productivity capabilities.",
 
-    soonTitle: "🧭 Coming Soon",
-    soonDesc:
-      "The following tools are on the roadmap. Before completion, only directions are shown without 404 links.",
+    professionalTitle: "Professional Tools Roadmap",
+    professionalDesc:
+      "More professional tools for development, data, documents, and automation are being built and will gradually become fully available features.",
 
-    customTitle: "💼 Custom Services",
+    customTitle: "Custom Services",
     customDesc:
-      "For scenarios that standard tools cannot cover, we can build dedicated systems or automation workflows around your actual business needs.",
+      "When standard tools cannot cover your workflow, NinesPro can build dedicated tools, internal systems, knowledge bases, or AI automation workflows around your scenario.",
 
-    layerTitle: "Tool Access Layers",
-    layerDesc:
-      "NinesPro uses layered access: basic tools are public; features that require history, export, batch processing, and personal records will gradually open after login; enterprise workflows, internal systems, and AI automation are handled as custom services.",
+    workflowTitle: "Productivity Workflow",
+    workflowDesc:
+      "The goal of the Tool Center is not to stack features, but to turn high-frequency actions into clear, stable, reusable workflows: precise input, fast processing, copyable output, and controllable data.",
 
     disclaimerTitle: "Notice:",
     disclaimerDesc:
-      "The Tool Center is for learning, calculation, formatting, and productivity assistance only. It does not constitute investment advice, legal advice, financial advice, or a professional service commitment. Please verify critical scenarios based on your actual situation.",
+      "Tool results are for learning, productivity assistance, and general informational reference only. For investment, legal, financial, contractual, or critical business decisions, please verify based on the actual situation and consult relevant professionals.",
 
     badges: {
-      public: "🔓 Public",
-      login: "🔐 Login",
-      soon: "🧭 Coming Soon",
-      custom: "💼 Custom",
+      public: "Public",
+      login: "Login",
+      planned: "Planned",
+      custom: "Custom",
     },
 
     actions: {
-      public: "Open Tool →",
-      login: "Use After Login →",
-      soon: "Coming Soon",
-      custom: "Contact Us →",
+      public: "Open Tool",
+      login: "Use After Login",
+      planned: "Coming Soon",
+      custom: "Contact Us",
     },
 
     publicTools: [
@@ -424,83 +430,85 @@ const toolPageText: Record<Locale, ToolPageText> = {
       },
       {
         title: "Text Diff",
-        desc: "Compare differences between two text blocks for copy edits, configuration changes, and code snippets.",
+        desc: "Compare two texts line by line for copy edits, configuration changes, and code snippet checks.",
         href: "/tool/text-diff",
         status: "public",
       },
       {
+        title: "Base64 Tool",
+        desc: "Encode and decode Base64 for common text conversion and API debugging scenarios.",
+        href: "/tool/base64",
+        status: "public",
+      },
+      {
+        title: "URL Encode / Decode",
+        desc: "Handle URL parameters, query strings, and special character encoding for API debugging and link cleanup.",
+        href: "/tool/url-codec",
+        status: "public",
+      },
+      {
         title: "Compound Interest Calculator",
-        desc: "Calculate long-term returns, recurring investment growth, and compound changes for learning and reference.",
+        desc: "Estimate long-term contribution, compound growth, and return changes for learning and reference.",
         href: "/tool/compound-interest",
         status: "public",
       },
       {
-        title: "Base64 Tool",
-        desc: "Encode and decode Base64 for common text-processing scenarios.",
-        href: "/tool/base64",
+        title: "Document Template Generator",
+        desc: "Choose a document type, tone, and key information to generate a copyable draft template.",
+        href: "/tool/document-template",
         status: "public",
       },
     ],
 
-    loginTools: [
+    memberTools: [
       {
         title: "Markdown Preview",
-        desc: "Write Markdown and preview it in real time for documents, instructions, and content drafts.",
+        desc: "Preview Markdown in real time for documentation, notes, drafts, and knowledge organization.",
         href: "/tool/markdown-preview",
         status: "login",
       },
     ],
 
-    comingSoonTools: [
-      {
-        title: "JSON to TypeScript",
-        desc: "Automatically generate TypeScript types from JSON to reduce repetitive structure writing.",
-        status: "soon",
-      },
+    professionalTools: [
       {
         title: "JWT Decoder",
-        desc: "Quickly inspect JWT Header and Payload for API debugging and login troubleshooting.",
-        status: "soon",
+        desc: "Inspect JWT Header, Payload, and expiration time for login troubleshooting and API debugging.",
+        status: "planned",
       },
       {
         title: "Regex Tester",
-        desc: "Test regular expression matches for text cleanup and form validation.",
-        status: "soon",
+        desc: "Test regular expression matches with common flags, match counts, and highlighted results.",
+        status: "planned",
       },
       {
         title: "Cron Expression Parser",
-        desc: "Parse execution times from Cron expressions to reduce scheduled task configuration errors.",
-        status: "soon",
+        desc: "Parse scheduled task expressions and preview future run times to reduce configuration errors.",
+        status: "planned",
       },
       {
-        title: "URL Encode / Decode",
-        desc: "Handle URL parameters, query strings, and special character encoding.",
-        status: "soon",
+        title: "Text Cleaner",
+        desc: "Remove empty lines, deduplicate text, extract emails/links/numbers, and count words and lines.",
+        status: "planned",
       },
       {
-        title: "Text Cleanup Tool",
-        desc: "Clean extra spaces, line breaks, duplicate content, and common formatting issues.",
-        status: "soon",
+        title: "Loan Calculator",
+        desc: "Calculate monthly payments, total interest, and repayment structure for common loan scenarios.",
+        status: "planned",
       },
       {
         title: "Image Compression",
         desc: "Compress common image formats to reduce webpage and content asset size.",
-        status: "soon",
+        status: "planned",
       },
       {
         title: "PDF Merge",
-        desc: "Merge multiple PDF files for document organization and archiving.",
-        status: "soon",
-      },
-      {
-        title: "Loan Calculator",
-        desc: "Calculate monthly payments, interest, and repayment structure for learning and reference.",
-        status: "soon",
+        desc: "Merge, organize, and reorder PDF files for document processing and archiving.",
+        status: "planned",
       },
       {
         title: "HTTP Header Checker",
-        desc: "Inspect webpage response headers to troubleshoot caching, security, and deployment configuration.",
-        status: "soon",
+        desc: "Inspect response headers to troubleshoot caching, security policies, and deployment configuration.",
+        status: "planned",
       },
     ],
 
@@ -512,20 +520,20 @@ const toolPageText: Record<Locale, ToolPageText> = {
         status: "custom",
       },
       {
-        title: "Course Learning System",
-        desc: "Build learning plans and content management capabilities for courses, programs, and internal training.",
-        href: "/contact",
-        status: "custom",
-      },
-      {
         title: "Internal Knowledge Base",
-        desc: "Turn scattered materials, processes, and experience into a searchable and reusable knowledge base.",
+        desc: "Turn scattered materials, processes, and experience into searchable and reusable knowledge assets.",
         href: "/contact",
         status: "custom",
       },
       {
         title: "AI Automation Workflow",
-        desc: "Connect repetitive operations into automated workflows to reduce manual transfer and low-value repetitive work.",
+        desc: "Connect repetitive operations, content organization, data processing, and multi-step tasks into automated workflows.",
+        href: "/contact",
+        status: "custom",
+      },
+      {
+        title: "Dedicated Tool System",
+        desc: "Build web tools, admin systems, form flows, and automation capabilities for specific business scenarios.",
         href: "/contact",
         status: "custom",
       },
@@ -540,83 +548,83 @@ export default function ToolPage() {
 
   return (
     <main className="subpage-main">
-      <div className="subpage-container">
+      <div
+        className="subpage-container"
+        style={{
+          maxWidth: 1120,
+        }}
+      >
         <div className="subpage-hero">
           <h1>{t.heroTitle}</h1>
           <p>{t.heroDesc}</p>
         </div>
 
-        <section className="subpage-section">
-          <h2>{t.publicTitle}</h2>
-          <p>{t.publicDesc}</p>
+        <ToolSection
+          title={t.publicTitle}
+          desc={t.publicDesc}
+          tools={t.publicTools}
+          locale={locale}
+          badges={t.badges}
+          actions={t.actions}
+        />
 
-          <div className="card-grid">
-            {t.publicTools.map((tool) => (
-              <ToolCard
-                key={tool.title}
-                tool={tool}
-                locale={locale}
-                badges={t.badges}
-                actions={t.actions}
-              />
-            ))}
+        <ToolSection
+          title={t.memberTitle}
+          desc={t.memberDesc}
+          tools={t.memberTools}
+          locale={locale}
+          badges={t.badges}
+          actions={t.actions}
+        />
+
+        <ToolSection
+          title={t.professionalTitle}
+          desc={t.professionalDesc}
+          tools={t.professionalTools}
+          locale={locale}
+          badges={t.badges}
+          actions={t.actions}
+        />
+
+        <ToolSection
+          title={t.customTitle}
+          desc={t.customDesc}
+          tools={t.customServices}
+          locale={locale}
+          badges={t.badges}
+          actions={t.actions}
+        />
+
+        <section className="subpage-section">
+          <div
+            className="card liquidGlassCard"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(17,17,17,0.96), rgba(45,45,45,0.92))",
+              color: "#fff",
+              border: "none",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 22,
+                marginBottom: 12,
+                color: "#fff",
+              }}
+            >
+              {t.workflowTitle}
+            </h2>
+
+            <p
+              style={{
+                color: "rgba(255,255,255,0.82)",
+                lineHeight: 1.8,
+                margin: 0,
+              }}
+            >
+              {t.workflowDesc}
+            </p>
           </div>
-        </section>
-
-        <section className="subpage-section">
-          <h2>{t.loginTitle}</h2>
-          <p>{t.loginDesc}</p>
-
-          <div className="card-grid">
-            {t.loginTools.map((tool) => (
-              <ToolCard
-                key={tool.title}
-                tool={tool}
-                locale={locale}
-                badges={t.badges}
-                actions={t.actions}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="subpage-section">
-          <h2>{t.soonTitle}</h2>
-          <p>{t.soonDesc}</p>
-
-          <div className="card-grid">
-            {t.comingSoonTools.map((tool) => (
-              <ToolCard
-                key={tool.title}
-                tool={tool}
-                locale={locale}
-                badges={t.badges}
-                actions={t.actions}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="subpage-section">
-          <h2>{t.customTitle}</h2>
-          <p>{t.customDesc}</p>
-
-          <div className="card-grid">
-            {t.customServices.map((tool) => (
-              <ToolCard
-                key={tool.title}
-                tool={tool}
-                locale={locale}
-                badges={t.badges}
-                actions={t.actions}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="subpage-section">
-          <h2>{t.layerTitle}</h2>
-          <p>{t.layerDesc}</p>
         </section>
 
         <div className="disclaimer-box">
@@ -627,6 +635,46 @@ export default function ToolPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+function ToolSection({
+  title,
+  desc,
+  tools,
+  locale,
+  badges,
+  actions,
+}: {
+  title: string;
+  desc: string;
+  tools: ToolItem[];
+  locale: Locale;
+  badges: Record<ToolStatus, string>;
+  actions: Record<ToolStatus, string>;
+}) {
+  return (
+    <section className="subpage-section">
+      <h2>{title}</h2>
+      <p>{desc}</p>
+
+      <div
+        className="card-grid"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+        }}
+      >
+        {tools.map((tool) => (
+          <ToolCard
+            key={tool.title}
+            tool={tool}
+            locale={locale}
+            badges={badges}
+            actions={actions}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -648,24 +696,64 @@ function ToolCard({
       ? `/${locale}${tool.href}`
       : undefined;
 
+  const cardClassName =
+    tool.status === "planned"
+      ? "card liquidGlassCard liquidGlassCardPlanned"
+      : "card liquidGlassCard";
+
+  const pillClassName =
+    tool.status === "public" || tool.status === "custom"
+      ? "liquidGlassPill liquidGlassPillDark"
+      : tool.status === "login"
+      ? "liquidGlassPill"
+      : "liquidGlassPill liquidGlassPillMuted";
+
   return (
-    <div className="card">
-      <div style={{ marginBottom: 8, fontSize: 12, color: "#666" }}>
-        {badges[tool.status]}
+    <div
+      className={cardClassName}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: 188,
+      }}
+    >
+      <div>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            marginBottom: 10,
+            padding: "4px 9px",
+            borderRadius: 999,
+            fontSize: 12,
+            fontWeight: 800,
+            color: tool.status === "planned" ? "#666" : "#111",
+            background:
+              tool.status === "planned"
+                ? "rgba(255,255,255,0.46)"
+                : "rgba(255,255,255,0.58)",
+            border: "1px solid rgba(255,255,255,0.72)",
+            boxShadow:
+              "inset 0 1px 1px rgba(255,255,255,0.88), 0 4px 12px rgba(18,28,45,0.05)",
+            backdropFilter: "blur(12px) saturate(160%)",
+            WebkitBackdropFilter: "blur(12px) saturate(160%)",
+          }}
+        >
+          {badges[tool.status]}
+        </div>
+
+        <h3>{tool.title}</h3>
+        <p>{tool.desc}</p>
       </div>
 
-      <h3>{tool.title}</h3>
-      <p>{tool.desc}</p>
-
-      <p style={{ marginTop: 8 }}>
+      <p style={{ marginTop: 14, marginBottom: 0 }}>
         {href ? (
-          <Link href={href} style={{ color: "#111", fontWeight: 500 }}>
+          <Link href={href} className={pillClassName}>
             {actions[tool.status]}
           </Link>
         ) : (
-          <span style={{ color: "#777", fontWeight: 500 }}>
-            {actions[tool.status]}
-          </span>
+          <span className={pillClassName}>{actions[tool.status]}</span>
         )}
       </p>
     </div>
