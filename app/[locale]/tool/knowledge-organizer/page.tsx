@@ -1,0 +1,3 @@
+﻿"use client";
+import * as React from "react";
+export default function KnowledgeOrganizerPage(){const h=React.createElement;return h("main",{className:"subpage-main"},h("div",{className:"subpage-container"},h("section",{className:"subpage-hero"},h("h1",null,"Knowledge Organizer"),h("p",null,"Stable temporary page.")),h("section",{className:"subpage-section"},h("div",{className:"card liquidGlassCard"},h("h3",null,"Page restored"),h("p",null,"This page is temporarily restored so the project can compile."),h("a",{href:"/zh/tool",className:"liquidGlassPill",style:{textDecoration:"none"}},"Back to Tool Center")))))}

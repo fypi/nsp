@@ -149,7 +149,7 @@ const groups: ToolGroup[] = [
           tw: "生成拼音、聲母、韻母和簡單詞語練習卡。",
         },
         href: "/tool/pinyin-card",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🔢",
@@ -160,7 +160,7 @@ const groups: ToolGroup[] = [
           tw: "按年級和範圍生成加減乘除練習。",
         },
         href: "/tool/arithmetic-practice",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "✍️",
@@ -171,7 +171,7 @@ const groups: ToolGroup[] = [
           tw: "生成作文結構、素材提示和段落提綱。",
         },
         href: "/tool/essay-outline",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🗓️",
@@ -182,7 +182,7 @@ const groups: ToolGroup[] = [
           tw: "按目標、天數和時間生成複習計劃。",
         },
         href: "/tool/study-planner",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🧪",
@@ -193,7 +193,7 @@ const groups: ToolGroup[] = [
           tw: "整理數學、物理、化學常用公式卡片。",
         },
         href: "/tool/formula-cards",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🧭",
@@ -204,7 +204,7 @@ const groups: ToolGroup[] = [
           tw: "按方向生成前端、後端、AI、網路和系統學習路線。",
         },
         href: "/tool/tech-learning-path",
-        status: "planned",
+        status: "online",
       },
     ],
   },
@@ -227,7 +227,7 @@ const groups: ToolGroup[] = [
           tw: "即時預覽 Markdown 文件。",
         },
         href: "/tool/markdown-preview",
-        status: "planned",
+        status: "online",
       },
       {
         icon: ".*",
@@ -238,7 +238,7 @@ const groups: ToolGroup[] = [
           tw: "測試匹配結果、分組和替換邏輯。",
         },
         href: "/tool/regex-tester",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "⏱️",
@@ -249,7 +249,7 @@ const groups: ToolGroup[] = [
           tw: "Unix 時間戳與日期時間互轉。",
         },
         href: "/tool/timestamp-converter",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "QR",
@@ -260,7 +260,7 @@ const groups: ToolGroup[] = [
           tw: "輸入文字或連結，生成 QR Code。",
         },
         href: "/tool/qr-code",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "SQL",
@@ -271,7 +271,7 @@ const groups: ToolGroup[] = [
           tw: "整理 SQL 縮排、換行和可讀性。",
         },
         href: "/tool/sql-formatter",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "#",
@@ -282,7 +282,7 @@ const groups: ToolGroup[] = [
           tw: "計算 MD5、SHA 系列雜湊值。",
         },
         href: "/tool/hash-calculator",
-        status: "planned",
+        status: "online",
       },
     ],
   },
@@ -305,7 +305,7 @@ const groups: ToolGroup[] = [
           tw: "生成會議紀要、行動項和負責人清單。",
         },
         href: "/tool/meeting-notes",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "📧",
@@ -316,7 +316,7 @@ const groups: ToolGroup[] = [
           tw: "生成商務、通知、跟進和說明類郵件。",
         },
         href: "/tool/email-template",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "CV",
@@ -327,7 +327,7 @@ const groups: ToolGroup[] = [
           tw: "生成履歷結構、專案描述和技能清單。",
         },
         href: "/tool/resume-template",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "📊",
@@ -338,7 +338,7 @@ const groups: ToolGroup[] = [
           tw: "把主題整理成簡報結構和頁面標題。",
         },
         href: "/tool/slide-outline",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "OKR",
@@ -349,7 +349,7 @@ const groups: ToolGroup[] = [
           tw: "生成目標、關鍵結果和追蹤表。",
         },
         href: "/tool/okr-template",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "PRD",
@@ -360,7 +360,7 @@ const groups: ToolGroup[] = [
           tw: "生成產品需求、範圍、流程和驗收標準。",
         },
         href: "/tool/prd-template",
-        status: "planned",
+        status: "online",
       },
     ],
   },
@@ -394,7 +394,7 @@ const groups: ToolGroup[] = [
           tw: "估算月供、總利息和還款結構。",
         },
         href: "/tool/mortgage-calculator",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "💰",
@@ -405,7 +405,7 @@ const groups: ToolGroup[] = [
           tw: "按目標金額和時間估算每月儲蓄。",
         },
         href: "/tool/savings-goal",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "📉",
@@ -416,7 +416,7 @@ const groups: ToolGroup[] = [
           tw: "估算通膨對未來購買力的影響。",
         },
         href: "/tool/inflation-impact",
-        status: "planned",
+        status: "online",
       },
     ],
   },
@@ -439,7 +439,7 @@ const groups: ToolGroup[] = [
           tw: "把零散內容整理成結構化筆記和清單。",
         },
         href: "/tool/knowledge-organizer",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🪄",
@@ -450,7 +450,7 @@ const groups: ToolGroup[] = [
           tw: "生成寫作、學習、程式碼和分析類提示詞模板。",
         },
         href: "/tool/prompt-template",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🧾",
@@ -461,7 +461,7 @@ const groups: ToolGroup[] = [
           tw: "把長文字整理成摘要、要點和提綱。",
         },
         href: "/tool/summary-outline",
-        status: "planned",
+        status: "online",
       },
       {
         icon: "🧬",
@@ -472,7 +472,7 @@ const groups: ToolGroup[] = [
           tw: "把業務流程拆成角色、步驟和自動化節點。",
         },
         href: "/tool/agent-workflow",
-        status: "planned",
+        status: "online",
       },
     ],
   },
@@ -487,9 +487,11 @@ const iconStyle = {
   justifyContent: "center",
   fontSize: 16,
   fontWeight: 900,
-  background: "linear-gradient(145deg, rgba(255,255,255,0.94), rgba(243,246,249,0.78))",
+  background:
+    "linear-gradient(145deg, rgba(255,255,255,0.94), rgba(243,246,249,0.78))",
   border: "1px solid rgba(255,255,255,0.95)",
-  boxShadow: "0 8px 20px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.98)",
+  boxShadow:
+    "0 8px 20px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.98)",
   color: "#111827",
 } as const;
 
@@ -503,11 +505,30 @@ const groupIconStyle = {
 
 function ToolCard({ item, locale }: { item: ToolItem; locale: Locale }) {
   const isOnline = item.status === "online";
+
   const content = (
-    <article className={`card liquidGlassCard ${!isOnline ? "liquidGlassCardPlanned" : ""}`}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 }}>
-        <span aria-hidden="true" style={iconStyle}>{item.icon}</span>
-        <span className={isOnline ? "liquidGlassPill" : "liquidGlassPillMuted"} style={{ minHeight: 28, padding: "7px 12px", fontSize: 12 }}>
+    <article
+      className={`card liquidGlassCard ${
+        !isOnline ? "liquidGlassCardPlanned" : ""
+      }`}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          marginBottom: 14,
+        }}
+      >
+        <span aria-hidden="true" style={iconStyle}>
+          {item.icon}
+        </span>
+
+        <span
+          className={isOnline ? "liquidGlassPill" : "liquidGlassPillMuted"}
+          style={{ minHeight: 28, padding: "7px 12px", fontSize: 12 }}
+        >
           {t(item.badge ?? statusText[item.status], locale)}
         </span>
       </div>
@@ -550,15 +571,29 @@ export default function ToolPage({ params }: PageParams) {
 
         {groups.map((group) => (
           <section key={group.key} className="subpage-section">
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-              <span aria-hidden="true" style={groupIconStyle}>{group.icon}</span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                marginBottom: 8,
+              }}
+            >
+              <span aria-hidden="true" style={groupIconStyle}>
+                {group.icon}
+              </span>
               <h2 style={{ margin: 0 }}>{t(group.title, locale)}</h2>
             </div>
+
             <p>{t(group.desc, locale)}</p>
 
             <div className="card-grid">
               {group.tools.map((item) => (
-                <ToolCard key={`${group.key}-${item.href}`} item={item} locale={locale} />
+                <ToolCard
+                  key={`${group.key}-${item.href}`}
+                  item={item}
+                  locale={locale}
+                />
               ))}
             </div>
           </section>

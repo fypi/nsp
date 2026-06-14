@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -93,6 +92,36 @@ function isPublicTool(route: string) {
     "/tool/url-codec",
     "/tool/document-template",
   ].includes(route);
+}
+
+function accountText(locale: Locale) {
+  if (locale === "en") {
+    return {
+      account: "Account Center",
+      profile: "Profile",
+      security: "Security",
+      logout: "Logout",
+      login: "Login",
+    };
+  }
+
+  if (locale === "zh-TW") {
+    return {
+      account: "個人中心",
+      profile: "個人資訊",
+      security: "安全設定",
+      logout: "登出",
+      login: "登入",
+    };
+  }
+
+  return {
+    account: "个人中心",
+    profile: "个人信息",
+    security: "安全设置",
+    logout: "退出登录",
+    login: "登录",
+  };
 }
 
 const megaData: Record<MegaKey, { cards: MegaCard[]; links: MegaLink[] }> = {
@@ -361,6 +390,20 @@ const mobileLinkStyle: CSSProperties = {
   background: "#f5f5f5",
 };
 
+const userMenuLinkStyle: CSSProperties = {
+  display: "block",
+  width: "100%",
+  padding: "10px 14px",
+  textAlign: "left",
+  border: "none",
+  background: "transparent",
+  fontSize: 14,
+  color: "#111827",
+  cursor: "pointer",
+  textDecoration: "none",
+  fontWeight: 650,
+};
+
 export default function Navbar() {
   const router = useRouter();
   const params = useParams();
@@ -402,6 +445,7 @@ export default function Navbar() {
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
   const currentMega = megaData[activeMenu ?? lastMenu];
+  const accountLabels = accountText(locale);
 
   const updateLangMenuPosition = () => {
     const el = langBtnWrapRef.current;
@@ -695,7 +739,9 @@ export default function Navbar() {
                   }}
                   type="button"
                 >
-                  {user.email?.charAt(0).toUpperCase()}
+                  {user.user_metadata?.display_name
+                    ? String(user.user_metadata.display_name).charAt(0).toUpperCase()
+                    : user.email?.charAt(0).toUpperCase()}
                 </button>
               )}
 
@@ -705,7 +751,7 @@ export default function Navbar() {
                     position: "absolute",
                     top: 42,
                     right: 0,
-                    width: 190,
+                    width: 220,
                     borderRadius: 24,
                     zIndex: 10002,
                     padding: "8px 0",
@@ -714,11 +760,54 @@ export default function Navbar() {
                     boxShadow: "0 18px 42px rgba(15,23,42,0.12)",
                   }}
                 >
-                  <div style={{ padding: "8px 14px", fontSize: 12, color: "#666", borderBottom: "1px solid rgba(0,0,0,0.06)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div
+                    style={{
+                      padding: "8px 14px",
+                      fontSize: 12,
+                      color: "#666",
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {user.email}
                   </div>
-                  <button onClick={handleLogout} type="button" style={{ width: "100%", padding: "10px 14px", textAlign: "left", border: "none", background: "transparent", fontSize: 14, color: "#d11a2a", cursor: "pointer" }}>
-                    {locale === "en" ? "Logout" : locale === "zh-TW" ? "登出" : "退出登录"}
+
+                  <Link
+                    href={`/${locale}/account`}
+                    onClick={closeAll}
+                    style={userMenuLinkStyle}
+                  >
+                    {accountLabels.account}
+                  </Link>
+
+                  <Link
+                    href={`/${locale}/account/profile`}
+                    onClick={closeAll}
+                    style={userMenuLinkStyle}
+                  >
+                    {accountLabels.profile}
+                  </Link>
+
+                  <Link
+                    href={`/${locale}/account/security`}
+                    onClick={closeAll}
+                    style={userMenuLinkStyle}
+                  >
+                    {accountLabels.security}
+                  </Link>
+
+                  <button
+                    onClick={handleLogout}
+                    type="button"
+                    style={{
+                      ...userMenuLinkStyle,
+                      color: "#d11a2a",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {accountLabels.logout}
                   </button>
                 </div>
               )}
@@ -737,7 +826,20 @@ export default function Navbar() {
                 setShowUserMenu(false);
               }}
               type="button"
-              style={{ width: 34, height: 34, borderRadius: 17, border: "1px solid #eeeeee", background: mobileOpen ? "#f5f5f5" : "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, cursor: "pointer", color: "#111", transition: "all .18s ease" }}
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 17,
+                border: "1px solid #eeeeee",
+                background: mobileOpen ? "#f5f5f5" : "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 15,
+                cursor: "pointer",
+                color: "#111",
+                transition: "all .18s ease",
+              }}
               aria-label="Menu"
             >
               {mobileOpen ? "✕" : "☰"}
@@ -823,51 +925,139 @@ export default function Navbar() {
           transition: "opacity 160ms ease, visibility 160ms ease, transform 160ms ease",
         }}
       >
-        <div style={{ maxWidth: 1220, width: "100%", display: "grid", gridTemplateColumns: "1fr 240px", gap: 54, alignItems: "start" }}>
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(currentMega.cards.length, 5)}, minmax(130px, 1fr))`, gap: 22 }}>
+        <div
+          style={{
+            maxWidth: 1220,
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: "1fr 240px",
+            gap: 54,
+            alignItems: "start",
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${Math.min(currentMega.cards.length, 5)}, minmax(130px, 1fr))`,
+              gap: 22,
+            }}
+          >
             {currentMega.cards.map((card, i) => {
               const title = pickLocaleText(card.title, locale);
               const desc = pickLocaleText(card.desc, locale);
               const content = (
-                <div className="liquidGlassCard" style={{ width: "100%", borderRadius: 24, padding: 16, transition: "all .18s ease", minHeight: 142 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: "#111", padding: "4px 8px", borderRadius: 999, background: "rgba(255,255,255,0.6)", border: "1px solid rgba(255,255,255,0.72)" }}>{card.badge}</span>
+                <div
+                  className="liquidGlassCard"
+                  style={{
+                    width: "100%",
+                    borderRadius: 24,
+                    padding: 16,
+                    transition: "all .18s ease",
+                    minHeight: 142,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 12,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: "#111",
+                        padding: "4px 8px",
+                        borderRadius: 999,
+                        background: "rgba(255,255,255,0.6)",
+                        border: "1px solid rgba(255,255,255,0.72)",
+                      }}
+                    >
+                      {card.badge}
+                    </span>
                   </div>
-                  <h3 style={{ fontSize: 15, fontWeight: 800, color: "#000", marginBottom: 8 }}>{title}</h3>
-                  <p style={{ fontSize: 12, lineHeight: 1.55, color: "#4b5563", margin: 0 }}>{desc}</p>
+                  <h3 style={{ fontSize: 15, fontWeight: 800, color: "#000", marginBottom: 8 }}>
+                    {title}
+                  </h3>
+                  <p style={{ fontSize: 12, lineHeight: 1.55, color: "#4b5563", margin: 0 }}>
+                    {desc}
+                  </p>
                 </div>
               );
 
               if ((activeMenu ?? lastMenu) === "tool") {
                 return (
-                  <button key={`mega-card-${i}`} type="button" onClick={() => handleToolRoute(card.route)} style={{ textAlign: "left", background: "transparent", border: "none", padding: 0, cursor: "pointer" }}>
+                  <button
+                    key={`mega-card-${i}`}
+                    type="button"
+                    onClick={() => handleToolRoute(card.route)}
+                    style={{
+                      textAlign: "left",
+                      background: "transparent",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                    }}
+                  >
                     {content}
                   </button>
                 );
               }
 
               return (
-                <Link key={`mega-card-${i}`} href={`/${locale}${card.route}`} onClick={closeAll} style={{ textDecoration: "none" }}>
+                <Link
+                  key={`mega-card-${i}`}
+                  href={`/${locale}${card.route}`}
+                  onClick={closeAll}
+                  style={{ textDecoration: "none" }}
+                >
                   {content}
                 </Link>
               );
             })}
           </div>
 
-          <div style={{ borderLeft: "none", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div
+            style={{
+              borderLeft: "none",
+              paddingLeft: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+          >
             {currentMega.links.map((link, i) => {
               const label = pickLinkText(link, locale);
 
               if ((activeMenu ?? lastMenu) === "tool") {
                 return (
-                  <button key={`mega-link-${i}`} type="button" onClick={() => handleToolRoute(link.route)} className="liquidGlassPill" style={{ border: "none", textAlign: "left", cursor: "pointer", width: "fit-content" }}>
+                  <button
+                    key={`mega-link-${i}`}
+                    type="button"
+                    onClick={() => handleToolRoute(link.route)}
+                    className="liquidGlassPill"
+                    style={{
+                      border: "none",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      width: "fit-content",
+                    }}
+                  >
                     {label}
                   </button>
                 );
               }
 
               return (
-                <Link key={`mega-link-${i}`} href={`/${locale}${link.route}`} onClick={closeAll} className="liquidGlassPill" style={{ width: "fit-content" }}>
+                <Link
+                  key={`mega-link-${i}`}
+                  href={`/${locale}${link.route}`}
+                  onClick={closeAll}
+                  className="liquidGlassPill"
+                  style={{ width: "fit-content" }}
+                >
                   {label}
                 </Link>
               );
@@ -877,25 +1067,101 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && isMobile && (
-        <div className="mobile-menu" style={{ position: "fixed", top: `${NAV_H}px`, left: 0, right: fixedRight, width: "auto", background: "#ffffff", padding: 20, zIndex: 9999, display: "flex", flexDirection: "column", gap: 10, borderTop: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}>
+        <div
+          className="mobile-menu"
+          style={{
+            position: "fixed",
+            top: `${NAV_H}px`,
+            left: 0,
+            right: fixedRight,
+            width: "auto",
+            background: "#ffffff",
+            padding: 20,
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            borderTop: "none",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+          }}
+        >
           {navItems.map((item) => (
-            <Link key={item.key} href={`/${locale}${item.path}`} onClick={closeAll} style={mobileLinkStyle}>
+            <Link
+              key={item.key}
+              href={`/${locale}${item.path}`}
+              onClick={closeAll}
+              style={mobileLinkStyle}
+            >
               {pickLocaleText(item.name, locale)}
             </Link>
           ))}
+
           {!user && (
             <Link href={`/${locale}/login`} onClick={closeAll} style={mobileLinkStyle}>
-              {locale === "en" ? "Login" : locale === "zh-TW" ? "登入" : "登录"}
+              {accountLabels.login}
             </Link>
           )}
+
           {user && (
-            <button onClick={handleLogout} type="button" style={{ ...mobileLinkStyle, border: "none", textAlign: "left", color: "#d11a2a", cursor: "pointer" }}>
-              {locale === "en" ? "Logout" : locale === "zh-TW" ? "登出" : "退出登录"}
+            <Link href={`/${locale}/account`} onClick={closeAll} style={mobileLinkStyle}>
+              {accountLabels.account}
+            </Link>
+          )}
+
+          {user && (
+            <Link href={`/${locale}/account/profile`} onClick={closeAll} style={mobileLinkStyle}>
+              {accountLabels.profile}
+            </Link>
+          )}
+
+          {user && (
+            <Link href={`/${locale}/account/security`} onClick={closeAll} style={mobileLinkStyle}>
+              {accountLabels.security}
+            </Link>
+          )}
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              type="button"
+              style={{
+                ...mobileLinkStyle,
+                border: "none",
+                textAlign: "left",
+                color: "#d11a2a",
+                cursor: "pointer",
+              }}
+            >
+              {accountLabels.logout}
             </button>
           )}
-          <div style={{ borderTop: "1px solid #eeeeee", paddingTop: 10, marginTop: 6, display: "flex", gap: 8, flexWrap: "wrap" }}>
+
+          <div
+            style={{
+              borderTop: "1px solid #eeeeee",
+              paddingTop: 10,
+              marginTop: 6,
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
             {locales.map((l) => (
-              <button key={l} onClick={() => changeLanguage(l)} type="button" style={{ padding: "8px 12px", border: "1px solid #eeeeee", borderRadius: 8, background: locale === l ? "#111" : "#ffffff", color: locale === l ? "#ffffff" : "#111", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>
+              <button
+                key={l}
+                onClick={() => changeLanguage(l)}
+                type="button"
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #eeeeee",
+                  borderRadius: 8,
+                  background: locale === l ? "#111" : "#ffffff",
+                  color: locale === l ? "#ffffff" : "#111",
+                  fontSize: 13,
+                  cursor: "pointer",
+                  fontWeight: 500,
+                }}
+              >
                 {languageNames[l]}
               </button>
             ))}

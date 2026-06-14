@@ -1115,3 +1115,166 @@ form button[type="submit"]:disabled,
   cursor: not-allowed !important;
   transform: none !important;
 }
+/* =========================================================
+   FINAL GLOBAL LIGHT BUTTON OVERRIDE
+   全站按钮统一浅色玻璃风格：禁止黑底按钮
+   放在 app/globals.css 最底部
+   ========================================================= */
+
+/* 所有常见操作按钮 */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn-dark,
+.contact-button,
+.auth-form button,
+.auth-box button,
+.auth-page button,
+.subpage-main button,
+.card button,
+form button[type="submit"],
+a.btn-dark,
+a.liquidGlassPill,
+button.liquidGlassPill,
+.liquidGlassPill {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+
+  background:
+    radial-gradient(
+      circle at 18% 8%,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.58) 38%,
+      rgba(255, 255, 255, 0.22) 76%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(243, 246, 249, 0.86)
+    ) !important;
+
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.96) !important;
+  border-radius: 999px !important;
+
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
+
+  backdrop-filter: blur(16px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+  font-weight: 800 !important;
+}
+
+/* 专门压住页面里写死 background: #111 / black / rgb(17,17,17) 的按钮和链接 */
+button[style*="background: #111"],
+button[style*="background:#111"],
+button[style*="background-color: #111"],
+button[style*="background-color:#111"],
+button[style*="background: black"],
+button[style*="background:black"],
+button[style*="background-color: black"],
+button[style*="background-color:black"],
+button[style*="background: rgb(17, 17, 17)"],
+button[style*="background-color: rgb(17, 17, 17)"],
+a[style*="background: #111"],
+a[style*="background:#111"],
+a[style*="background-color: #111"],
+a[style*="background-color:#111"],
+a[style*="background: black"],
+a[style*="background:black"],
+a[style*="background-color: black"],
+a[style*="background-color:black"],
+a[style*="background: rgb(17, 17, 17)"],
+a[style*="background-color: rgb(17, 17, 17)"] {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+
+  background:
+    radial-gradient(
+      circle at 18% 8%,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.58) 38%,
+      rgba(255, 255, 255, 0.22) 76%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(243, 246, 249, 0.86)
+    ) !important;
+
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.96) !important;
+  border-radius: 999px !important;
+
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
+
+  backdrop-filter: blur(16px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
+}
+
+/* 按钮里的文字、图标也统一深色清晰 */
+button *,
+.btn-dark *,
+.contact-button *,
+.auth-form button *,
+.auth-box button *,
+.auth-page button *,
+.subpage-main button *,
+.card button *,
+.liquidGlassPill *,
+a[style*="background"] * {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  opacity: 1 !important;
+}
+
+/* hover 仍然是浅色，不变黑 */
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+.btn-dark:hover,
+.contact-button:hover,
+.auth-form button:hover,
+.auth-box button:hover,
+.auth-page button:hover,
+.subpage-main button:hover,
+.card button:hover,
+form button[type="submit"]:hover,
+a.btn-dark:hover,
+a.liquidGlassPill:hover,
+button.liquidGlassPill:hover,
+.liquidGlassPill:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  border-color: rgba(126, 177, 231, 0.48) !important;
+
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.11),
+    0 4px 12px rgba(126, 177, 231, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* 禁用状态 */
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled,
+.auth-form button:disabled,
+.auth-box button:disabled,
+.auth-page button:disabled,
+.subpage-main button:disabled,
+.card button:disabled {
+  opacity: 0.56 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
