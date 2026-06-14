@@ -1,11 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-
-type Locale = "en" | "zh" | "zh-TW";
+import";import { useEffect, useMemo, useState } from "react";
 
 type Track =
   | "frontend"
@@ -230,9 +226,36 @@ const texts: Record<Locale, TechPathText> = {
 
 const trackTopics: Record<Track, { zh: string[]; tw: string[]; en: string[] }> = {
   frontend: {
-    zh: ["HTML / CSS 基础", "JavaScript", "TypeScript", "React / Next.js", "状态管理", "接口请求", "组件设计", "性能优化"],
-    tw: ["HTML / CSS 基礎", "JavaScript", "TypeScript", "React / Next.js", "狀態管理", "接口請求", "元件設計", "效能優化"],
-    en: ["HTML / CSS basics", "JavaScript", "TypeScript", "React / Next.js", "State management", "API requests", "Component design", "Performance"],
+    zh: [
+      "HTML / CSS 基础",
+      "JavaScript",
+      "TypeScript",
+      "React / Next.js",
+      "状态管理",
+      "接口请求",
+      "组件设计",
+      "性能优化",
+    ],
+    tw: [
+      "HTML / CSS 基礎",
+      "JavaScript",
+      "TypeScript",
+      "React / Next.js",
+      "狀態管理",
+      "接口請求",
+      "元件設計",
+      "效能優化",
+    ],
+    en: [
+      "HTML / CSS basics",
+      "JavaScript",
+      "TypeScript",
+      "React / Next.js",
+      "State management",
+      "API requests",
+      "Component design",
+      "Performance",
+    ],
   },
   backend: {
     zh: ["HTTP 基础", "数据库", "Node.js / API", "认证权限", "缓存", "队列", "日志监控", "部署"],
@@ -307,7 +330,6 @@ function tasksForWeek({
   locale,
 }: {
   topic: string;
-  track: Track;
   level: Level;
   pace: Pace;
   locale: Locale;
@@ -412,7 +434,7 @@ function generatePath({
     weeklyPlan.push({
       week: i,
       focus: topic,
-      tasks: tasksForWeek({ topic, track, level, pace, locale }),
+      tasks: tasksForWeek({ topic, level, pace, locale }),
       output:
         locale === "en"
           ? `A small note, demo, or checklist related to ${topic}.`
@@ -704,7 +726,14 @@ export default function TechLearningPathPage() {
               className="card liquidGlassCard"
               style={{ textAlign: "center" }}
             >
-              {loginHref}
+              <Link
+                href={loginHref}
+                className="liquidGlassPill"
+                style={{
+                  display: "inline-block",
+                  textDecoration: "none",
+                }}
+              >
                 {t.loginBtn}
               </Link>
             </div>
@@ -997,3 +1026,7 @@ export default function TechLearningPathPage() {
     </main>
   );
 }
+
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+

@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-function isValid(value) {function isValidEmail(email) {
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function normalizeText(value) {
   return String(value || "").replace(/\r\n/g, "\n").trim();
 }
 
@@ -8,24 +12,23 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    const name = String(body.name || "").trim();
-    const email = String(body.email || "").trim();
-    const company = String(body.company || "").trim();
-    const phone = String(body.phone || "").trim();
-    const subject = String(body.subject || "官网联系表单").trim();
-    const message = String(body.message || "").trim();
-    const locale = String(body.locale || "").trim();
-    const source = String(body.source || "contact-page").trim();
+    const name = normalizeText(body.name);
+    const email = normalizeText(body.email);
+    const company = normalizeText(body.company);
+    const phone = normalizeText(body.phone);
+    const subject = normalizeText(body.subject || "官网联系表单");
+    const message = normalizeText(body.message);
+    const locale = normalizeText(body.locale);
+    const source = normalizeText(body.source || "contact-page");
 
     const privacyAccepted = Boolean(
       body.privacyAccepted || body.agree || body.consent
     );
 
-    const honeypot = String(
+    const honeypot = normalizeText(
       body.website || body.hp || body.honeypot || ""
-    ).trim();
+    );
 
-    // 机器人误填隐藏字段，直接假成功
     if (honeypot) {
       return NextResponse.json({
         ok: true,
@@ -94,9 +97,7 @@ export async function POST(request) {
     const fromEmail =
       process.env.CONTACT_FROM_EMAIL || "NinesPro <onboarding@resend.dev>";
 
-    const safeMessage = escapeText(message);
-
-    const text = [
+    const emailText = [
       "官网联系表单新消息",
       "",
       "姓名：" + name,
@@ -108,12 +109,11 @@ export async function POST(request) {
       "来源：" + source,
       "",
       "留言内容：",
-      safeMessage,
+      message,
       "",
       "用户已勾选同意隐私政策与服务条款。",
     ].join("\n");
 
-    // 没配置 Resend 时，不让前端失败，先记录日志并返回成功
     if (!resendApiKey) {
       console.log("Contact form submission without RESEND_API_KEY:", {
         name,
@@ -121,7 +121,7 @@ export async function POST(request) {
         company,
         phone,
         subject,
-        message: safeMessage,
+        message,
         locale,
         source,
       });
@@ -145,7 +145,7 @@ export async function POST(request) {
         to: [toEmail],
         reply_to: email,
         subject: "官网联系表单：" + subject,
-        text,
+        text: emailText,
       }),
     });
 
@@ -191,6 +191,3 @@ export async function GET() {
     message: "NinesPro contact API is running.",
   });
 }
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
