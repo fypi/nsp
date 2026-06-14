@@ -1,22 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
-
-type Locale = "zh" | "zh-TW" | "en";
-
-type ContactText = {
-  heroTitle: string;
-  heroDesc: string;
-
-  emailTitle: string;
-  emailDescBefore: string;
-  email: string;
-  emailDescAfter: string;
-
-  replyTitle: string;
-  replyDesc: string;
+import { use  replyDesc: string;import { useParams } from "next/navigation";
 
   channelTitle: string;
   channelDescBefore: string;
@@ -165,9 +150,28 @@ async function readResponseMessage(res: Response) {
 
   const text = await res.text().catch(() => "");
 
+  if (res.status === 404) {
+    return {
+      ok: false,
+      message:
+        "联系表单接口不存在：/api/contact 返回 404。请确认 app/api/contact/route.ts 已创建并成功部署。",
+      raw: text,
+    };
+  }
+
+  if (res.status >= 500) {
+    return {
+      ok: false,
+      message: `服务器接口错误，状态码：${res.status}。请检查 /api/contact 后端日志。`,
+      raw: text,
+    };
+  }
+
   return {
     ok: res.ok,
-    message: text,
+    message: text
+      ? `服务器返回了非 JSON 响应，状态码：${res.status}`
+      : `请求失败，状态码：${res.status}`,
     raw: text,
   };
 }
@@ -336,3 +340,17 @@ export default function ContactPage() {
     </main>
   );
 }
+import { useState, type FormEvent } from "react";
+
+type Locale = "zh" | "zh-TW" | "en";
+
+type ContactText = {
+  heroTitle: string;
+  heroDesc: string;
+
+  emailTitle: string;
+  emailDescBefore: string;
+  email: string;
+  emailDescAfter: string;
+
+  replyTitle: string;
