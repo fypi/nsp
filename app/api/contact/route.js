@@ -152,10 +152,13 @@ export async function POST(request) {
       body: JSON.stringify({
         from: `NINESPRO <${fromEmail}>`,
         to: [toEmail],
+
+        // Resend SDK / 文档字段
         replyTo: email,
-        headers: {
-          "Reply-To": email,
-        },
+
+        // Resend REST API 兼容字段
+        reply_to: email,
+
         subject: `官网联系表单：${name} - ${email} - ${Date.now()}`,
         text: emailText,
       }),
