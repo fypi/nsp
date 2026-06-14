@@ -146,16 +146,15 @@ export async function POST(request) {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    from: `NINESPRO <${fromEmail}>`,
-    to: [toEmail],
-    replyTo: email,
-    headers: {
-      "Reply-To": email,
-    },
-    subject: `官网联系表单：${name} - ${email} - ${Date.now()}`,
-    text: emailText,
-  }),
-});
+  from: `NINESPRO <${fromEmail}>`,
+  to: [toEmail],
+  replyTo: email,
+  headers: {
+    "Reply-To": email,
+  },
+  subject: `官网联系表单：${name} - ${email} - ${Date.now()}`,
+  text: emailText,
+}),
 
     const resendText = await resendResp.text();
 
