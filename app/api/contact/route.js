@@ -100,7 +100,31 @@ export async function POST(request) {
 
     const resendApiKey = process.env.RESEND_API_KEY;
     const toEmail = process.env.CONTACT_TO_EMAIL || "one@ninespro.com";
-    const fromEmail = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
+    const fromEmail =
+      process.env.CONTACT_FROM_EMAIL || "contact@one.ninespro.com";
+
+    if (!resendApiKey) {
+      console.error("Missing RESEND_API_KEY. Email was not sent.", {
+        name,
+        email,
+        company,
+        phone,
+        subject,
+        message,
+        locale,
+        source,
+      });
+
+      return NextResponse.json(
+        {
+          ok: false,
+          success: false,
+          message:
+            "邮件服务未配置：缺少 RESEND_API_KEY。请在 Vercel 环境变量中添加 RESEND_API_KEY。",
+        },
+        { status: 500 }
+      );
+    }
 
     const emailText = [
       "官网联系表单新消息",
@@ -119,42 +143,23 @@ export async function POST(request) {
       "用户已同意隐私政策与服务条款。",
     ].join("\n");
 
-    if (!resendApiKey) {
-      console.log("Contact form submission without RESEND_API_KEY:", {
-        name,
-        email,
-        company,
-        phone,
-        subject,
-        message,
-        locale,
-        source,
-      });
-
-      return NextResponse.json({
-        ok: true,
-        success: true,
-        message:
-          "提交成功。当前邮件服务未配置 RESEND_API_KEY，消息已记录到服务器日志。",
-      });
-    }
-
-   const resendResp = await fetch("https://api.resend.com/emails", {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer " + resendApiKey,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-  from: `NINESPRO <${fromEmail}>`,
-  to: [toEmail],
-  replyTo: email,
-  headers: {
-    "Reply-To": email,
-  },
-  subject: `官网联系表单：${name} - ${email} - ${Date.now()}`,
-  text: emailText,
-}),
+    const resendResp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + resendApiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: `NINESPRO <${fromEmail}>`,
+        to: [toEmail],
+        replyTo: email,
+        headers: {
+          "Reply-To": email,
+        },
+        subject: `官网联系表单：${name} - ${email} - ${Date.now()}`,
+        text: emailText,
+      }),
+    });
 
     const resendText = await resendResp.text();
 
