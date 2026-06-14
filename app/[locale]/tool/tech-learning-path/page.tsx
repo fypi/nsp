@@ -704,7 +704,7 @@ export default function TechLearningPathPage() {
               className="card liquidGlassCard"
               style={{ textAlign: "center" }}
             >
-              <Link href={loginHref} className="liquidGlassPill">
+              {loginHref}
                 {t.loginBtn}
               </Link>
             </div>
@@ -996,3 +996,4 @@ export default function TechLearningPathPage() {
       </div>
     </main>
   );
+}
