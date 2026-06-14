@@ -148,7 +148,7 @@ export async function POST(request) {
       body: JSON.stringify({
         from: fromEmail,
         to: [toEmail],
-        reply_to: email,
+        replyto: email,
         subject: "官网联系表单：" + subject,
         text: emailText,
       }),
