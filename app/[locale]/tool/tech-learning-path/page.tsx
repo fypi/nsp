@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import";import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+
+type Locale = "en" | "zh" | "zh-TW";
 
 type Track =
   | "frontend"
