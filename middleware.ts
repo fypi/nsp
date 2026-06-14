@@ -1,11 +1,13 @@
 import createMiddleware from "next-intl/middleware";
 
 export default createMiddleware({
-  locales: ["zh", "en", "zh-TW"],
-  defaultLocale: "zh",
-  localePrefix: "always"
+  locales: ["en", "zh", "zh-TW"],
+  defaultLocale: "en",
+  localePrefix: "as-needed",
 });
 
 export const config = {
-  matcher: ["/((?!_next|.*\\..*).*)"]
+  matcher: [
+    "/((?!api|_next|_vercel|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)",
+  ],
 };
