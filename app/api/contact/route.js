@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
 
-type ContactRequestBody = {
- message = String(body.message || "").trim();  name?: string;
+function isValid(value) {function isValidEmail(email) {
+  return String(value || "").replace(/\r\n/g, "\n").trim();
+}
+
+export async function POST(request) {
+  try {
+    const body = await request.json();
+
+    const name = String(body.name || "").trim();
+    const email = String(body.email || "").trim();
+    const company = String(body.company || "").trim();
+    const phone = String(body.phone || "").trim();
+    const subject = String(body.subject || "官网联系表单").trim();
+    const message = String(body.message || "").trim();
     const locale = String(body.locale || "").trim();
     const source = String(body.source || "contact-page").trim();
 
@@ -13,7 +25,7 @@ type ContactRequestBody = {
       body.website || body.hp || body.honeypot || ""
     ).trim();
 
-    // 机器人误填隐藏字段，直接假成功，不继续处理
+    // 机器人误填隐藏字段，直接假成功
     if (honeypot) {
       return NextResponse.json({
         ok: true,
@@ -66,7 +78,6 @@ type ContactRequestBody = {
       );
     }
 
-    // 原来是 10 个字，会导致“收到请回复”这种测试内容失败
     if (message.length < 2) {
       return NextResponse.json(
         {
@@ -180,35 +191,6 @@ export async function GET() {
     message: "NinesPro contact API is running.",
   });
 }
-  email?: string;
-  company?: string;
-  phone?: string;
-  subject?: string;
-  message?: string;
-  privacyAccepted?: boolean;
-  agree?: boolean;
-  consent?: boolean;
-  website?: string;
-  hp?: string;
-  honeypot?: string;
-  locale?: string;
-  source?: string;
-};
-
-function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function escapeText(value: string) {
-  return value.replace(/\r\n/g, "\n").trim();
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = (await request.json()) as ContactRequestBody;
-
-    const name = String(body.name || "").trim();
-    const email = String(body.email || "").trim();
-    const company = String(body.company || "").trim();
-    const phone = String(body.phone || "").trim();
-    const subject = String(body.subject || "官网联系表单").trim();

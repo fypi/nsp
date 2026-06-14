@@ -130,8 +130,8 @@ function parseInline(text: string) {
   value = value.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   value = value.replace(/\*([^*]+)\*/g, "<em>$1</em>");
 
-  codeTokens.forEach((html, i) => {
-    value = value.replace(`__CODE_${i}__`, html);
+  codeTokens.forEach((html, index) => {
+    value = value.replace(`__CODE_${index}__`, html);
   });
 
   return value;
@@ -445,7 +445,7 @@ export default function MarkdownPreviewPage() {
 
               <textarea
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(event) => setInput(event.target.value)}
                 placeholder={t.placeholder}
                 style={textareaStyle}
               />
