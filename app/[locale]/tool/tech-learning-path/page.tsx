@@ -1030,7 +1030,3 @@ export default function TechLearningPathPage() {
     </main>
   );
 }
-
-import { useParams } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-
