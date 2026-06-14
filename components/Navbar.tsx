@@ -124,6 +124,29 @@ function accountText(locale: Locale) {
   };
 }
 
+function getUserDisplayName(user: User | null, fallback: string) {
+  if (!user) return fallback;
+
+  const meta = user.user_metadata ?? {};
+
+  const displayName =
+    meta.display_name ||
+    meta.full_name ||
+    meta.name ||
+    meta.username ||
+    meta.nickname;
+
+  if (typeof displayName === "string" && displayName.trim()) {
+    return displayName.trim();
+  }
+
+  if (user.email) {
+    return user.email.split("@")[0];
+  }
+
+  return fallback;
+}
+
 const megaData: Record<MegaKey, { cards: MegaCard[]; links: MegaLink[] }> = {
   product: {
     cards: [
@@ -393,7 +416,7 @@ const mobileLinkStyle: CSSProperties = {
 const userMenuLinkStyle: CSSProperties = {
   display: "block",
   width: "100%",
-  padding: "10px 14px",
+  padding: "10px 16px",
   textAlign: "left",
   border: "none",
   background: "transparent",
@@ -446,6 +469,7 @@ export default function Navbar() {
   const isMegaOpen = activeMenu !== null && !isMobile;
   const currentMega = megaData[activeMenu ?? lastMenu];
   const accountLabels = accountText(locale);
+  const userDisplayName = getUserDisplayName(user, accountLabels.account);
 
   const updateLangMenuPosition = () => {
     const el = langBtnWrapRef.current;
@@ -455,6 +479,31 @@ export default function Navbar() {
       top: Math.round(rect.bottom + 8),
       left: Math.round(rect.left + rect.width / 2),
     });
+  };
+
+  const clearCloseTimer = () => {
+    if (menuCloseTimerRef.current) {
+      clearTimeout(menuCloseTimerRef.current);
+      menuCloseTimerRef.current = null;
+    }
+  };
+
+  const clearLangCloseTimer = () => {
+    if (langCloseTimerRef.current) {
+      clearTimeout(langCloseTimerRef.current);
+      langCloseTimerRef.current = null;
+    }
+  };
+
+  const closeAll = () => {
+    clearCloseTimer();
+    clearLangCloseTimer();
+    setActiveMenu(null);
+    setShowLangMenu(false);
+    setShowUserMenu(false);
+    setMobileOpen(false);
+    setHoveredNav(null);
+    setHoveredIcon(null);
   };
 
   useEffect(() => {
@@ -498,20 +547,6 @@ export default function Navbar() {
     closeAll();
   }, [pathname, searchParams]);
 
-  const clearCloseTimer = () => {
-    if (menuCloseTimerRef.current) {
-      clearTimeout(menuCloseTimerRef.current);
-      menuCloseTimerRef.current = null;
-    }
-  };
-
-  const clearLangCloseTimer = () => {
-    if (langCloseTimerRef.current) {
-      clearTimeout(langCloseTimerRef.current);
-      langCloseTimerRef.current = null;
-    }
-  };
-
   const openMenu = (key: MegaKey) => {
     if (isMobile) return;
     clearCloseTimer();
@@ -550,17 +585,6 @@ export default function Navbar() {
     }, 180);
   };
 
-  const closeAll = () => {
-    clearCloseTimer();
-    clearLangCloseTimer();
-    setActiveMenu(null);
-    setShowLangMenu(false);
-    setShowUserMenu(false);
-    setMobileOpen(false);
-    setHoveredNav(null);
-    setHoveredIcon(null);
-  };
-
   const changeLanguage = (l: Locale) => {
     document.cookie = `locale=${l}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
@@ -577,14 +601,17 @@ export default function Navbar() {
 
   const handleToolRoute = (route: string) => {
     closeAll();
+
     if (isPublicTool(route)) {
       router.push(`/${locale}${route}`);
       return;
     }
+
     if (!user) {
       router.push(`/${locale}/login?next=${encodeURIComponent(`/${locale}${route}`)}`);
       return;
     }
+
     router.push(`/${locale}${route}`);
   };
 
@@ -646,7 +673,9 @@ export default function Navbar() {
                     "liquidGlassNavItem",
                     isActive ? "liquidGlassNavActive" : "",
                     isHover ? "liquidGlassNavHover" : "",
-                  ].filter(Boolean).join(" ")}
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   aria-current={isActive ? "page" : undefined}
                   onMouseEnter={() => openMenu(item.key)}
                   style={{
@@ -673,7 +702,9 @@ export default function Navbar() {
               onClick={closeAll}
               onMouseEnter={() => setHoveredIcon("help")}
               onMouseLeave={() => setHoveredIcon((v) => (v === "help" ? null : v))}
-              className={["liquidGlassNavItem", hoveredIcon === "help" ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
+              className={["liquidGlassNavItem", hoveredIcon === "help" ? "liquidGlassNavHover" : ""]
+                .filter(Boolean)
+                .join(" ")}
               style={{ ...iconBtn, textDecoration: "none" }}
               aria-label="Help"
             >
@@ -695,7 +726,9 @@ export default function Navbar() {
               }}
             >
               <button
-                className={["liquidGlassNavItem", hoveredIcon === "lang" || showLangMenu ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
+                className={["liquidGlassNavItem", hoveredIcon === "lang" || showLangMenu ? "liquidGlassNavHover" : ""]
+                  .filter(Boolean)
+                  .join(" ")}
                 style={iconBtn}
                 onClick={() => {
                   if (!isReady) return;
@@ -720,7 +753,9 @@ export default function Navbar() {
                   onClick={closeAll}
                   onMouseEnter={() => setHoveredIcon("login")}
                   onMouseLeave={() => setHoveredIcon((v) => (v === "login" ? null : v))}
-                  className={["liquidGlassNavItem", hoveredIcon === "login" ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
+                  className={["liquidGlassNavItem", hoveredIcon === "login" ? "liquidGlassNavHover" : ""]
+                    .filter(Boolean)
+                    .join(" ")}
                   style={{ ...iconBtn, textDecoration: "none" }}
                   aria-label="Login"
                 >
@@ -728,7 +763,9 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <button
-                  className={["liquidGlassNavItem", hoveredIcon === "user" ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
+                  className={["liquidGlassNavItem", hoveredIcon === "user" || showUserMenu ? "liquidGlassNavHover" : ""]
+                    .filter(Boolean)
+                    .join(" ")}
                   style={iconBtn}
                   onMouseEnter={() => setHoveredIcon("user")}
                   onMouseLeave={() => setHoveredIcon((v) => (v === "user" ? null : v))}
@@ -738,40 +775,81 @@ export default function Navbar() {
                     setActiveMenu(null);
                   }}
                   type="button"
+                  aria-label="User menu"
+                  title={user.email ?? userDisplayName}
                 >
-                  {user.user_metadata?.display_name
-                    ? String(user.user_metadata.display_name).charAt(0).toUpperCase()
-                    : user.email?.charAt(0).toUpperCase()}
+                  {userDisplayName.charAt(0).toUpperCase()}
                 </button>
               )}
 
-              {showUserMenu && (
+              {showUserMenu && user && (
                 <div
                   style={{
                     position: "absolute",
                     top: 42,
                     right: 0,
-                    width: 220,
+                    width: 260,
                     borderRadius: 24,
                     zIndex: 10002,
-                    padding: "8px 0",
+                    padding: "10px 0",
                     background: "#fff",
                     border: "1px solid rgba(0,0,0,0.06)",
                     boxShadow: "0 18px 42px rgba(15,23,42,0.12)",
+                    overflow: "hidden",
                   }}
                 >
                   <div
                     style={{
-                      padding: "8px 14px",
-                      fontSize: 12,
-                      color: "#666",
+                      padding: "12px 16px",
                       borderBottom: "1px solid rgba(0,0,0,0.06)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
+                      background: "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
                     }}
                   >
-                    {user.email}
+                    <div
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: 999,
+                        background: "#111827",
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 16,
+                        fontWeight: 900,
+                        marginBottom: 10,
+                      }}
+                    >
+                      {userDisplayName.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 850,
+                        color: "#111827",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        marginBottom: 4,
+                      }}
+                      title={userDisplayName}
+                    >
+                      {userDisplayName}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#6b7280",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={user.email ?? ""}
+                    >
+                      {user.email}
+                    </div>
                   </div>
 
                   <Link
@@ -803,8 +881,11 @@ export default function Navbar() {
                     type="button"
                     style={{
                       ...userMenuLinkStyle,
+                      borderTop: "1px solid rgba(0,0,0,0.06)",
+                      marginTop: 4,
+                      paddingTop: 12,
                       color: "#d11a2a",
-                      fontWeight: 700,
+                      fontWeight: 800,
                     }}
                   >
                     {accountLabels.logout}
@@ -1100,6 +1181,72 @@ export default function Navbar() {
             <Link href={`/${locale}/login`} onClick={closeAll} style={mobileLinkStyle}>
               {accountLabels.login}
             </Link>
+          )}
+
+          {user && (
+            <div
+              style={{
+                padding: "14px 16px",
+                borderRadius: 14,
+                background: "#f5f5f5",
+                color: "#111827",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginBottom: 8,
+                }}
+              >
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 999,
+                    background: "#111827",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 15,
+                    fontWeight: 900,
+                    flex: "0 0 34px",
+                  }}
+                >
+                  {userDisplayName.charAt(0).toUpperCase()}
+                </div>
+
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 850,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    title={userDisplayName}
+                  >
+                    {userDisplayName}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#6b7280",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    title={user.email ?? ""}
+                  >
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {user && (
