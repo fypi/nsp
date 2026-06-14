@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState, type FormEvent } from "react";
 
 type Locale = "zh" | "zh-TW" | "en";
 
@@ -124,7 +124,8 @@ const contactText: Record<Locale, ContactText> = {
       "We usually reply within 1-2 business days. For urgent matters, please include [Urgent] in the subject line.",
 
     channelTitle: "Other Channels",
-    channelDescBefore: "For more direct communication, please submit feedback via the",
+    channelDescBefore:
+      "For more direct communication, please submit feedback via the",
     supportLink: "Support Center",
     channelDescAfter: ", and we will arrange follow-up accordingly.",
 
@@ -138,10 +139,38 @@ const contactText: Record<Locale, ContactText> = {
     send: "Send",
     sending: "Sending...",
 
-    successMessage: "✔ Your message has been sent. We will reply as soon as possible.",
+    successMessage:
+      "✔ Your message has been sent. We will reply as soon as possible.",
     failMessage: "Submission failed. Please try again later.",
   },
 };
+
+async function readResponseMessage(res: Response) {
+  const contentType = res.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    const data = await res.json().catch(() => null);
+
+    return {
+      ok: Boolean(data?.ok || data?.success),
+      message:
+        data?.message ||
+        data?.error ||
+        data?.details ||
+        data?.hint ||
+        "",
+      raw: data,
+    };
+  }
+
+  const text = await res.text().catch(() => "");
+
+  return {
+    ok: res.ok,
+    message: text,
+    raw: text,
+  };
+}
 
 export default function ContactPage() {
   const params = useParams();
@@ -152,14 +181,21 @@ export default function ContactPage() {
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (loading) return;
+
+    const formEl = event.currentTarget;
+    const form = new FormData(formEl);
+
+    const name = String(form.get("name") || "").trim();
+    const email = String(form.get("email") || "").trim();
+    const message = String(form.get("message") || "").trim();
 
     setLoading(true);
     setSuccess(false);
     setErrorMessage("");
-
-    const form = new FormData(e.currentTarget);
 
     try {
       const res = await fetch("/api/contact", {
@@ -168,30 +204,29 @@ export default function ContactPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: form.get("name"),
-          email: form.get("email"),
-          message: form.get("message"),
-
-          // 如果后端要求 privacyAccepted，这里默认传 true。
-          // 后面如果你加隐私勾选框，可以把这里改成 checkbox 的值。
+          name,
+          email,
+          message,
           privacyAccepted: true,
+          locale,
+          source: "contact-page",
         }),
       });
 
-      const data = await res.json();
+      const data = await readResponseMessage(res);
 
-      setLoading(false);
-
-      if (data.ok || data.success) {
+      if (res.ok && data.ok) {
         setSuccess(true);
-        e.currentTarget.reset();
+        formEl.reset();
         return;
       }
 
-      setErrorMessage(data.message || data.error || t.failMessage);
-    } catch {
-      setLoading(false);
+      setErrorMessage(data.message || `${t.failMessage} HTTP ${res.status}`);
+    } catch (error) {
+      console.error("Contact form submit failed:", error);
       setErrorMessage(t.failMessage);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -253,13 +288,13 @@ export default function ContactPage() {
           <p>{t.formDesc}</p>
 
           {success && (
-            <p style={{ color: "green", marginTop: "10px" }}>
+            <p style={{ color: "green", marginTop: "10px", fontWeight: 600 }}>
               {t.successMessage}
             </p>
           )}
 
           {errorMessage && (
-            <p style={{ color: "#d11a2a", marginTop: "10px" }}>
+            <p style={{ color: "#d11a2a", marginTop: "10px", fontWeight: 600 }}>
               {errorMessage}
             </p>
           )}
@@ -270,6 +305,8 @@ export default function ContactPage() {
               placeholder={t.namePlaceholder}
               required
               className="contact-input"
+              disabled={loading}
+              autoComplete="name"
             />
 
             <input
@@ -278,6 +315,8 @@ export default function ContactPage() {
               placeholder={t.emailPlaceholder}
               required
               className="contact-input"
+              disabled={loading}
+              autoComplete="email"
             />
 
             <textarea
@@ -285,6 +324,7 @@ export default function ContactPage() {
               placeholder={t.messagePlaceholder}
               required
               className="contact-textarea"
+              disabled={loading}
             />
 
             <button type="submit" disabled={loading} className="contact-button">
