@@ -302,7 +302,6 @@ function clamp(value: number, min: number, max: number) {
 
 function tasksForWeek({
   topic,
-  track,
   level,
   pace,
   locale,
@@ -705,7 +704,7 @@ export default function TechLearningPathPage() {
               className="card liquidGlassCard"
               style={{ textAlign: "center" }}
             >
-              {loginHref}
+              <Link href={loginHref} className="liquidGlassPill">
                 {t.loginBtn}
               </Link>
             </div>
