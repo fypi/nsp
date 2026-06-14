@@ -4,30 +4,36 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function normalizeText(value) {
+function clean(value) {
   return String(value || "").replace(/\r\n/g, "\n").trim();
+}
+
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    success: true,
+    message: "NinesPro contact API is running.",
+  });
 }
 
 export async function POST(request) {
   try {
     const body = await request.json();
 
-    const name = normalizeText(body.name);
-    const email = normalizeText(body.email);
-    const company = normalizeText(body.company);
-    const phone = normalizeText(body.phone);
-    const subject = normalizeText(body.subject || "官网联系表单");
-    const message = normalizeText(body.message);
-    const locale = normalizeText(body.locale);
-    const source = normalizeText(body.source || "contact-page");
+    const name = clean(body.name);
+    const email = clean(body.email);
+    const message = clean(body.message);
+    const company = clean(body.company);
+    const phone = clean(body.phone);
+    const subject = clean(body.subject || "官网联系表单");
+    const locale = clean(body.locale);
+    const source = clean(body.source || "contact-page");
 
     const privacyAccepted = Boolean(
       body.privacyAccepted || body.agree || body.consent
     );
 
-    const honeypot = normalizeText(
-      body.website || body.hp || body.honeypot || ""
-    );
+    const honeypot = clean(body.website || body.hp || body.honeypot || "");
 
     if (honeypot) {
       return NextResponse.json({
@@ -94,8 +100,7 @@ export async function POST(request) {
 
     const resendApiKey = process.env.RESEND_API_KEY;
     const toEmail = process.env.CONTACT_TO_EMAIL || "one@ninespro.com";
-    const fromEmail =
-      process.env.CONTACT_FROM_EMAIL || "NinesPro <onboarding@resend.dev>";
+    const fromEmail = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
 
     const emailText = [
       "官网联系表单新消息",
@@ -111,7 +116,7 @@ export async function POST(request) {
       "留言内容：",
       message,
       "",
-      "用户已勾选同意隐私政策与服务条款。",
+      "用户已同意隐私政策与服务条款。",
     ].join("\n");
 
     if (!resendApiKey) {
@@ -182,12 +187,4 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-}
-
-export async function GET() {
-  return NextResponse.json({
-    ok: true,
-    success: true,
-    message: "NinesPro contact API is running.",
-  });
 }
