@@ -1,202 +1,154 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-type Locale = "en" | "zh" | "zh-TW";
+const locales = ["en", "zh", "zh-TW"] as const;
+type Locale = (typeof locales)[number];
 
-type ForgotPasswordText = {
-  title: string;
-  emailLabel: string;
-  emailPlaceholder: string;
-  send: string;
-  sending: string;
-  successMessage: string;
-  errorMessage: string;
-  backToLogin: string;
-};
-
-const locales: Locale[] = ["en", "zh", "zh-TW"];
-
-function normalizeLocale(rawLocale: unknown): Locale {
-  if (rawLocale === "en") return "en";
-  if (rawLocale === "zh") return "zh";
-  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
-
+function normalizeLocale(raw: unknown): Locale {
+  if (raw === "en") return "en";
+  if (raw === "zh-TW") return "zh-TW";
   return "zh";
 }
 
-const forgotPasswordText: Record<Locale, ForgotPasswordText> = {
+const copy = {
   zh: {
-    title: "重置密码",
-    emailLabel: "邮箱",
-    emailPlaceholder: "请输入你的邮箱",
-    send: "发送邮件",
+    title: "忘记密码",
+    desc: "输入注册邮箱，我们会发送密码重置链接。",
+    email: "邮箱",
+    emailPlaceholder: "请输入注册邮箱",
+    send: "发送重置链接",
     sending: "发送中...",
-    successMessage: "如果该邮箱存在，你将收到重置链接。",
-    errorMessage: "发送失败，请稍后再试。",
-    backToLogin: "返回登录",
+    back: "返回登录",
+    required: "请输入邮箱。",
+    success: "如果该邮箱已注册，重置链接会发送到邮箱中。",
+    failed: "发送失败，请检查网络、邮箱配置或稍后重试。",
   },
-
-  "zh-TW": {
-    title: "重設密碼",
-    emailLabel: "郵箱",
-    emailPlaceholder: "請輸入你的郵箱",
-    send: "發送郵件",
-    sending: "發送中...",
-    successMessage: "如果該郵箱存在，你將收到重設連結。",
-    errorMessage: "發送失敗，請稍後再試。",
-    backToLogin: "返回登入",
-  },
-
   en: {
-    title: "Reset Password",
-    emailLabel: "Email",
-    emailPlaceholder: "Enter your email",
-    send: "Send email",
+    title: "Forgot password",
+    desc: "Enter your registered email and we will send a password reset link.",
+    email: "Email",
+    emailPlaceholder: "Enter your registered email",
+    send: "Send reset link",
     sending: "Sending...",
-    successMessage: "If the email exists, you’ll receive a reset link.",
-    errorMessage: "Failed to send reset email. Please try again later.",
-    backToLogin: "Back to login",
+    back: "Back to login",
+    required: "Please enter your email.",
+    success: "If the email is registered, a reset link will be sent to it.",
+    failed: "Failed to send. Please check the network, email configuration, or try again later.",
+  },
+  "zh-TW": {
+    title: "忘記密碼",
+    desc: "輸入註冊信箱，我們會發送密碼重設連結。",
+    email: "信箱",
+    emailPlaceholder: "請輸入註冊信箱",
+    send: "發送重設連結",
+    sending: "發送中...",
+    back: "返回登入",
+    required: "請輸入信箱。",
+    success: "如果該信箱已註冊，重設連結會發送到信箱中。",
+    failed: "發送失敗，請檢查網路、信箱設定或稍後重試。",
   },
 };
 
 export default function ForgotPasswordPage() {
   const params = useParams();
-
-  const locale: Locale = useMemo(() => {
-    return normalizeLocale(params?.locale);
-  }, [params]);
-
-  const t = forgotPasswordText[locale];
+  const locale = normalizeLocale(params?.locale);
+  const c = copy[locale];
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [infoMsg, setInfoMsg] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"error" | "success">("error");
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMessage("");
+    setMessageType("error");
 
-    setLoading(true);
-    setErrorMsg(null);
-    setInfoMsg(null);
-
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const redirectTo = `${origin}/${locale}/reset-password`;
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo,
-    });
-
-    setLoading(false);
-
-    if (error) {
-      setErrorMsg(t.errorMessage);
+    if (!email.trim()) {
+      setMessage(c.required);
       return;
     }
 
-    setInfoMsg(t.successMessage);
-  };
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/${locale}/reset-password`
+            : undefined,
+      });
+
+      if (error) {
+        setMessage(c.failed);
+        setLoading(false);
+        return;
+      }
+
+      setMessageType("success");
+      setMessage(c.success);
+    } catch {
+      setMessage(c.failed);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0 20px",
-        boxSizing: "border-box",
-        margin: 0,
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: "400px" }}>
-        <h1
-          style={{
-            fontSize: "28px",
-            fontWeight: "bold",
-            textAlign: "center",
-            marginBottom: "24px",
-          }}
-        >
-          {t.title}
-        </h1>
+    <main className="auth-page">
+      <div className="auth-box">
+        <h1>{c.title}</h1>
+        <p style={{ textAlign: "center", color: "#6b7280", fontSize: 14, lineHeight: 1.65, marginBottom: 24 }}>
+          {c.desc}
+        </p>
 
-        <form
-          onSubmit={onSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-        >
-          <div>
-            <label
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label htmlFor="email">{c.email}</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder={c.emailPlaceholder}
+          />
+
+          {message && (
+            <p
               style={{
-                display: "block",
-                fontSize: "14px",
-                marginBottom: "6px",
-                textAlign: "left",
+                color: messageType === "success" ? "#166534" : "#b42318",
+                fontSize: 13,
+                lineHeight: 1.55,
+                margin: 0,
               }}
             >
-              {t.emailLabel}
-            </label>
-
-            <input
-              type="email"
-              required
-              value={email}
-              placeholder={t.emailPlaceholder}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: "100%",
-                border: "1px solid #ddd",
-                borderRadius: "999px",
-                padding: "12px 16px",
-                fontSize: "15px",
-                boxSizing: "border-box",
-                outline: "none",
-              }}
-            />
-          </div>
-
-          {errorMsg && (
-            <p style={{ color: "red", fontSize: "12px", textAlign: "center" }}>
-              {errorMsg}
+              {message}
             </p>
           )}
 
-          {infoMsg && (
-            <p style={{ color: "green", fontSize: "12px", textAlign: "center" }}>
-              {infoMsg}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%",
-              backgroundColor: "#000",
-              color: "#fff",
-              border: "none",
-              borderRadius: "999px",
-              padding: "12px",
-              fontSize: "15px",
-              cursor: loading ? "not-allowed" : "pointer",
-              boxSizing: "border-box",
-              opacity: loading ? 0.7 : 1,
-            }}
-          >
-            {loading ? t.sending : t.send}
+          <button type="submit" disabled={loading}>
+            {loading ? c.sending : c.send}
           </button>
         </form>
 
-        <p style={{ marginTop: "20px", fontSize: "13px", textAlign: "center" }}>
-          <Link href={`/${locale}/login`} style={{ color: "#007bff" }}>
-            {t.backToLogin}
-          </Link>
-        </p>
+        <div
+          className="auth-links"
+          style={{
+            display: "grid",
+            justifyContent: "center",
+            justifyItems: "start",
+            gap: 10,
+            marginTop: 24,
+            fontSize: 15,
+            lineHeight: 1.35,
+          }}
+        >
+          <Link href={`/${locale}/login`}>{c.back}</Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
