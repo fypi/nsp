@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -352,6 +357,10 @@ export default function MarkdownPreviewPage() {
     };
   }, []);
 
+  useEffect(() => {
+    setInput(t.sampleText);
+  }, [t.sampleText]);
+
   const html = useMemo(() => renderMarkdown(input), [input]);
 
   const handleCopy = async () => {
@@ -491,7 +500,7 @@ export default function MarkdownPreviewPage() {
   );
 }
 
-const textareaStyle: React.CSSProperties = {
+const textareaStyle: CSSProperties = {
   width: "100%",
   minHeight: "420px",
   border: "1px solid #ddd",
@@ -506,7 +515,7 @@ const textareaStyle: React.CSSProperties = {
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 };
 
-const toolBtnPrimary: React.CSSProperties = {
+const toolBtnPrimary: CSSProperties = {
   padding: "10px 16px",
   borderRadius: "999px",
   border: "none",
@@ -516,7 +525,7 @@ const toolBtnPrimary: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const toolBtnSecondary: React.CSSProperties = {
+const toolBtnSecondary: CSSProperties = {
   padding: "10px 16px",
   borderRadius: "999px",
   border: "1px solid #ddd",
