@@ -129,15 +129,16 @@ function getUserDisplayName(user: User | null, fallback: string) {
 
   const meta = user.user_metadata ?? {};
 
-  const displayName =
+  const name =
     meta.display_name ||
     meta.full_name ||
     meta.name ||
+    meta.user_name ||
     meta.username ||
     meta.nickname;
 
-  if (typeof displayName === "string" && displayName.trim()) {
-    return displayName.trim();
+  if (typeof name === "string" && name.trim()) {
+    return name.trim();
   }
 
   if (user.email) {
@@ -416,7 +417,7 @@ const mobileLinkStyle: CSSProperties = {
 const userMenuLinkStyle: CSSProperties = {
   display: "block",
   width: "100%",
-  padding: "10px 16px",
+  padding: "11px 16px",
   textAlign: "left",
   border: "none",
   background: "transparent",
@@ -673,9 +674,7 @@ export default function Navbar() {
                     "liquidGlassNavItem",
                     isActive ? "liquidGlassNavActive" : "",
                     isHover ? "liquidGlassNavHover" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
+                  ].filter(Boolean).join(" ")}
                   aria-current={isActive ? "page" : undefined}
                   onMouseEnter={() => openMenu(item.key)}
                   style={{
@@ -702,9 +701,7 @@ export default function Navbar() {
               onClick={closeAll}
               onMouseEnter={() => setHoveredIcon("help")}
               onMouseLeave={() => setHoveredIcon((v) => (v === "help" ? null : v))}
-              className={["liquidGlassNavItem", hoveredIcon === "help" ? "liquidGlassNavHover" : ""]
-                .filter(Boolean)
-                .join(" ")}
+              className={["liquidGlassNavItem", hoveredIcon === "help" ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
               style={{ ...iconBtn, textDecoration: "none" }}
               aria-label="Help"
             >
@@ -726,9 +723,7 @@ export default function Navbar() {
               }}
             >
               <button
-                className={["liquidGlassNavItem", hoveredIcon === "lang" || showLangMenu ? "liquidGlassNavHover" : ""]
-                  .filter(Boolean)
-                  .join(" ")}
+                className={["liquidGlassNavItem", hoveredIcon === "lang" || showLangMenu ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
                 style={iconBtn}
                 onClick={() => {
                   if (!isReady) return;
@@ -753,9 +748,7 @@ export default function Navbar() {
                   onClick={closeAll}
                   onMouseEnter={() => setHoveredIcon("login")}
                   onMouseLeave={() => setHoveredIcon((v) => (v === "login" ? null : v))}
-                  className={["liquidGlassNavItem", hoveredIcon === "login" ? "liquidGlassNavHover" : ""]
-                    .filter(Boolean)
-                    .join(" ")}
+                  className={["liquidGlassNavItem", hoveredIcon === "login" ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
                   style={{ ...iconBtn, textDecoration: "none" }}
                   aria-label="Login"
                 >
@@ -763,9 +756,7 @@ export default function Navbar() {
                 </Link>
               ) : (
                 <button
-                  className={["liquidGlassNavItem", hoveredIcon === "user" || showUserMenu ? "liquidGlassNavHover" : ""]
-                    .filter(Boolean)
-                    .join(" ")}
+                  className={["liquidGlassNavItem", hoveredIcon === "user" || showUserMenu ? "liquidGlassNavHover" : ""].filter(Boolean).join(" ")}
                   style={iconBtn}
                   onMouseEnter={() => setHoveredIcon("user")}
                   onMouseLeave={() => setHoveredIcon((v) => (v === "user" ? null : v))}
@@ -788,7 +779,7 @@ export default function Navbar() {
                     position: "absolute",
                     top: 42,
                     right: 0,
-                    width: 260,
+                    width: 280,
                     borderRadius: 24,
                     zIndex: 10002,
                     padding: "10px 0",
@@ -800,55 +791,66 @@ export default function Navbar() {
                 >
                   <div
                     style={{
-                      padding: "12px 16px",
+                      padding: "14px 16px",
                       borderBottom: "1px solid rgba(0,0,0,0.06)",
                       background: "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
                     }}
                   >
                     <div
                       style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: 999,
-                        background: "#111827",
-                        color: "#fff",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 16,
-                        fontWeight: 900,
-                        marginBottom: 10,
+                        gap: 12,
+                        minWidth: 0,
                       }}
                     >
-                      {userDisplayName.charAt(0).toUpperCase()}
-                    </div>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 999,
+                          background: "#111827",
+                          color: "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 17,
+                          fontWeight: 900,
+                          flex: "0 0 40px",
+                        }}
+                      >
+                        {userDisplayName.charAt(0).toUpperCase()}
+                      </div>
 
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 850,
-                        color: "#111827",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        marginBottom: 4,
-                      }}
-                      title={userDisplayName}
-                    >
-                      {userDisplayName}
-                    </div>
+                      <div style={{ minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 15,
+                            fontWeight: 850,
+                            color: "#111827",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            marginBottom: 4,
+                          }}
+                          title={userDisplayName}
+                        >
+                          {userDisplayName}
+                        </div>
 
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: "#6b7280",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                      title={user.email ?? ""}
-                    >
-                      {user.email}
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: "#6b7280",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={user.email ?? ""}
+                        >
+                          {user.email}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -1026,6 +1028,7 @@ export default function Navbar() {
             {currentMega.cards.map((card, i) => {
               const title = pickLocaleText(card.title, locale);
               const desc = pickLocaleText(card.desc, locale);
+
               const content = (
                 <div
                   className="liquidGlassCard"
@@ -1059,9 +1062,11 @@ export default function Navbar() {
                       {card.badge}
                     </span>
                   </div>
+
                   <h3 style={{ fontSize: 15, fontWeight: 800, color: "#000", marginBottom: 8 }}>
                     {title}
                   </h3>
+
                   <p style={{ fontSize: 12, lineHeight: 1.55, color: "#4b5563", margin: 0 }}>
                     {desc}
                   </p>
@@ -1197,7 +1202,7 @@ export default function Navbar() {
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
-                  marginBottom: 8,
+                  minWidth: 0,
                 }}
               >
                 <div
@@ -1226,6 +1231,7 @@ export default function Navbar() {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      marginBottom: 4,
                     }}
                     title={userDisplayName}
                   >
