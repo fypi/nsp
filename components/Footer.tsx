@@ -1,74 +1,68 @@
+"use client";
+
 import Link from "next/link";
+import { useParams } from "next/navigation";
+
+const locales = ["en", "zh", "zh-TW"] as const;
+type Locale = (typeof locales)[number];
 
 type FooterProps = {
   locale?: string;
 };
 
-export default function Footer({ locale = "zh" }: FooterProps) {
-  const currentYear = new Date().getFullYear();
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+  return "zh";
+}
+
+const footerCopy = {
+  copyright: {
+    zh: "九域 © 2026 版权所有",
+    en: "NinesPro © 2026 All Rights Reserved",
+    tw: "九域 © 2026 版權所有",
+  },
+  privacy: {
+    zh: "隐私与法律",
+    en: "Privacy & Legal",
+    tw: "隱私與法律",
+  },
+  contact: {
+    zh: "联系方式",
+    en: "Contact",
+    tw: "聯絡方式",
+  },
+  help: {
+    zh: "帮助中心",
+    en: "Help Center",
+    tw: "說明中心",
+  },
+};
+
+function t(value: { zh: string; en: string; tw: string }, locale: Locale) {
+  if (locale === "en") return value.en;
+  if (locale === "zh-TW") return value.tw;
+  return value.zh;
+}
+
+function localePath(locale: Locale, path: string) {
+  if (locale === "en") return path === "/" ? "/" : path;
+  return `/${locale}${path === "/" ? "" : path}`;
+}
+
+export default function SiteFooter({ locale: localeProp }: FooterProps) {
+  const params = useParams();
+  const locale = normalizeLocale(localeProp ?? params?.locale);
 
   return (
-    <footer
-      style={{
-        width: "100%",
-        marginTop: 64,
-        padding: "18px 16px 22px",
-        background: "#ffffff",
-        color: "#333333",
-        textAlign: "center",
-        fontSize: 13,
-        lineHeight: 1.6,
-        boxSizing: "border-box",
-        flexShrink: 0,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 10,
-          flexWrap: "wrap",
-          marginBottom: 6,
-        }}
-      >
-        <Link
-          href={`/${locale}/privacy`}
-          style={{ color: "#333333", textDecoration: "none" }}
-        >
-          隐私政策
-        </Link>
-
-        <span style={{ color: "#999999" }}>·</span>
-
-        <Link
-          href={`/${locale}/support`}
-          style={{ color: "#333333", textDecoration: "none" }}
-        >
-          支持中心
-        </Link>
-
-        <span style={{ color: "#999999" }}>·</span>
-
-        <Link
-          href={`/${locale}/help`}
-          style={{ color: "#333333", textDecoration: "none" }}
-        >
-          帮助中心
-        </Link>
-
-        <span style={{ color: "#999999" }}>·</span>
-
-        <Link
-          href={`/${locale}/contact`}
-          style={{ color: "#333333", textDecoration: "none" }}
-        >
-          联系我们
-        </Link>
-      </div>
-
-      <div style={{ color: "#666666" }}>
-        © {currentYear} NinesPro / 九域. All rights reserved.
+    <footer className="site-footer" aria-label="Site footer">
+      <div className="site-footer-inner">
+        <span className="site-footer-text">{t(footerCopy.copyright, locale)}</span>
+        <nav className="site-footer-links" aria-label="Footer links">
+          <Link href={localePath(locale, "/privacy")}>{t(footerCopy.privacy, locale)}</Link>
+          <Link href={localePath(locale, "/contact")}>{t(footerCopy.contact, locale)}</Link>
+          <Link href={localePath(locale, "/help")}>{t(footerCopy.help, locale)}</Link>
+        </nav>
       </div>
     </footer>
   );

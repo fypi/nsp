@@ -4,11 +4,26 @@
   box-sizing: border-box;
 }
 
+/* =========================================================
+   NINE 可调：全站统一滚动条参数
+   主页面和子页面都用这一套。
+   Navbar.tsx 里的 SCROLLBAR_W 也必须是 12。
+   ========================================================= */
+:root {
+  --nines-scrollbar-width: 12px;
+  --nines-scrollbar-button-size: 12px;
+  --nines-scrollbar-icon-size: 16px;
+  --nines-scrollbar-thumb-inset: 2.5px;
+
+  --lg-blue: rgba(126, 177, 231, 0.55);
+  --lg-shadow: rgba(15, 23, 42, 0.08);
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: #ffffff;
   overflow: hidden;
 }
 
@@ -25,6 +40,118 @@ body {
   scroll-behavior: smooth;
   padding-bottom: 1px;
 }
+
+/* =========================================================
+   NINE 可调：主页面滚动条
+   .page-container 是主页滚动容器。
+   ========================================================= */
+
+.page-container::-webkit-scrollbar {
+  width: var(--nines-scrollbar-width) !important;
+  height: var(--nines-scrollbar-width) !important;
+  display: block !important;
+}
+
+.page-container::-webkit-scrollbar-track {
+  background: #ffffff !important;
+  display: block !important;
+}
+
+.page-container::-webkit-scrollbar-thumb {
+  background: #888888 !important;
+  border-radius: 6px !important;
+  border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
+  background-clip: content-box !important;
+  display: block !important;
+}
+
+.page-container::-webkit-scrollbar-button {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+}
+
+.page-container::-webkit-scrollbar-button:vertical:start:decrement,
+.page-container::-webkit-scrollbar-button:single-button:vertical:decrement {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+.page-container::-webkit-scrollbar-button:vertical:end:increment,
+.page-container::-webkit-scrollbar-button:single-button:vertical:increment {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+/* =========================================================
+   NINE 逻辑：导航栏下拉时隐藏主页滚动条
+   Navbar.tsx 会在下拉 / 语言菜单 / 用户菜单 / 移动菜单打开时，
+   给 html 和 body 加 .nines-nav-expanded。
+   ========================================================= */
+
+html.nines-nav-expanded,
+body.nines-nav-expanded {
+  scrollbar-width: none !important;
+}
+
+html.nines-nav-expanded body,
+body.nines-nav-expanded {
+  overflow-y: hidden !important;
+}
+
+html.nines-nav-expanded body .page-container,
+body.nines-nav-expanded .page-container {
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+html.nines-nav-expanded body .page-container::-webkit-scrollbar,
+body.nines-nav-expanded .page-container::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-track,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-thumb,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-button,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-button:vertical:start:decrement,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-button:vertical:end:increment,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-button:single-button:vertical:decrement,
+html.nines-nav-expanded body .page-container::-webkit-scrollbar-button:single-button:vertical:increment,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-track,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-thumb,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-button,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-button:vertical:start:decrement,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-button:vertical:end:increment,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-button:single-button:vertical:decrement,
+body.nines-nav-expanded .page-container::-webkit-scrollbar-button:single-button:vertical:increment {
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* =========================================================
+   首页旧 screen 样式
+   ========================================================= */
 
 .screen {
   height: 100vh;
@@ -67,7 +194,7 @@ body {
   position: relative;
   z-index: 10;
   text-align: center;
-  color: #fff;
+  color: #ffffff;
   max-width: 600px;
   padding: 0 20px;
 }
@@ -104,13 +231,13 @@ body {
 }
 
 .btn-white {
-  background: #fff;
-  color: #000;
+  background: #ffffff;
+  color: #000000;
 }
 
 .btn-dark {
   background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: #ffffff;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -142,56 +269,19 @@ body {
   }
 }
 
-/* 首页滚动条：白色轨道、灰色滑块、上下小三角 */
-.page-container::-webkit-scrollbar {
-  width: 12px !important;
-}
-
-.page-container::-webkit-scrollbar-track {
-  background: #fff !important;
-}
-
-.page-container::-webkit-scrollbar-thumb {
-  background: #888 !important;
-  border-radius: 6px !important;
-  border: 2.5px solid transparent !important;
-  background-clip: content-box !important;
-}
-
-.page-container::-webkit-scrollbar-button {
-  display: none !important;
-}
-
-.page-container::-webkit-scrollbar-button:vertical:start:decrement {
-  display: block !important;
-  width: 12px !important;
-  height: 12px !important;
-  background: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 16px !important;
-}
-
-.page-container::-webkit-scrollbar-button:vertical:end:increment {
-  display: block !important;
-  width: 12px !important;
-  height: 12px !important;
-  background: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 16px !important;
-}
+/* =========================================================
+   旧 footer 样式
+   首页新 footer 在 app/[locale]/page.tsx 的 .home-footer 里。
+   ========================================================= */
 
 .page-footer {
   width: 100%;
   text-align: center;
   padding: 0 !important;
   margin: 0 !important;
-  background: #fff;
+  background: #ffffff;
   font-size: 13px;
-  color: #333;
+  color: #333333;
   line-height: 3;
 }
 
@@ -205,7 +295,7 @@ body {
 }
 
 .footer-links a {
-  color: #333;
+  color: #333333;
   text-decoration: none;
   margin: 0 5px;
 }
@@ -213,6 +303,10 @@ body {
 .footer-links a:hover {
   text-decoration: underline;
 }
+
+/* =========================================================
+   基础交互
+   ========================================================= */
 
 a,
 button,
@@ -232,7 +326,7 @@ button,
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #111;
+  color: #111111;
   text-decoration: none;
   padding: 0;
 }
@@ -244,6 +338,10 @@ button,
 .teslaIconBtn:active {
   transform: translateY(1px);
 }
+
+/* =========================================================
+   Navbar 响应式
+   ========================================================= */
 
 .mobile-menu-btn {
   display: none;
@@ -274,13 +372,13 @@ button,
     position: fixed;
     top: 52px;
     left: 0;
-    background: #fff;
+    background: #ffffff;
     padding: 20px;
     z-index: 9998;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #eeeeee;
   }
 }
 
@@ -290,13 +388,17 @@ button,
   }
 }
 
+/* =========================================================
+   子页面布局
+   ========================================================= */
+
 .subpage-main {
   min-height: 100vh;
   padding-top: 80px;
   padding-bottom: 80px;
   background:
     radial-gradient(circle at 50% 0%, rgba(126, 177, 231, 0.055), rgba(255, 255, 255, 0) 34%),
-    #fff;
+    #ffffff;
 }
 
 .subpage-container {
@@ -314,13 +416,13 @@ button,
   font-size: 40px;
   font-weight: 750;
   letter-spacing: -0.035em;
-  color: #111;
+  color: #111111;
   margin-bottom: 16px;
 }
 
 .subpage-hero p {
   font-size: 18px;
-  color: #666;
+  color: #666666;
   max-width: 620px;
   margin: 0 auto;
   line-height: 1.7;
@@ -334,13 +436,13 @@ button,
   font-size: 22px;
   font-weight: 750;
   letter-spacing: -0.02em;
-  color: #111;
+  color: #111111;
   margin-bottom: 16px;
 }
 
 .subpage-section p {
   font-size: 15px;
-  color: #444;
+  color: #444444;
   line-height: 1.7;
   margin-bottom: 12px;
 }
@@ -379,7 +481,7 @@ button,
 .card h3 {
   font-size: 16px;
   font-weight: 750;
-  color: #111;
+  color: #111111;
   margin-bottom: 8px;
 }
 
@@ -403,6 +505,119 @@ button,
   }
 }
 
+/* =========================================================
+   子页面滚动条
+   统一和主页一样 12px。
+   ========================================================= */
+
+html:not(:has(body .page-container)) {
+  background: #ffffff !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+body:not(:has(.page-container)) {
+  background: #ffffff !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  scrollbar-width: auto !important;
+  scrollbar-color: #888888 #ffffff !important;
+}
+
+body:not(:has(.page-container)) .subpage-main {
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 80px !important;
+}
+
+body:not(:has(.page-container)) .subpage-container,
+body:not(:has(.page-container)) .subpage-section,
+body:not(:has(.page-container)) .card-grid {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body:not(:has(.page-container)) .card {
+  height: auto !important;
+}
+
+body:not(:has(.page-container)) footer,
+body:not(:has(.page-container)) .page-footer {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: visible !important;
+  background: #ffffff !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar {
+  width: var(--nines-scrollbar-width) !important;
+  height: var(--nines-scrollbar-width) !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-track {
+  background: #ffffff !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-thumb {
+  background: #888888 !important;
+  border-radius: 6px !important;
+  border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
+  background-clip: content-box !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
+body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
+body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+@media (max-width: 900px) {
+  body:not(:has(.page-container)) .subpage-main {
+    padding-top: 76px !important;
+    padding-bottom: 70px !important;
+  }
+}
+
+/* =========================================================
+   Auth / Contact
+   ========================================================= */
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -415,7 +630,7 @@ button,
 .auth-box {
   width: 100%;
   max-width: 400px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 24px;
   padding: 40px 32px;
   box-shadow: 0 18px 48px rgba(15, 23, 42, 0.07);
@@ -426,7 +641,7 @@ button,
   font-weight: 700;
   text-align: center;
   margin-bottom: 28px;
-  color: #111;
+  color: #111111;
 }
 
 .auth-form {
@@ -437,13 +652,13 @@ button,
 
 .auth-form label {
   font-size: 14px;
-  color: #555;
+  color: #555555;
   font-weight: 500;
 }
 
 .auth-form input {
   padding: 12px 16px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   border-radius: 14px;
   font-size: 15px;
   outline: none;
@@ -452,15 +667,15 @@ button,
 }
 
 .auth-form input:focus {
-  border-color: #111;
+  border-color: #111111;
 }
 
 .auth-form button[type="submit"] {
   padding: 12px;
   border-radius: 999px;
   border: none;
-  background: #111;
-  color: #fff;
+  background: #111111;
+  color: #ffffff;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -475,12 +690,12 @@ button,
 }
 
 .auth-links a {
-  color: #555;
+  color: #555555;
   text-decoration: none;
 }
 
 .auth-links a:hover {
-  color: #111;
+  color: #111111;
   text-decoration: underline;
 }
 
@@ -512,7 +727,7 @@ button,
   width: 100%;
   padding: 12px;
   border-radius: 14px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   font-size: 15px;
 }
 
@@ -522,8 +737,8 @@ button,
 }
 
 .contact-button {
-  background: #111;
-  color: #fff;
+  background: #111111;
+  color: #ffffff;
   padding: 12px;
   border-radius: 999px;
   font-size: 15px;
@@ -535,104 +750,9 @@ button,
   cursor: not-allowed;
 }
 
-html:not(:has(body .page-container)) {
-  background: #fff !important;
-  height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
-}
-
-body:not(:has(.page-container)) {
-  background: #fff !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: scroll !important;
-  scrollbar-width: auto !important;
-  scrollbar-color: #888 #fff !important;
-}
-
-body:not(:has(.page-container)) .subpage-main {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
-  padding-bottom: 80px !important;
-}
-
-body:not(:has(.page-container)) .subpage-container,
-body:not(:has(.page-container)) .subpage-section,
-body:not(:has(.page-container)) .card-grid {
-  height: auto !important;
-  overflow: visible !important;
-}
-
-body:not(:has(.page-container)) .card {
-  height: auto !important;
-}
-
-body:not(:has(.page-container)) footer,
-body:not(:has(.page-container)) .page-footer {
-  position: relative !important;
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  overflow: visible !important;
-  background: #fff !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar {
-  width: 12px !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-track {
-  background: #fff !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-thumb {
-  background: #888 !important;
-  border-radius: 6px !important;
-  border: 2.5px solid transparent !important;
-  background-clip: content-box !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button {
-  display: none !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement {
-  display: block !important;
-  width: 12px !important;
-  height: 12px !important;
-  background: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 16px !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment {
-  display: block !important;
-  width: 12px !important;
-  height: 12px !important;
-  background: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 16px !important;
-}
-
-@media (max-width: 900px) {
-  body:not(:has(.page-container)) .subpage-main {
-    padding-top: 76px !important;
-    padding-bottom: 70px !important;
-  }
-}
-
-/* Liquid Glass 导航系统 */
-:root {
-  --lg-blue: rgba(126, 177, 231, 0.55);
-  --lg-shadow: rgba(15, 23, 42, 0.08);
-}
+/* =========================================================
+   Liquid Glass 导航系统
+   ========================================================= */
 
 .liquidGlassNavItem,
 .nav-link {
@@ -642,7 +762,7 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment
   border-radius: 999px !important;
   background: transparent !important;
   border: 1px solid transparent !important;
-  color: #111 !important;
+  color: #111111 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -760,7 +880,10 @@ nav button {
   color: #05070a !important;
 }
 
-/* Apple Liquid Glass 卡片 / 胶囊 */
+/* =========================================================
+   Liquid Glass 卡片 / 胶囊
+   ========================================================= */
+
 .liquidGlassCard {
   position: relative;
   isolation: isolate;
@@ -845,7 +968,7 @@ nav button {
   line-height: 1 !important;
   text-decoration: none !important;
   white-space: nowrap !important;
-  color: #111 !important;
+  color: #111111 !important;
   border: 1px solid rgba(255, 255, 255, 0.94) !important;
   background:
     radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.48) 38%, rgba(255, 255, 255, 0.18) 76%),
@@ -908,7 +1031,10 @@ nav + div .liquidGlassCard {
   }
 }
 
-/* 玻璃卡片文字可读性 */
+/* =========================================================
+   子页面玻璃卡片文字可读性
+   ========================================================= */
+
 .subpage-main .liquidGlassCard,
 .subpage-main .card,
 .subpage-main [class*="liquid"],
@@ -1018,9 +1144,9 @@ nav + div .liquidGlassCard {
   -webkit-text-fill-color: #4b5563 !important;
 }
 
-/* FINAL AUTH AND ACTION BUTTON LIGHT GLASS OVERRIDE
-   修复“创建账号 / 登录 / 开始计算 / 提交 / 联系咨询”等深色按钮太黑、字看不清。
-   这是最后覆盖层，放在文件末尾，优先级高于页面内联深色背景。 */
+/* =========================================================
+   全站浅色按钮覆盖
+   ========================================================= */
 
 .auth-page button,
 .auth-page button[type="submit"],
@@ -1115,13 +1241,7 @@ form button[type="submit"]:disabled,
   cursor: not-allowed !important;
   transform: none !important;
 }
-/* =========================================================
-   FINAL GLOBAL LIGHT BUTTON OVERRIDE
-   全站按钮统一浅色玻璃风格：禁止黑底按钮
-   放在 app/globals.css 最底部
-   ========================================================= */
 
-/* 所有常见操作按钮 */
 button,
 input[type="button"],
 input[type="submit"],
@@ -1140,7 +1260,6 @@ button.liquidGlassPill,
 .liquidGlassPill {
   color: #111827 !important;
   -webkit-text-fill-color: #111827 !important;
-
   background:
     radial-gradient(
       circle at 18% 8%,
@@ -1153,25 +1272,20 @@ button.liquidGlassPill,
       rgba(255, 255, 255, 0.96),
       rgba(243, 246, 249, 0.86)
     ) !important;
-
   background-color: rgba(255, 255, 255, 0.94) !important;
   border: 1px solid rgba(255, 255, 255, 0.96) !important;
   border-radius: 999px !important;
-
   box-shadow:
     0 10px 24px rgba(15, 23, 42, 0.08),
     0 2px 8px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 1),
     inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
-
   backdrop-filter: blur(16px) saturate(155%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
-
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
   font-weight: 800 !important;
 }
 
-/* 专门压住页面里写死 background: #111 / black / rgb(17,17,17) 的按钮和链接 */
 button[style*="background: #111"],
 button[style*="background:#111"],
 button[style*="background-color: #111"],
@@ -1194,7 +1308,6 @@ a[style*="background: rgb(17, 17, 17)"],
 a[style*="background-color: rgb(17, 17, 17)"] {
   color: #111827 !important;
   -webkit-text-fill-color: #111827 !important;
-
   background:
     radial-gradient(
       circle at 18% 8%,
@@ -1207,22 +1320,18 @@ a[style*="background-color: rgb(17, 17, 17)"] {
       rgba(255, 255, 255, 0.96),
       rgba(243, 246, 249, 0.86)
     ) !important;
-
   background-color: rgba(255, 255, 255, 0.94) !important;
   border: 1px solid rgba(255, 255, 255, 0.96) !important;
   border-radius: 999px !important;
-
   box-shadow:
     0 10px 24px rgba(15, 23, 42, 0.08),
     0 2px 8px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 1),
     inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
-
   backdrop-filter: blur(16px) saturate(155%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
 }
 
-/* 按钮里的文字、图标也统一深色清晰 */
 button *,
 .btn-dark *,
 .contact-button *,
@@ -1238,7 +1347,6 @@ a[style*="background"] * {
   opacity: 1 !important;
 }
 
-/* hover 仍然是浅色，不变黑 */
 button:hover,
 input[type="button"]:hover,
 input[type="submit"]:hover,
@@ -1257,14 +1365,12 @@ button.liquidGlassPill:hover,
 .liquidGlassPill:hover {
   transform: translateY(-1px) scale(1.02) !important;
   border-color: rgba(126, 177, 231, 0.48) !important;
-
   box-shadow:
     0 14px 30px rgba(15, 23, 42, 0.11),
     0 4px 12px rgba(126, 177, 231, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
-/* 禁用状态 */
 button:disabled,
 input[type="button"]:disabled,
 input[type="submit"]:disabled,
@@ -1277,4 +1383,26 @@ input[type="reset"]:disabled,
   opacity: 0.56 !important;
   cursor: not-allowed !important;
   transform: none !important;
+}
+
+/* =========================================================
+   NINE 修复：首页轮播左右箭头 hover 不下移
+   因为上面有全局 button:hover transform，所以这里必须最后覆盖。
+   ========================================================= */
+
+button.carousel-arrow,
+button.carousel-arrow:hover,
+button.carousel-arrow:active,
+button.carousel-arrow:focus,
+.carousel-arrow,
+.carousel-arrow:hover,
+.carousel-arrow:active,
+.carousel-arrow:focus {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+button.carousel-arrow:hover,
+.carousel-arrow:hover {
+  opacity: 1 !important;
 }

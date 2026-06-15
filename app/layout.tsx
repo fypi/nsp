@@ -1,15 +1,21 @@
 import "./globals.css";
+import type { ReactNode } from "react";
 
-export default function RootLayout({ children }) {
+export const metadata = {
+  title: "九域 / NinesPro",
+  description: "尽知天下事，弹指皆可得",
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="zh-CN">
-      {/* 👇 这一行是手机适配核心 */}
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
       </head>
-      <body style={{ margin: 0, padding: 0, minHeight: "100vh" }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
