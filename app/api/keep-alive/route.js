@@ -53,3 +53,6 @@ export async function GET() {
         message: "Keep-alive API failed.",
       },
       { status: 500 }
+    );
+  }
+}
