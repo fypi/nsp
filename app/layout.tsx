@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "NinesPro",
+  title: "NinesPro | All things in the world, available at your fingertips",
   description:
     "A calm workspace for tools, workflows, learning, finance, and AI.",
 };
