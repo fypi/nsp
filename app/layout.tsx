@@ -1,14 +1,16 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-export const metadata = {
-  title: "九域 / NinesPro",
-  description: "尽知天下事，弹指皆可得",
+export const metadata: Metadata = {
+  title: "NinesPro",
+  description:
+    "A calm workspace for tools, workflows, learning, finance, and AI.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <head>
         <meta
           name="viewport"
