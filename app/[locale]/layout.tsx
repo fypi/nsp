@@ -21,7 +21,7 @@ export async function generateMetadata({
 
   if (locale === "en") {
     return {
-      title: "NinesPro | All things in the world, available at your fingertips",
+      title: "NinesPro — All things in the world, available at your fingertips",
       description:
         "A calm workspace for tools, workflows, learning, finance, and AI.",
     };
@@ -29,13 +29,13 @@ export async function generateMetadata({
 
   if (locale === "zh-TW") {
     return {
-      title: "九域 | 盡知天下事，彈指皆可得",
+      title: "九域 — 盡知天下事，彈指皆可得",
       description: "盡知天下事，彈指皆可得。",
     };
   }
 
   return {
-    title: "九域 | 尽知天下事，弹指皆可得",
+    title: "九域 — 尽知天下事，弹指皆可得",
     description: "尽知天下事，弹指皆可得。",
   };
 }
