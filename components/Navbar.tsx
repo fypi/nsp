@@ -428,7 +428,7 @@ export default function Navbar() {
 
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
-  const shouldExpandToRightEdge = isMegaOpen || showLangMenu || showUserMenu || mobileOpen;
+  const shouldExpandToRightEdge = isMegaOpen || mobileOpen;
   const fixedRight = shouldExpandToRightEdge ? 0 : SCROLLBAR_W;
 
   const currentMega = megaData[activeMenu ?? lastMenu];
