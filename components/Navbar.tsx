@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -248,6 +249,12 @@ const megaData: Record<MegaKey, { cards: MegaCard[]; links: MegaLink[] }> = {
   },
 };
 
+function normalizeLocale(rawLocale: unknown): Locale {
+  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+  return "zh";
+}
+
 function stripLocaleFromPath(path: string): string {
   const parts = path.split("/");
   const maybeLocale = parts[1];
@@ -261,7 +268,13 @@ function stripLocaleFromPath(path: string): string {
 }
 
 function localePath(locale: Locale, route: string) {
-  return `/${locale}${route}`;
+  const cleanRoute = route.startsWith("/") ? route : `/${route}`;
+
+  if (locale === "en") {
+    return cleanRoute === "/" ? "/" : cleanRoute;
+  }
+
+  return `/${locale}${cleanRoute === "/" ? "" : cleanRoute}`;
 }
 
 function accountText(locale: Locale) {
@@ -398,6 +411,7 @@ export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTouchLike, setIsTouchLike] = useState(false);
 
   const [activeMenu, setActiveMenu] = useState<MegaKey | null>(null);
   const [lastMenu, setLastMenu] = useState<MegaKey>("product");
@@ -415,12 +429,7 @@ export default function Navbar() {
   const menuCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const langCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const locale: Locale = useMemo(() => {
-    const raw = params?.locale;
-    if (typeof raw === "string" && locales.includes(raw as Locale)) return raw as Locale;
-    return "zh";
-  }, [params]);
-
+  const locale: Locale = useMemo(() => normalizeLocale(params?.locale), [params]);
   const currentPath = useMemo(() => stripLocaleFromPath(pathname), [pathname]);
 
   const NAV_H = 52;
@@ -429,7 +438,7 @@ export default function Navbar() {
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
   const shouldExpandToRightEdge = isMegaOpen || mobileOpen;
-  const fixedRight = shouldExpandToRightEdge ? 0 : SCROLLBAR_W;
+  const fixedRight = shouldExpandToRightEdge ? 0 : isTouchLike ? 0 : SCROLLBAR_W;
 
   const currentMega = megaData[activeMenu ?? lastMenu];
   const accountLabels = accountText(locale);
@@ -484,10 +493,13 @@ export default function Navbar() {
   useEffect(() => {
     setMounted(true);
 
-    const updateIsMobile = () => setIsMobile(window.innerWidth <= 1180);
+    const updateDeviceFlags = () => {
+      setIsMobile(window.innerWidth <= 1180);
+      setIsTouchLike(window.matchMedia("(pointer: coarse)").matches);
+    };
 
-    updateIsMobile();
-    window.addEventListener("resize", updateIsMobile);
+    updateDeviceFlags();
+    window.addEventListener("resize", updateDeviceFlags);
     window.addEventListener("resize", updateLangMenuPosition);
     window.addEventListener("scroll", updateLangMenuPosition, true);
 
@@ -498,7 +510,7 @@ export default function Navbar() {
     });
 
     return () => {
-      window.removeEventListener("resize", updateIsMobile);
+      window.removeEventListener("resize", updateDeviceFlags);
       window.removeEventListener("resize", updateLangMenuPosition);
       window.removeEventListener("scroll", updateLangMenuPosition, true);
       listener.subscription.unsubscribe();
@@ -568,7 +580,7 @@ export default function Navbar() {
   const changeLanguage = (nextLocale: Locale) => {
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
-    router.push(`/${nextLocale}${basePath === "/" ? "" : basePath}`);
+    router.push(localePath(nextLocale, basePath));
     closeAll();
   };
 
@@ -576,7 +588,7 @@ export default function Navbar() {
     await supabase.auth.signOut();
     setUser(null);
     setShowUserMenu(false);
-    router.push(`/${locale}`);
+    router.push(localePath(locale, "/"));
   };
 
   const handleToolRoute = (route: string) => {
@@ -588,7 +600,11 @@ export default function Navbar() {
     }
 
     if (!user) {
-      router.push(`/${locale}/login?next=${encodeURIComponent(localePath(locale, route))}`);
+      router.push(
+        `${localePath(locale, "/login")}?next=${encodeURIComponent(
+          localePath(locale, route)
+        )}`
+      );
       return;
     }
 
@@ -1160,7 +1176,81 @@ export default function Navbar() {
           )}
 
           {user && (
-            <>
+            <div
+              style={{
+                borderTop: "1px solid #eeeeee",
+                paddingTop: 14,
+                marginTop: 6,
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+              }}
+            >
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderRadius: 18,
+                  background: "#f5f5f5",
+                  color: "#111827",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    minWidth: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 999,
+                      background: "#111827",
+                      color: "#ffffff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 16,
+                      fontWeight: 900,
+                      flex: "0 0 38px",
+                    }}
+                  >
+                    {userDisplayName.charAt(0).toUpperCase()}
+                  </div>
+
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 850,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        marginBottom: 4,
+                      }}
+                      title={userDisplayName}
+                    >
+                      {userDisplayName}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#6b7280",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={user.email ?? ""}
+                    >
+                      {user.email}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <Link href={localePath(locale, "/account")} onClick={closeAll} style={mobileLinkStyle}>
                 {accountLabels.account}
               </Link>
@@ -1186,7 +1276,7 @@ export default function Navbar() {
               >
                 {accountLabels.logout}
               </button>
-            </>
+            </div>
           )}
 
           <div
@@ -1224,4 +1314,3 @@ export default function Navbar() {
     </div>
   );
 }
-``

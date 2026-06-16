@@ -1406,3 +1406,62 @@ button.carousel-arrow:hover,
 .carousel-arrow:hover {
   opacity: 1 !important;
 }
+/* =========================================================
+   NINE MOBILE / TABLET ONLY FIX
+   只针对真实触屏设备：
+   1. 移动端/平板端原生滚动条不占布局宽度，隐藏它避免右侧空隙。
+   2. 避免移动端滚动条滑块在 section / footer 后面穿层。
+   3. 不影响桌面端，也不影响桌面端窗口缩小。
+   ========================================================= */
+
+@media (pointer: coarse) {
+  :root {
+    --nines-scrollbar-width: 0px;
+    --nines-scrollbar-button-size: 0px;
+  }
+
+  html,
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .page-container {
+    scrollbar-width: none !important;
+  }
+
+  .page-container::-webkit-scrollbar,
+  .page-container::-webkit-scrollbar-track,
+  .page-container::-webkit-scrollbar-thumb,
+  .page-container::-webkit-scrollbar-button,
+  .page-container::-webkit-scrollbar-button:vertical:start:decrement,
+  .page-container::-webkit-scrollbar-button:vertical:end:increment,
+  .page-container::-webkit-scrollbar-button:single-button:vertical:decrement,
+  .page-container::-webkit-scrollbar-button:single-button:vertical:increment {
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  body:not(:has(.page-container)) {
+    scrollbar-width: none !important;
+  }
+
+  body:not(:has(.page-container))::-webkit-scrollbar,
+  body:not(:has(.page-container))::-webkit-scrollbar-track,
+  body:not(:has(.page-container))::-webkit-scrollbar-thumb,
+  body:not(:has(.page-container))::-webkit-scrollbar-button,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+    background-image: none !important;
+  }
+}
