@@ -13,6 +13,12 @@ function normalizeLocale(rawLocale: unknown): Locale {
   return "zh";
 }
 
+const icons: Metadata["icons"] = {
+  icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  shortcut: "/icon.svg",
+  apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -25,6 +31,7 @@ export async function generateMetadata({
       title: "NinesPro — All things in the world, available at your fingertips",
       description:
         "A calm workspace for tools, workflows, learning, finance, and AI.",
+      icons,
     };
   }
 
@@ -32,12 +39,14 @@ export async function generateMetadata({
     return {
       title: "九域 — 盡知天下事，彈指皆可得",
       description: "盡知天下事，彈指皆可得。",
+      icons,
     };
   }
 
   return {
     title: "九域 — 尽知天下事，弹指皆可得",
     description: "尽知天下事，弹指皆可得。",
+    icons,
   };
 }
 

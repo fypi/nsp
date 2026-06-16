@@ -1,12 +1,12 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
 const NAV_HEIGHT = 52;
-const BAR_WIDTH = 12;
-const BUTTON_SIZE = 12;
-const MIN_THUMB_HEIGHT = 36;
+const HIT_WIDTH = 6;
+const THUMB_WIDTH = 3;
+const BUTTON_SIZE = 6;
+const MIN_THUMB_HEIGHT = 34;
 
 function getScrollTarget(): HTMLElement | null {
   const pageContainer = document.querySelector<HTMLElement>(".page-container");
@@ -38,7 +38,10 @@ export default function NinesTouchScrollbar() {
 
     const viewportHeight = window.innerHeight;
     const trackTop = NAV_HEIGHT + BUTTON_SIZE;
-    const trackHeight = Math.max(80, viewportHeight - NAV_HEIGHT - BUTTON_SIZE * 2);
+    const trackHeight = Math.max(
+      80,
+      viewportHeight - NAV_HEIGHT - BUTTON_SIZE * 2
+    );
 
     const nextVisible = scrollHeight > clientHeight + 4;
     const nextThumbHeight = Math.max(
@@ -46,7 +49,8 @@ export default function NinesTouchScrollbar() {
       Math.round((clientHeight / scrollHeight) * trackHeight)
     );
     const travel = Math.max(1, trackHeight - nextThumbHeight);
-    const nextThumbTop = trackTop + Math.round((scrollTop / maxScrollTop) * travel);
+    const nextThumbTop =
+      trackTop + Math.round((scrollTop / maxScrollTop) * travel);
 
     setVisible(nextVisible);
     setThumbHeight(nextThumbHeight);
@@ -55,13 +59,17 @@ export default function NinesTouchScrollbar() {
 
   useEffect(() => {
     const updateEnabled = () => {
-      const isTouchLike = window.matchMedia("(pointer: coarse)").matches;
-      setEnabled(isTouchLike);
+      setEnabled(window.matchMedia("(pointer: coarse)").matches);
     };
 
     updateEnabled();
     window.addEventListener("resize", updateEnabled);
-    return () => window.removeEventListener("resize", updateEnabled);
+    window.addEventListener("orientationchange", updateEnabled);
+
+    return () => {
+      window.removeEventListener("resize", updateEnabled);
+      window.removeEventListener("orientationchange", updateEnabled);
+    };
   }, []);
 
   useEffect(() => {
@@ -77,7 +85,7 @@ export default function NinesTouchScrollbar() {
     window.addEventListener("resize", recalc);
     window.addEventListener("orientationchange", recalc);
 
-    const timer = window.setInterval(recalc, 350);
+    const timer = window.setInterval(recalc, 300);
 
     return () => {
       target.removeEventListener("scroll", recalc);
@@ -98,7 +106,10 @@ export default function NinesTouchScrollbar() {
       if (!target) return;
 
       const viewportHeight = window.innerHeight;
-      const trackHeight = Math.max(80, viewportHeight - NAV_HEIGHT - BUTTON_SIZE * 2);
+      const trackHeight = Math.max(
+        80,
+        viewportHeight - NAV_HEIGHT - BUTTON_SIZE * 2
+      );
       const maxScrollTop = Math.max(1, target.scrollHeight - target.clientHeight);
       const travel = Math.max(1, trackHeight - thumbHeight);
       const deltaY = event.clientY - dragStartYRef.current;
@@ -131,6 +142,25 @@ export default function NinesTouchScrollbar() {
     target.scrollBy({ top: amount, behavior: "smooth" });
   };
 
+  const arrowBaseStyle = {
+    position: "absolute" as const,
+    right: 0,
+    width: HIT_WIDTH,
+    height: BUTTON_SIZE,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    pointerEvents: "auto" as const,
+    background: "rgba(224,224,224,0.82)",
+    color: "#555555",
+    fontSize: 6,
+    lineHeight: 1,
+    userSelect: "none" as const,
+    WebkitUserSelect: "none" as const,
+    WebkitTextFillColor: "#555555",
+    touchAction: "manipulation" as const,
+  };
+
   return (
     <div
       aria-hidden="true"
@@ -139,38 +169,15 @@ export default function NinesTouchScrollbar() {
         top: NAV_HEIGHT,
         right: 0,
         bottom: 0,
-        width: BAR_WIDTH,
+        width: HIT_WIDTH,
         zIndex: 2147483000,
         pointerEvents: "none",
-        background: "#ffffff",
+        background: "transparent",
       }}
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        onClick={() => scrollByAmount(-280)}
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: BAR_WIDTH,
-          height: BUTTON_SIZE,
-          border: "none",
-          borderRadius: 0,
-          padding: 0,
-          margin: 0,
-          pointerEvents: "auto",
-          background: "#e0e0e0",
-          color: "#666666",
-          fontSize: 9,
-          lineHeight: `${BUTTON_SIZE}px`,
-          textAlign: "center",
-          boxShadow: "none",
-          WebkitTextFillColor: "#666666",
-        }}
-      >
+      <div onClick={() => scrollByAmount(-260)} style={{ ...arrowBaseStyle, top: 0 }}>
         ▲
-      </button>
+      </div>
 
       <div
         style={{
@@ -178,21 +185,23 @@ export default function NinesTouchScrollbar() {
           top: BUTTON_SIZE,
           right: 0,
           bottom: BUTTON_SIZE,
-          width: BAR_WIDTH,
-          background: "#ffffff",
+          width: HIT_WIDTH,
+          background: "transparent",
           pointerEvents: "auto",
+          touchAction: "none",
         }}
         onClick={(event) => {
           const target = targetRef.current;
           if (!target) return;
-          const rect = event.currentTarget.getBoundingClientRect();
-          const clickY = event.clientY - rect.top;
           const isAboveThumb = event.clientY < thumbTop;
-          const amount = isAboveThumb ? -target.clientHeight * 0.8 : target.clientHeight * 0.8;
-          if (clickY >= 0) target.scrollBy({ top: amount, behavior: "smooth" });
+          const amount = isAboveThumb
+            ? -target.clientHeight * 0.82
+            : target.clientHeight * 0.82;
+          target.scrollBy({ top: amount, behavior: "smooth" });
         }}
       >
         <div
+          onClick={(event) => event.stopPropagation()}
           onPointerDown={(event) => {
             const target = targetRef.current;
             if (!target) return;
@@ -201,48 +210,29 @@ export default function NinesTouchScrollbar() {
             dragStartScrollTopRef.current = target.scrollTop;
             document.body.style.userSelect = "none";
             event.currentTarget.setPointerCapture(event.pointerId);
+            event.stopPropagation();
           }}
           style={{
             position: "fixed",
-            right: 2,
+            right: 1.5,
             top: thumbTop,
-            width: 8,
+            width: THUMB_WIDTH,
             height: thumbHeight,
+            minHeight: MIN_THUMB_HEIGHT,
             borderRadius: 999,
-            background: "#888888",
-            boxShadow: "0 0 0 1px rgba(255,255,255,0.72)",
+            background: "#555555",
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.95), 0 2px 6px rgba(0,0,0,0.22)",
             pointerEvents: "auto",
             touchAction: "none",
+            opacity: 0.98,
           }}
         />
       </div>
 
-      <button
-        type="button"
-        tabIndex={-1}
-        onClick={() => scrollByAmount(280)}
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: 0,
-          width: BAR_WIDTH,
-          height: BUTTON_SIZE,
-          border: "none",
-          borderRadius: 0,
-          padding: 0,
-          margin: 0,
-          pointerEvents: "auto",
-          background: "#e0e0e0",
-          color: "#666666",
-          fontSize: 9,
-          lineHeight: `${BUTTON_SIZE}px`,
-          textAlign: "center",
-          boxShadow: "none",
-          WebkitTextFillColor: "#666666",
-        }}
-      >
+      <div onClick={() => scrollByAmount(260)} style={{ ...arrowBaseStyle, bottom: 0 }}>
         ▼
-      </button>
+      </div>
     </div>
   );
 }

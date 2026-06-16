@@ -6,8 +6,8 @@
 
 /* =========================================================
    NINE 可调：全站统一滚动条参数
-   主页面和子页面都用这一套。
-   Navbar.tsx 里的 SCROLLBAR_W 也必须是 12。
+   桌面端使用 12px 原生滚动条；移动端/平板端由最后的
+   NINE TOUCH CUSTOM SCROLLBAR FINAL 覆盖为 6px 自定义滚动条。
    ========================================================= */
 :root {
   --nines-scrollbar-width: 12px;
@@ -42,8 +42,7 @@ body {
 }
 
 /* =========================================================
-   NINE 可调：主页面滚动条
-   .page-container 是主页滚动容器。
+   主页面滚动条：桌面端
    ========================================================= */
 
 .page-container::-webkit-scrollbar {
@@ -99,9 +98,9 @@ body {
 }
 
 /* =========================================================
-   NINE 逻辑：导航栏下拉时隐藏主页滚动条
-   Navbar.tsx 会在下拉 / 语言菜单 / 用户菜单 / 移动菜单打开时，
-   给 html 和 body 加 .nines-nav-expanded。
+   导航栏大下拉时隐藏主页滚动条
+   注意：Navbar.tsx 现在只会在桌面 Mega 大下拉时加这个 class。
+   语言小菜单、用户小菜单、移动端菜单不会触发。
    ========================================================= */
 
 html.nines-nav-expanded,
@@ -271,7 +270,6 @@ body.nines-nav-expanded .page-container::-webkit-scrollbar-button:single-button:
 
 /* =========================================================
    旧 footer 样式
-   首页新 footer 在 app/[locale]/page.tsx 的 .home-footer 里。
    ========================================================= */
 
 .page-footer {
@@ -506,8 +504,7 @@ button,
 }
 
 /* =========================================================
-   子页面滚动条
-   统一和主页一样 12px。
+   子页面滚动条：桌面端
    ========================================================= */
 
 html:not(:has(body .page-container)) {
@@ -1209,39 +1206,6 @@ a[style*="background:#111"] * {
   opacity: 1 !important;
 }
 
-.auth-page button:hover,
-.auth-form button:hover,
-.auth-box button:hover,
-.login-page button:hover,
-.register-page button:hover,
-form button[type="submit"]:hover,
-.subpage-main button[type="submit"]:hover,
-.subpage-main button:not(.mobile-menu-btn):hover,
-.contact-button:hover,
-.btn-dark:hover,
-button[style*="background: #111"]:hover,
-button[style*="background:#111"]:hover,
-a[style*="background: #111"]:hover,
-a[style*="background:#111"]:hover {
-  transform: translateY(-1px) scale(1.02) !important;
-  border-color: rgba(126, 177, 231, 0.48) !important;
-  box-shadow:
-    0 14px 30px rgba(15, 23, 42, 0.11),
-    0 4px 12px rgba(126, 177, 231, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
-.auth-page button:disabled,
-.auth-form button:disabled,
-.auth-box button:disabled,
-form button[type="submit"]:disabled,
-.subpage-main button:disabled,
-.contact-button:disabled {
-  opacity: 0.58 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-}
-
 button,
 input[type="button"],
 input[type="submit"],
@@ -1387,7 +1351,6 @@ input[type="reset"]:disabled,
 
 /* =========================================================
    NINE 修复：首页轮播左右箭头 hover 不下移
-   因为上面有全局 button:hover transform，所以这里必须最后覆盖。
    ========================================================= */
 
 button.carousel-arrow,
@@ -1406,19 +1369,18 @@ button.carousel-arrow:hover,
 .carousel-arrow:hover {
   opacity: 1 !important;
 }
-/* =========================================================
-   NINE MOBILE / TABLET RESERVED SCROLLBAR MODE
-   真实触屏设备也保留右侧 12px 滚动条区域。
-   不隐藏滚动条；电脑端和电脑端缩小窗口不受影响。
 
-   说明：iOS / Android / 部分平板浏览器不保证显示桌面式滚动条和上下小箭头。
-   这段只负责：预留滚动条区域 + 尽量显示滚动条 + 不让导航栏/菜单盖住右侧区域。
+/* =========================================================
+   NINE TOUCH CUSTOM SCROLLBAR FINAL
+   手机 / 平板：隐藏系统细滚动条，使用 components/NinesTouchScrollbar.tsx。
+   右侧统一预留 6px；可见滑块 3px；左右各约 1.5px。
+   电脑端和电脑端缩小窗口不受影响。
    ========================================================= */
 
 @media (pointer: coarse) {
   :root {
-    --nines-scrollbar-width: 12px;
-    --nines-scrollbar-button-size: 12px;
+    --nines-scrollbar-width: 6px !important;
+    --nines-scrollbar-button-size: 6px !important;
   }
 
   html,
@@ -1427,91 +1389,7 @@ button.carousel-arrow:hover,
   }
 
   .page-container {
-    overflow-y: scroll !important;
-    scrollbar-width: auto !important;
-    scrollbar-color: #888888 #ffffff !important;
-  }
-
-  .page-container::-webkit-scrollbar {
-    width: var(--nines-scrollbar-width) !important;
-    height: var(--nines-scrollbar-width) !important;
-    display: block !important;
-  }
-
-  .page-container::-webkit-scrollbar-track {
-    background: #ffffff !important;
-    display: block !important;
-  }
-
-  .page-container::-webkit-scrollbar-thumb {
-    background: #888888 !important;
-    border-radius: 6px !important;
-    border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
-    background-clip: content-box !important;
-    display: block !important;
-  }
-
-  .page-container::-webkit-scrollbar-button {
-    display: block !important;
-    width: var(--nines-scrollbar-button-size) !important;
-    height: var(--nines-scrollbar-button-size) !important;
-    min-height: var(--nines-scrollbar-button-size) !important;
-  }
-
-  body:not(:has(.page-container)) {
-    overflow-y: scroll !important;
-    scrollbar-width: auto !important;
-    scrollbar-color: #888888 #ffffff !important;
-  }
-
-  body:not(:has(.page-container))::-webkit-scrollbar {
-    width: var(--nines-scrollbar-width) !important;
-    height: var(--nines-scrollbar-width) !important;
-    display: block !important;
-  }
-
-  body:not(:has(.page-container))::-webkit-scrollbar-track {
-    background: #ffffff !important;
-    display: block !important;
-  }
-
-  body:not(:has(.page-container))::-webkit-scrollbar-thumb {
-    background: #888888 !important;
-    border-radius: 6px !important;
-    border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
-    background-clip: content-box !important;
-    display: block !important;
-  }
-
-  body:not(:has(.page-container))::-webkit-scrollbar-button {
-    display: block !important;
-    width: var(--nines-scrollbar-button-size) !important;
-    height: var(--nines-scrollbar-button-size) !important;
-    min-height: var(--nines-scrollbar-button-size) !important;
-  }
-}
-/* =========================================================
-   NINE TOUCH CUSTOM SCROLLBAR MODE
-   真实手机 / 平板使用自定义滚动条：
-   - 原生移动端细滚动条隐藏，避免被图块/footer/导航层压住。
-   - 右侧预留 12px 给自定义滚动条。
-   - 自定义滚动条由 components/NinesTouchScrollbar.tsx 固定在最上层。
-   - 电脑端和电脑端缩小窗口不受影响。
-   ========================================================= */
-
-@media (pointer: coarse) {
-  :root {
-    --nines-scrollbar-width: 12px !important;
-    --nines-scrollbar-button-size: 12px !important;
-  }
-
-  html,
-  body {
-    overflow-x: hidden !important;
-  }
-
-  .page-container {
-    padding-right: 12px !important;
+    padding-right: 6px !important;
     scrollbar-width: none !important;
   }
 
@@ -1532,7 +1410,7 @@ button.carousel-arrow:hover,
   }
 
   body:not(:has(.page-container)) {
-    padding-right: 12px !important;
+    padding-right: 6px !important;
     scrollbar-width: none !important;
   }
 

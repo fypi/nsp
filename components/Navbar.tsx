@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -433,12 +432,17 @@ export default function Navbar() {
   const currentPath = useMemo(() => stripLocaleFromPath(pathname), [pathname]);
 
   const NAV_H = 52;
-  const SCROLLBAR_W = 12;
+  const DESKTOP_SCROLLBAR_W = 12;
+  const TOUCH_SCROLLBAR_W = 6;
 
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
-  const shouldExpandToRightEdge = isMegaOpen || mobileOpen;
-  const fixedRight = shouldExpandToRightEdge ? 0 : isTouchLike ? 0 : SCROLLBAR_W;
+  const shouldExpandToRightEdge = isMegaOpen;
+  const fixedRight = shouldExpandToRightEdge
+    ? 0
+    : isTouchLike
+      ? TOUCH_SCROLLBAR_W
+      : DESKTOP_SCROLLBAR_W;
 
   const currentMega = megaData[activeMenu ?? lastMenu];
   const accountLabels = accountText(locale);
@@ -500,6 +504,7 @@ export default function Navbar() {
 
     updateDeviceFlags();
     window.addEventListener("resize", updateDeviceFlags);
+    window.addEventListener("orientationchange", updateDeviceFlags);
     window.addEventListener("resize", updateLangMenuPosition);
     window.addEventListener("scroll", updateLangMenuPosition, true);
 
@@ -511,6 +516,7 @@ export default function Navbar() {
 
     return () => {
       window.removeEventListener("resize", updateDeviceFlags);
+      window.removeEventListener("orientationchange", updateDeviceFlags);
       window.removeEventListener("resize", updateLangMenuPosition);
       window.removeEventListener("scroll", updateLangMenuPosition, true);
       listener.subscription.unsubscribe();
@@ -580,8 +586,9 @@ export default function Navbar() {
   const changeLanguage = (nextLocale: Locale) => {
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000`;
     const basePath = stripLocaleFromPath(pathname);
-    router.push(localePath(nextLocale, basePath));
+    const nextPath = localePath(nextLocale, basePath);
     closeAll();
+    window.location.assign(nextPath);
   };
 
   const handleLogout = async () => {
