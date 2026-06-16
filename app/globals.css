@@ -1407,17 +1407,18 @@ button.carousel-arrow:hover,
   opacity: 1 !important;
 }
 /* =========================================================
-   NINE MOBILE / TABLET ONLY FIX
-   只针对真实触屏设备：
-   1. 移动端/平板端原生滚动条不占布局宽度，隐藏它避免右侧空隙。
-   2. 避免移动端滚动条滑块在 section / footer 后面穿层。
-   3. 不影响桌面端，也不影响桌面端窗口缩小。
+   NINE MOBILE / TABLET RESERVED SCROLLBAR MODE
+   真实触屏设备也保留右侧 12px 滚动条区域。
+   不隐藏滚动条；电脑端和电脑端缩小窗口不受影响。
+
+   说明：iOS / Android / 部分平板浏览器不保证显示桌面式滚动条和上下小箭头。
+   这段只负责：预留滚动条区域 + 尽量显示滚动条 + 不让导航栏/菜单盖住右侧区域。
    ========================================================= */
 
 @media (pointer: coarse) {
   :root {
-    --nines-scrollbar-width: 0px;
-    --nines-scrollbar-button-size: 0px;
+    --nines-scrollbar-width: 12px;
+    --nines-scrollbar-button-size: 12px;
   }
 
   html,
@@ -1426,42 +1427,66 @@ button.carousel-arrow:hover,
   }
 
   .page-container {
-    scrollbar-width: none !important;
+    overflow-y: scroll !important;
+    scrollbar-width: auto !important;
+    scrollbar-color: #888888 #ffffff !important;
   }
 
-  .page-container::-webkit-scrollbar,
-  .page-container::-webkit-scrollbar-track,
-  .page-container::-webkit-scrollbar-thumb,
-  .page-container::-webkit-scrollbar-button,
-  .page-container::-webkit-scrollbar-button:vertical:start:decrement,
-  .page-container::-webkit-scrollbar-button:vertical:end:increment,
-  .page-container::-webkit-scrollbar-button:single-button:vertical:decrement,
-  .page-container::-webkit-scrollbar-button:single-button:vertical:increment {
-    width: 0 !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    display: none !important;
-    background: transparent !important;
-    background-image: none !important;
+  .page-container::-webkit-scrollbar {
+    width: var(--nines-scrollbar-width) !important;
+    height: var(--nines-scrollbar-width) !important;
+    display: block !important;
+  }
+
+  .page-container::-webkit-scrollbar-track {
+    background: #ffffff !important;
+    display: block !important;
+  }
+
+  .page-container::-webkit-scrollbar-thumb {
+    background: #888888 !important;
+    border-radius: 6px !important;
+    border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
+    background-clip: content-box !important;
+    display: block !important;
+  }
+
+  .page-container::-webkit-scrollbar-button {
+    display: block !important;
+    width: var(--nines-scrollbar-button-size) !important;
+    height: var(--nines-scrollbar-button-size) !important;
+    min-height: var(--nines-scrollbar-button-size) !important;
   }
 
   body:not(:has(.page-container)) {
-    scrollbar-width: none !important;
+    overflow-y: scroll !important;
+    scrollbar-width: auto !important;
+    scrollbar-color: #888888 #ffffff !important;
   }
 
-  body:not(:has(.page-container))::-webkit-scrollbar,
-  body:not(:has(.page-container))::-webkit-scrollbar-track,
-  body:not(:has(.page-container))::-webkit-scrollbar-thumb,
-  body:not(:has(.page-container))::-webkit-scrollbar-button,
-  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
-  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
-  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement,
-  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
-    width: 0 !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    display: none !important;
-    background: transparent !important;
-    background-image: none !important;
+  body:not(:has(.page-container))::-webkit-scrollbar {
+    width: var(--nines-scrollbar-width) !important;
+    height: var(--nines-scrollbar-width) !important;
+    display: block !important;
+  }
+
+  body:not(:has(.page-container))::-webkit-scrollbar-track {
+    background: #ffffff !important;
+    display: block !important;
+  }
+
+  body:not(:has(.page-container))::-webkit-scrollbar-thumb {
+    background: #888888 !important;
+    border-radius: 6px !important;
+    border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
+    background-clip: content-box !important;
+    display: block !important;
+  }
+
+  body:not(:has(.page-container))::-webkit-scrollbar-button {
+    display: block !important;
+    width: var(--nines-scrollbar-button-size) !important;
+    height: var(--nines-scrollbar-button-size) !important;
+    min-height: var(--nines-scrollbar-button-size) !important;
   }
 }
