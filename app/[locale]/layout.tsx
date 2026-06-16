@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/SiteFooter";
 import NetworkStatusToast from "@/components/NetworkStatusToast";
+import NinesTouchScrollbar from "@/components/NinesTouchScrollbar";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -47,6 +48,7 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       {children}
       <SiteFooter />
       <NetworkStatusToast />
+      <NinesTouchScrollbar />
     </>
   );
 }

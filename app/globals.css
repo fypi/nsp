@@ -1490,3 +1490,65 @@ button.carousel-arrow:hover,
     min-height: var(--nines-scrollbar-button-size) !important;
   }
 }
+/* =========================================================
+   NINE TOUCH CUSTOM SCROLLBAR MODE
+   真实手机 / 平板使用自定义滚动条：
+   - 原生移动端细滚动条隐藏，避免被图块/footer/导航层压住。
+   - 右侧预留 12px 给自定义滚动条。
+   - 自定义滚动条由 components/NinesTouchScrollbar.tsx 固定在最上层。
+   - 电脑端和电脑端缩小窗口不受影响。
+   ========================================================= */
+
+@media (pointer: coarse) {
+  :root {
+    --nines-scrollbar-width: 12px !important;
+    --nines-scrollbar-button-size: 12px !important;
+  }
+
+  html,
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .page-container {
+    padding-right: 12px !important;
+    scrollbar-width: none !important;
+  }
+
+  .page-container::-webkit-scrollbar,
+  .page-container::-webkit-scrollbar-track,
+  .page-container::-webkit-scrollbar-thumb,
+  .page-container::-webkit-scrollbar-button,
+  .page-container::-webkit-scrollbar-button:vertical:start:decrement,
+  .page-container::-webkit-scrollbar-button:vertical:end:increment,
+  .page-container::-webkit-scrollbar-button:single-button:vertical:decrement,
+  .page-container::-webkit-scrollbar-button:single-button:vertical:increment {
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  body:not(:has(.page-container)) {
+    padding-right: 12px !important;
+    scrollbar-width: none !important;
+  }
+
+  body:not(:has(.page-container))::-webkit-scrollbar,
+  body:not(:has(.page-container))::-webkit-scrollbar-track,
+  body:not(:has(.page-container))::-webkit-scrollbar-thumb,
+  body:not(:has(.page-container))::-webkit-scrollbar-button,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement,
+  body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+    background-image: none !important;
+  }
+}
