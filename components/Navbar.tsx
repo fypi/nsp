@@ -659,7 +659,7 @@ export default function Navbar() {
           boxShadow: "none",
         }}
       >
-        <BrandLogo locale={locale} compact={false} />
+        <BrandLogo locale={locale} compact={isMobile} />
 
         {!isMobile && (
           <div className="nav-center" style={{ display: "flex", gap: 8, fontSize: 15, color: "#000" }}>

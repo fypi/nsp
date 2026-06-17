@@ -18,23 +18,6 @@ const logoSources = [
   "/brand/logo-white.png",
 ];
 
-function getHomeHref(locale: Locale) {
-  if (locale === "en") return "/";
-  return `/${locale}`;
-}
-
-function getSlogan(locale: Locale) {
-  if (locale === "en") {
-    return "— All things in the world, available at your fingertips";
-  }
-
-  if (locale === "zh-TW") {
-    return "—— 盡知天下事，彈指皆可得";
-  }
-
-  return "—— 尽知天下事，弹指皆可得";
-}
-
 export default function BrandLogo({
   locale = "zh",
   compact = false,
@@ -42,9 +25,8 @@ export default function BrandLogo({
 }: BrandLogoProps) {
   const [sourceIndex, setSourceIndex] = useState(0);
 
-  const href = getHomeHref(locale);
+  const href = `/${locale}`;
   const src = logoSources[sourceIndex] ?? "/brand/logo-wordmark.png";
-  const slogan = getSlogan(locale);
 
   return (
     <Link
@@ -54,14 +36,11 @@ export default function BrandLogo({
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 8,
-        height: 38,
-        minWidth: 0,
-        maxWidth: "calc(100vw - 74px)",
+        height: compact ? 34 : 38,
+        minWidth: compact ? 116 : 148,
         color: "#111827",
         textDecoration: "none",
-        flexShrink: 1,
-        overflow: "hidden",
+        flexShrink: 0,
       }}
     >
       <img
@@ -78,26 +57,8 @@ export default function BrandLogo({
           height: "auto",
           maxHeight: compact ? 28 : 32,
           objectFit: "contain",
-          flex: "0 0 auto",
         }}
       />
-
-      <span
-        style={{
-          display: "inline-block",
-          fontSize: compact ? 11 : 13,
-          lineHeight: 1.15,
-          fontWeight: 650,
-          letterSpacing: locale === "en" ? "-0.02em" : "0.01em",
-          color: "#111827",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          transform: "translateY(0.5px)",
-        }}
-      >
-        {slogan}
-      </span>
     </Link>
   );
 }
