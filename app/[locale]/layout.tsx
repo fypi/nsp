@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 
 type Locale = "zh" | "zh-TW" | "en";
 
-const iconVersion = "20260616";
+const iconVersion = "20260617";
 
 function normalizeLocale(rawLocale: unknown): Locale {
   if (rawLocale === "en") return "en";
@@ -15,7 +15,10 @@ function normalizeLocale(rawLocale: unknown): Locale {
 }
 
 const icons: Metadata["icons"] = {
-  icon: [{ url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
+  icon: [
+    { url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" },
+    { url: `/favicon.svg?v=${iconVersion}`, type: "image/svg+xml" },
+  ],
   shortcut: `/icon.svg?v=${iconVersion}`,
   apple: [{ url: `/apple-icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
 };

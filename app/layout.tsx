@@ -3,14 +3,17 @@ import NinesTouchScrollbar from "@/components/NinesTouchScrollbar";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-const iconVersion = "20260616";
+const iconVersion = "20260617";
 
 export const metadata: Metadata = {
   title: "NinesPro — All things in the world, available at your fingertips",
   description:
     "A calm workspace for tools, workflows, learning, finance, and AI.",
   icons: {
-    icon: [{ url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
+    icon: [
+      { url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" },
+      { url: `/favicon.svg?v=${iconVersion}`, type: "image/svg+xml" },
+    ],
     shortcut: `/icon.svg?v=${iconVersion}`,
     apple: [{ url: `/apple-icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
   },

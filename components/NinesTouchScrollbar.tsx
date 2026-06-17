@@ -8,12 +8,12 @@ const THUMB_WIDTH = 3;
 const BUTTON_SIZE = 6;
 const MIN_THUMB_HEIGHT = 34;
 
-function getScrollTarget(): HTMLElement | null {
-  const pageContainer = document.querySelector<HTMLElement>(".page-container");
-  if (pageContainer) return pageContainer;
-
-  const scrollingElement = document.scrollingElement as HTMLElement | null;
-  return scrollingElement || document.documentElement;
+function findScrollTarget(): HTMLElement | null {
+  return (
+    document.querySelector<HTMLElement>(".page-container") ||
+    (document.scrollingElement as HTMLElement | null) ||
+    document.documentElement
+  );
 }
 
 export default function NinesTouchScrollbar() {
@@ -23,14 +23,31 @@ export default function NinesTouchScrollbar() {
   const [thumbHeight, setThumbHeight] = useState(MIN_THUMB_HEIGHT);
 
   const targetRef = useRef<HTMLElement | null>(null);
+  const scrollListenerTargetRef = useRef<HTMLElement | null>(null);
   const draggingRef = useRef(false);
   const dragStartYRef = useRef(0);
   const dragStartScrollTopRef = useRef(0);
 
+  const attachScrollListenerIfNeeded = () => {
+    const nextTarget = findScrollTarget();
+    if (!nextTarget) return null;
+
+    targetRef.current = nextTarget;
+
+    if (scrollListenerTargetRef.current !== nextTarget) {
+      if (scrollListenerTargetRef.current) {
+        scrollListenerTargetRef.current.removeEventListener("scroll", recalc);
+      }
+      nextTarget.addEventListener("scroll", recalc, { passive: true });
+      scrollListenerTargetRef.current = nextTarget;
+    }
+
+    return nextTarget;
+  };
+
   const recalc = () => {
-    const target = targetRef.current || getScrollTarget();
+    const target = attachScrollListenerIfNeeded();
     if (!target) return;
-    targetRef.current = target;
 
     const scrollHeight = target.scrollHeight;
     const clientHeight = target.clientHeight;
@@ -60,7 +77,10 @@ export default function NinesTouchScrollbar() {
 
   useEffect(() => {
     const updateEnabled = () => {
-      setEnabled(window.matchMedia("(pointer: coarse)").matches);
+      setEnabled(
+        window.matchMedia("(pointer: coarse)").matches ||
+          window.innerWidth <= 1180
+      );
     };
 
     updateEnabled();
@@ -76,19 +96,15 @@ export default function NinesTouchScrollbar() {
   useEffect(() => {
     if (!enabled) return;
 
-    const target = getScrollTarget();
-    if (!target) return;
-    targetRef.current = target;
-
     const run = () => requestAnimationFrame(recalc);
     run();
 
-    target.addEventListener("scroll", recalc, { passive: true });
     window.addEventListener("resize", run);
     window.addEventListener("orientationchange", run);
+    document.addEventListener("scroll", recalc, true);
 
     const resizeObserver = new ResizeObserver(run);
-    resizeObserver.observe(target);
+    resizeObserver.observe(document.documentElement);
     resizeObserver.observe(document.body);
 
     const mutationObserver = new MutationObserver(run);
@@ -98,12 +114,16 @@ export default function NinesTouchScrollbar() {
       attributes: true,
     });
 
-    const timer = window.setInterval(recalc, 300);
+    const timer = window.setInterval(recalc, 250);
 
     return () => {
-      target.removeEventListener("scroll", recalc);
+      if (scrollListenerTargetRef.current) {
+        scrollListenerTargetRef.current.removeEventListener("scroll", recalc);
+        scrollListenerTargetRef.current = null;
+      }
       window.removeEventListener("resize", run);
       window.removeEventListener("orientationchange", run);
+      document.removeEventListener("scroll", recalc, true);
       resizeObserver.disconnect();
       mutationObserver.disconnect();
       window.clearInterval(timer);
@@ -212,10 +232,10 @@ export default function NinesTouchScrollbar() {
           const target = targetRef.current;
           if (!target) return;
           const isAboveThumb = event.clientY < thumbTop;
-          const amount = isAboveThumb
-            ? -target.clientHeight * 0.82
-            : target.clientHeight * 0.82;
-          target.scrollBy({ top: amount, behavior: "smooth" });
+          target.scrollBy({
+            top: isAboveThumb ? -target.clientHeight * 0.82 : target.clientHeight * 0.82,
+            behavior: "smooth",
+          });
         }}
       >
         <div
