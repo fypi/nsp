@@ -28,8 +28,9 @@ export default function NinesTouchScrollbar() {
   const dragStartScrollTopRef = useRef(0);
 
   const recalc = () => {
-    const target = targetRef.current;
+    const target = targetRef.current || getScrollTarget();
     if (!target) return;
+    targetRef.current = target;
 
     const scrollHeight = target.scrollHeight;
     const clientHeight = target.clientHeight;
@@ -46,7 +47,7 @@ export default function NinesTouchScrollbar() {
     const nextVisible = scrollHeight > clientHeight + 4;
     const nextThumbHeight = Math.max(
       MIN_THUMB_HEIGHT,
-      Math.round((clientHeight / scrollHeight) * trackHeight)
+      Math.round((clientHeight / Math.max(1, scrollHeight)) * trackHeight)
     );
     const travel = Math.max(1, trackHeight - nextThumbHeight);
     const nextThumbTop =
@@ -77,20 +78,34 @@ export default function NinesTouchScrollbar() {
 
     const target = getScrollTarget();
     if (!target) return;
-
     targetRef.current = target;
-    recalc();
+
+    const run = () => requestAnimationFrame(recalc);
+    run();
 
     target.addEventListener("scroll", recalc, { passive: true });
-    window.addEventListener("resize", recalc);
-    window.addEventListener("orientationchange", recalc);
+    window.addEventListener("resize", run);
+    window.addEventListener("orientationchange", run);
+
+    const resizeObserver = new ResizeObserver(run);
+    resizeObserver.observe(target);
+    resizeObserver.observe(document.body);
+
+    const mutationObserver = new MutationObserver(run);
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+    });
 
     const timer = window.setInterval(recalc, 300);
 
     return () => {
       target.removeEventListener("scroll", recalc);
-      window.removeEventListener("resize", recalc);
-      window.removeEventListener("orientationchange", recalc);
+      window.removeEventListener("resize", run);
+      window.removeEventListener("orientationchange", run);
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
       window.clearInterval(timer);
     };
   }, [enabled]);
@@ -142,25 +157,6 @@ export default function NinesTouchScrollbar() {
     target.scrollBy({ top: amount, behavior: "smooth" });
   };
 
-  const arrowBaseStyle = {
-    position: "absolute" as const,
-    right: 0,
-    width: HIT_WIDTH,
-    height: BUTTON_SIZE,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    pointerEvents: "auto" as const,
-    background: "rgba(224,224,224,0.82)",
-    color: "#555555",
-    fontSize: 6,
-    lineHeight: 1,
-    userSelect: "none" as const,
-    WebkitUserSelect: "none" as const,
-    WebkitTextFillColor: "#555555",
-    touchAction: "manipulation" as const,
-  };
-
   return (
     <div
       aria-hidden="true"
@@ -175,8 +171,30 @@ export default function NinesTouchScrollbar() {
         background: "transparent",
       }}
     >
-      <div onClick={() => scrollByAmount(-260)} style={{ ...arrowBaseStyle, top: 0 }}>
-        ▲
+      <div
+        onClick={() => scrollByAmount(-260)}
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: HIT_WIDTH,
+          height: BUTTON_SIZE,
+          pointerEvents: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span
+          style={{
+            display: "block",
+            width: 0,
+            height: 0,
+            borderLeft: "2px solid transparent",
+            borderRight: "2px solid transparent",
+            borderBottom: "4px solid #555555",
+          }}
+        />
       </div>
 
       <div
@@ -230,8 +248,30 @@ export default function NinesTouchScrollbar() {
         />
       </div>
 
-      <div onClick={() => scrollByAmount(260)} style={{ ...arrowBaseStyle, bottom: 0 }}>
-        ▼
+      <div
+        onClick={() => scrollByAmount(260)}
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: 0,
+          width: HIT_WIDTH,
+          height: BUTTON_SIZE,
+          pointerEvents: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <span
+          style={{
+            display: "block",
+            width: 0,
+            height: 0,
+            borderLeft: "2px solid transparent",
+            borderRight: "2px solid transparent",
+            borderTop: "4px solid #555555",
+          }}
+        />
       </div>
     </div>
   );

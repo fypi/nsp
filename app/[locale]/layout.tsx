@@ -1,11 +1,12 @@
 import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/SiteFooter";
 import NetworkStatusToast from "@/components/NetworkStatusToast";
-import NinesTouchScrollbar from "@/components/NinesTouchScrollbar";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 type Locale = "zh" | "zh-TW" | "en";
+
+const iconVersion = "20260616";
 
 function normalizeLocale(rawLocale: unknown): Locale {
   if (rawLocale === "en") return "en";
@@ -14,9 +15,9 @@ function normalizeLocale(rawLocale: unknown): Locale {
 }
 
 const icons: Metadata["icons"] = {
-  icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-  shortcut: "/icon.svg",
-  apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  icon: [{ url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
+  shortcut: `/icon.svg?v=${iconVersion}`,
+  apple: [{ url: `/apple-icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
 };
 
 export async function generateMetadata({
@@ -57,7 +58,6 @@ export default function LocaleLayout({ children }: { children: ReactNode }) {
       {children}
       <SiteFooter />
       <NetworkStatusToast />
-      <NinesTouchScrollbar />
     </>
   );
 }
