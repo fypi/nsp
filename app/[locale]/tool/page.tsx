@@ -1,616 +1,221 @@
-import Link from "next/link";
-
-const locales = ["en", "zh", "zh-TW"] as const;
-type Locale = (typeof locales)[number];
-
-type PageParams = {
-  params: {
-    locale?: string;
-  };
-};
-
-type LocalText = {
-  zh: string;
-  en: string;
-  tw: string;
-};
-
-type ToolStatus = "online" | "planned";
+type Locale = "zh" | "zh-TW" | "en";
 
 type ToolItem = {
-  icon: string;
-  title: LocalText;
-  desc: LocalText;
-  href: string;
-  status: ToolStatus;
-  badge?: LocalText;
+  slug: string;
+  zh: string;
+  tw: string;
+  en: string;
+  zhDesc: string;
+  twDesc: string;
+  enDesc: string;
 };
 
-type ToolGroup = {
-  key: string;
-  icon: string;
-  title: LocalText;
-  desc: LocalText;
-  tools: ToolItem[];
-};
-
-function normalizeLocale(locale?: string): Locale {
-  if (locale === "en") return "en";
-  if (locale === "zh-TW") return "zh-TW";
+function getLocale(raw?: string): Locale {
+  if (raw === "en") return "en";
+  if (raw === "zh-TW" || raw === "zh-tw") return "zh-TW";
   return "zh";
 }
 
-function t(text: LocalText, locale: Locale) {
-  if (locale === "en") return text.en;
-  if (locale === "zh-TW") return text.tw;
-  return text.zh;
+function localePath(locale: Locale, path: string) {
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  if (locale === "en") return clean === "/" ? "/" : clean;
+  return `/${locale}${clean === "/" ? "" : clean}`;
 }
 
-const statusText: Record<ToolStatus, LocalText> = {
-  online: { zh: "已上线", en: "Online", tw: "已上線" },
-  planned: { zh: "规划中", en: "Planned", tw: "規劃中" },
-};
+const copy = {
+  zh: {
+    title: "工具中心",
+    desc: "NINESPRO 工具集合，覆盖 AI、文书、学习、办公、开发、金融、文本与效率场景。",
+    count: "个工具",
+  },
+  "zh-TW": {
+    title: "工具中心",
+    desc: "NINESPRO 工具集合，覆蓋 AI、文書、學習、辦公、開發、金融、文字與效率場景。",
+    count: "個工具",
+  },
+  en: {
+    title: "Tools",
+    desc: "NINESPRO tool collection for AI, documents, learning, office, development, finance, text, and productivity workflows.",
+    count: "tools",
+  },
+} satisfies Record<Locale, { title: string; desc: string; count: string }>;
 
-const groups: ToolGroup[] = [
-  {
-    key: "popular",
-    icon: "🔥",
-    title: { zh: "热门工具", en: "Popular Tools", tw: "熱門工具" },
-    desc: {
-      zh: "高频、轻量、打开就能用的工具，适合日常处理文本、数据和文档。",
-      en: "Frequently used lightweight tools for text, data, and document workflows.",
-      tw: "高頻、輕量、打開就能用的工具，適合日常處理文字、資料和文件。",
-    },
-    tools: [
-      {
-        icon: "{}",
-        title: { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化" },
-        desc: {
-          zh: "格式化、压缩和校验 JSON。",
-          en: "Format, minify, and validate JSON.",
-          tw: "格式化、壓縮和校驗 JSON。",
-        },
-        href: "/tool/json-formatter",
-        status: "online",
-      },
-      {
-        icon: "≠",
-        title: { zh: "文本对比", en: "Text Diff", tw: "文字對比" },
-        desc: {
-          zh: "对比两段文本，查看新增、删除和相同内容。",
-          en: "Compare two texts and review additions, removals, and unchanged lines.",
-          tw: "對比兩段文字，查看新增、刪除和相同內容。",
-        },
-        href: "/tool/text-diff",
-        status: "online",
-      },
-      {
-        icon: "%",
-        title: { zh: "URL 编码 / 解码", en: "URL Encode / Decode", tw: "URL 編碼 / 解碼" },
-        desc: {
-          zh: "处理 URL 参数、查询字符串和特殊字符。",
-          en: "Encode and decode URL parameters, query strings, and special characters.",
-          tw: "處理 URL 參數、查詢字串和特殊字元。",
-        },
-        href: "/tool/url-codec",
-        status: "online",
-      },
-      {
-        icon: "64",
-        title: { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具" },
-        desc: {
-          zh: "Base64 编码与解码。",
-          en: "Encode and decode Base64 content.",
-          tw: "Base64 編碼與解碼。",
-        },
-        href: "/tool/base64",
-        status: "online",
-      },
-      {
-        icon: "📄",
-        title: { zh: "文书模板生成器", en: "Document Template", tw: "文書模板生成器" },
-        desc: {
-          zh: "快速生成常见文书、说明和模板结构。",
-          en: "Generate common document templates and structured drafts.",
-          tw: "快速生成常見文書、說明和模板結構。",
-        },
-        href: "/tool/document-template",
-        status: "online",
-      },
-      {
-        icon: "∑",
-        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
-        desc: {
-          zh: "估算长期复利增长和每月追加效果。",
-          en: "Estimate long-term compound growth and monthly contributions.",
-          tw: "估算長期複利增長和每月追加效果。",
-        },
-        href: "/tool/compound-interest",
-        status: "online",
-      },
-    ],
-  },
-  {
-    key: "learning",
-    icon: "📚",
-    title: { zh: "学习工具", en: "Learning Tools", tw: "學習工具" },
-    desc: {
-      zh: "从幼儿启蒙、小学练习到技术自学，围绕学习过程生成可打印、可练习、可复盘的材料。",
-      en: "From early learning to technical self-study, generate printable, practice-ready, and reviewable materials.",
-      tw: "從幼兒啟蒙、小學練習到技術自學，圍繞學習過程生成可列印、可練習、可復盤的材料。",
-    },
-    tools: [
-      {
-        icon: "🔤",
-        title: { zh: "拼音卡片生成器", en: "Pinyin Cards", tw: "拼音卡片生成器" },
-        desc: {
-          zh: "生成拼音、声母、韵母和简单词语练习卡。",
-          en: "Generate pinyin, initials, finals, and simple word practice cards.",
-          tw: "生成拼音、聲母、韻母和簡單詞語練習卡。",
-        },
-        href: "/tool/pinyin-card",
-        status: "online",
-      },
-      {
-        icon: "🔢",
-        title: { zh: "口算练习生成器", en: "Arithmetic Practice", tw: "口算練習生成器" },
-        desc: {
-          zh: "按年级和范围生成加减乘除练习。",
-          en: "Generate arithmetic practice by grade level and range.",
-          tw: "按年級和範圍生成加減乘除練習。",
-        },
-        href: "/tool/arithmetic-practice",
-        status: "online",
-      },
-      {
-        icon: "✍️",
-        title: { zh: "作文提纲生成器", en: "Essay Outline", tw: "作文提綱生成器" },
-        desc: {
-          zh: "生成作文结构、素材提示和段落提纲。",
-          en: "Generate essay structure, material prompts, and paragraph outlines.",
-          tw: "生成作文結構、素材提示和段落提綱。",
-        },
-        href: "/tool/essay-outline",
-        status: "online",
-      },
-      {
-        icon: "🗓️",
-        title: { zh: "学习计划生成器", en: "Study Planner", tw: "學習計劃生成器" },
-        desc: {
-          zh: "按目标、天数和时间生成复习计划。",
-          en: "Generate study plans by goal, duration, and available time.",
-          tw: "按目標、天數和時間生成複習計劃。",
-        },
-        href: "/tool/study-planner",
-        status: "online",
-      },
-      {
-        icon: "🧪",
-        title: { zh: "公式速查卡片", en: "Formula Cards", tw: "公式速查卡片" },
-        desc: {
-          zh: "整理数学、物理、化学常用公式卡片。",
-          en: "Organize common math, physics, and chemistry formula cards.",
-          tw: "整理數學、物理、化學常用公式卡片。",
-        },
-        href: "/tool/formula-cards",
-        status: "online",
-      },
-      {
-        icon: "🧭",
-        title: { zh: "技术学习路线", en: "Tech Learning Path", tw: "技術學習路線" },
-        desc: {
-          zh: "按方向生成前端、后端、AI、网络和系统学习路线。",
-          en: "Generate learning paths for frontend, backend, AI, networking, and systems.",
-          tw: "按方向生成前端、後端、AI、網路和系統學習路線。",
-        },
-        href: "/tool/tech-learning-path",
-        status: "online",
-      },
-    ],
-  },
-  {
-    key: "tech",
-    icon: "🧰",
-    title: { zh: "技术工具", en: "Developer Tools", tw: "技術工具" },
-    desc: {
-      zh: "开发、排查、格式化和调试常用工具，适合工程和技术学习。",
-      en: "Common tools for development, troubleshooting, formatting, and debugging.",
-      tw: "開發、排查、格式化和除錯常用工具，適合工程和技術學習。",
-    },
-    tools: [
-      {
-        icon: "MD",
-        title: { zh: "Markdown 预览", en: "Markdown Preview", tw: "Markdown 預覽" },
-        desc: {
-          zh: "实时预览 Markdown 文档。",
-          en: "Preview Markdown documents in real time.",
-          tw: "即時預覽 Markdown 文件。",
-        },
-        href: "/tool/markdown-preview",
-        status: "online",
-      },
-      {
-        icon: ".*",
-        title: { zh: "正则表达式测试器", en: "Regex Tester", tw: "正則表達式測試器" },
-        desc: {
-          zh: "测试匹配结果、分组和替换逻辑。",
-          en: "Test matches, groups, and replacement logic.",
-          tw: "測試匹配結果、分組和替換邏輯。",
-        },
-        href: "/tool/regex-tester",
-        status: "online",
-      },
-      {
-        icon: "⏱️",
-        title: { zh: "时间戳转换", en: "Timestamp Converter", tw: "時間戳轉換" },
-        desc: {
-          zh: "Unix 时间戳与日期时间互转。",
-          en: "Convert Unix timestamps and date-time values.",
-          tw: "Unix 時間戳與日期時間互轉。",
-        },
-        href: "/tool/timestamp-converter",
-        status: "online",
-      },
-      {
-        icon: "QR",
-        title: { zh: "二维码生成器", en: "QR Code Generator", tw: "QR Code 生成器" },
-        desc: {
-          zh: "输入文本或链接，生成二维码。",
-          en: "Generate QR codes from text or links.",
-          tw: "輸入文字或連結，生成 QR Code。",
-        },
-        href: "/tool/qr-code",
-        status: "online",
-      },
-      {
-        icon: "SQL",
-        title: { zh: "SQL 格式化", en: "SQL Formatter", tw: "SQL 格式化" },
-        desc: {
-          zh: "整理 SQL 缩进、换行和可读性。",
-          en: "Format SQL indentation, line breaks, and readability.",
-          tw: "整理 SQL 縮排、換行和可讀性。",
-        },
-        href: "/tool/sql-formatter",
-        status: "online",
-      },
-      {
-        icon: "#",
-        title: { zh: "Hash 计算器", en: "Hash Calculator", tw: "Hash 計算器" },
-        desc: {
-          zh: "计算 MD5、SHA 系列哈希值。",
-          en: "Calculate MD5 and SHA hash values.",
-          tw: "計算 MD5、SHA 系列雜湊值。",
-        },
-        href: "/tool/hash-calculator",
-        status: "online",
-      },
-    ],
-  },
-  {
-    key: "office",
-    icon: "📄",
-    title: { zh: "办公文档", en: "Office & Documents", tw: "辦公文件" },
-    desc: {
-      zh: "把高频文档、会议、日报、计划和简历内容变成模板。",
-      en: "Turn common documents, meetings, reports, plans, and resumes into templates.",
-      tw: "把高頻文件、會議、日報、計劃和履歷內容變成模板。",
-    },
-    tools: [
-      {
-        icon: "📝",
-        title: { zh: "会议纪要模板", en: "Meeting Notes", tw: "會議紀要模板" },
-        desc: {
-          zh: "生成会议纪要、行动项和责任人清单。",
-          en: "Generate meeting notes, action items, and owner lists.",
-          tw: "生成會議紀要、行動項和負責人清單。",
-        },
-        href: "/tool/meeting-notes",
-        status: "online",
-      },
-      {
-        icon: "📧",
-        title: { zh: "邮件模板生成器", en: "Email Template", tw: "郵件模板生成器" },
-        desc: {
-          zh: "生成商务、通知、跟进和说明类邮件。",
-          en: "Generate business, notice, follow-up, and explanatory emails.",
-          tw: "生成商務、通知、跟進和說明類郵件。",
-        },
-        href: "/tool/email-template",
-        status: "online",
-      },
-      {
-        icon: "CV",
-        title: { zh: "简历模板生成器", en: "Resume Template", tw: "履歷模板生成器" },
-        desc: {
-          zh: "生成简历结构、项目描述和技能清单。",
-          en: "Generate resume structure, project descriptions, and skills lists.",
-          tw: "生成履歷結構、專案描述和技能清單。",
-        },
-        href: "/tool/resume-template",
-        status: "online",
-      },
-      {
-        icon: "📊",
-        title: { zh: "PPT 大纲生成器", en: "Slide Outline", tw: "PPT 大綱生成器" },
-        desc: {
-          zh: "把主题整理成演示结构和页面标题。",
-          en: "Turn a topic into a presentation structure and slide titles.",
-          tw: "把主題整理成簡報結構和頁面標題。",
-        },
-        href: "/tool/slide-outline",
-        status: "online",
-      },
-      {
-        icon: "OKR",
-        title: { zh: "OKR 模板", en: "OKR Template", tw: "OKR 模板" },
-        desc: {
-          zh: "生成目标、关键结果和跟踪表。",
-          en: "Generate objectives, key results, and tracking tables.",
-          tw: "生成目標、關鍵結果和追蹤表。",
-        },
-        href: "/tool/okr-template",
-        status: "online",
-      },
-      {
-        icon: "PRD",
-        title: { zh: "需求文档模板", en: "PRD Template", tw: "需求文件模板" },
-        desc: {
-          zh: "生成产品需求、范围、流程和验收标准。",
-          en: "Generate requirements, scope, workflows, and acceptance criteria.",
-          tw: "生成產品需求、範圍、流程和驗收標準。",
-        },
-        href: "/tool/prd-template",
-        status: "online",
-      },
-    ],
-  },
-  {
-    key: "finance",
-    icon: "🧮",
-    title: { zh: "金融计算", en: "Finance Calculators", tw: "金融計算" },
-    desc: {
-      zh: "用于学习、测算和辅助判断的轻量计算工具。所有结果仅供估算参考。",
-      en: "Lightweight calculators for learning, estimation, and support. Results are for reference only.",
-      tw: "用於學習、測算和輔助判斷的輕量計算工具。所有結果僅供估算參考。",
-    },
-    tools: [
-      {
-        icon: "∑",
-        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
-        desc: {
-          zh: "估算长期复利增长和每月追加效果。",
-          en: "Estimate long-term compound growth and monthly contributions.",
-          tw: "估算長期複利增長和每月追加效果。",
-        },
-        href: "/tool/compound-interest",
-        status: "online",
-      },
-      {
-        icon: "🏠",
-        title: { zh: "房贷计算器", en: "Mortgage Calculator", tw: "房貸計算器" },
-        desc: {
-          zh: "估算月供、总利息和还款结构。",
-          en: "Estimate monthly payments, total interest, and repayment structure.",
-          tw: "估算月供、總利息和還款結構。",
-        },
-        href: "/tool/mortgage-calculator",
-        status: "online",
-      },
-      {
-        icon: "💰",
-        title: { zh: "储蓄目标计算器", en: "Savings Goal", tw: "儲蓄目標計算器" },
-        desc: {
-          zh: "按目标金额和时间估算每月储蓄。",
-          en: "Estimate monthly savings by goal amount and time frame.",
-          tw: "按目標金額和時間估算每月儲蓄。",
-        },
-        href: "/tool/savings-goal",
-        status: "online",
-      },
-      {
-        icon: "📉",
-        title: { zh: "通胀购买力", en: "Inflation Impact", tw: "通膨購買力" },
-        desc: {
-          zh: "估算通胀对未来购买力的影响。",
-          en: "Estimate the impact of inflation on future purchasing power.",
-          tw: "估算通膨對未來購買力的影響。",
-        },
-        href: "/tool/inflation-impact",
-        status: "online",
-      },
-    ],
-  },
-  {
-    key: "ai",
-    icon: "🤖",
-    title: { zh: "AI 辅助", en: "AI Assistants", tw: "AI 輔助" },
-    desc: {
-      zh: "面向写作、学习、知识整理和工作流的 AI 辅助入口。",
-      en: "AI-assisted entry points for writing, learning, knowledge organization, and workflows.",
-      tw: "面向寫作、學習、知識整理和工作流的 AI 輔助入口。",
-    },
-    tools: [
-      {
-        icon: "🧠",
-        title: { zh: "知识整理助手", en: "Knowledge Organizer", tw: "知識整理助手" },
-        desc: {
-          zh: "把零散内容整理成结构化笔记和清单。",
-          en: "Turn scattered content into structured notes and lists.",
-          tw: "把零散內容整理成結構化筆記和清單。",
-        },
-        href: "/tool/knowledge-organizer",
-        status: "online",
-      },
-      {
-        icon: "🪄",
-        title: { zh: "提示词模板", en: "Prompt Templates", tw: "提示詞模板" },
-        desc: {
-          zh: "生成写作、学习、代码和分析类提示词模板。",
-          en: "Generate prompt templates for writing, learning, coding, and analysis.",
-          tw: "生成寫作、學習、程式碼和分析類提示詞模板。",
-        },
-        href: "/tool/prompt-template",
-        status: "online",
-      },
-      {
-        icon: "🧾",
-        title: { zh: "摘要与提纲", en: "Summary & Outline", tw: "摘要與提綱" },
-        desc: {
-          zh: "把长文本整理成摘要、要点和提纲。",
-          en: "Turn long text into summaries, key points, and outlines.",
-          tw: "把長文字整理成摘要、要點和提綱。",
-        },
-        href: "/tool/summary-outline",
-        status: "online",
-      },
-      {
-        icon: "🧬",
-        title: { zh: "Agent 流程草图", en: "Agent Workflow Draft", tw: "Agent 流程草圖" },
-        desc: {
-          zh: "把业务流程拆成角色、步骤和自动化节点。",
-          en: "Break business workflows into roles, steps, and automation nodes.",
-          tw: "把業務流程拆成角色、步驟和自動化節點。",
-        },
-        href: "/tool/agent-workflow",
-        status: "online",
-      },
-    ],
-  },
+const tools: ToolItem[] = [
+  { slug: "agent-workflow", zh: "Agent 工作流", tw: "Agent 工作流", en: "Agent Workflow", zhDesc: "规划多步骤 Agent 执行流程。", twDesc: "規劃多步驟 Agent 執行流程。", enDesc: "Plan multi-step agent execution workflows." },
+  { slug: "ai", zh: "AI 工具", tw: "AI 工具", en: "AI Tools", zhDesc: "AI 生成、辅助和自动化工具集合。", twDesc: "AI 生成、輔助和自動化工具集合。", enDesc: "AI generation, assistance, and automation tools." },
+  { slug: "arithmetic-practice", zh: "算术练习", tw: "算術練習", en: "Arithmetic Practice", zhDesc: "生成基础算术练习题。", twDesc: "生成基礎算術練習題。", enDesc: "Generate basic arithmetic practice." },
+  { slug: "base64", zh: "Base64 工具", tw: "Base64 工具", en: "Base64", zhDesc: "Base64 编码与解码。", twDesc: "Base64 編碼與解碼。", enDesc: "Encode and decode Base64." },
+  { slug: "classics", zh: "经典文库", tw: "經典文庫", en: "Classics", zhDesc: "经典内容与学习辅助。", twDesc: "經典內容與學習輔助。", enDesc: "Classic texts and learning helpers." },
+  { slug: "compound-interest", zh: "复利计算", tw: "複利計算", en: "Compound Interest", zhDesc: "计算复利增长与收益。", twDesc: "計算複利成長與收益。", enDesc: "Calculate compound growth and returns." },
+  { slug: "developer", zh: "开发工具", tw: "開發工具", en: "Developer Tools", zhDesc: "开发者常用效率工具。", twDesc: "開發者常用效率工具。", enDesc: "Productivity tools for developers." },
+  { slug: "document", zh: "文档工具", tw: "文檔工具", en: "Document Tools", zhDesc: "文档处理与内容整理。", twDesc: "文檔處理與內容整理。", enDesc: "Document processing and organization." },
+  { slug: "document-template", zh: "文书模板", tw: "文書模板", en: "Document Templates", zhDesc: "生成常见文书模板。", twDesc: "生成常見文書模板。", enDesc: "Generate common document templates." },
+  { slug: "email-template", zh: "邮件模板", tw: "郵件模板", en: "Email Templates", zhDesc: "生成商务、沟通和通知邮件。", twDesc: "生成商務、溝通和通知郵件。", enDesc: "Generate business, communication, and notice emails." },
+  { slug: "essay-outline", zh: "文章提纲", tw: "文章提綱", en: "Essay Outline", zhDesc: "生成文章、论文和报告提纲。", twDesc: "生成文章、論文和報告提綱。", enDesc: "Generate essay, paper, and report outlines." },
+  { slug: "finance", zh: "金融工具", tw: "金融工具", en: "Finance Tools", zhDesc: "金融计算和规划工具集合。", twDesc: "金融計算和規劃工具集合。", enDesc: "Finance calculators and planning tools." },
+  { slug: "formula-cards", zh: "公式卡片", tw: "公式卡片", en: "Formula Cards", zhDesc: "学习公式、概念和速查卡片。", twDesc: "學習公式、概念和速查卡片。", enDesc: "Study formulas, concepts, and quick reference cards." },
+  { slug: "hash-calculator", zh: "哈希计算", tw: "雜湊計算", en: "Hash Calculator", zhDesc: "计算文本哈希摘要。", twDesc: "計算文字雜湊摘要。", enDesc: "Calculate text hash digests." },
+  { slug: "inflation-impact", zh: "通胀影响", tw: "通膨影響", en: "Inflation Impact", zhDesc: "估算通胀对购买力的影响。", twDesc: "估算通膨對購買力的影響。", enDesc: "Estimate inflation impact on purchasing power." },
+  { slug: "json-formatter", zh: "JSON 格式化", tw: "JSON 格式化", en: "JSON Formatter", zhDesc: "格式化、压缩和校验 JSON。", twDesc: "格式化、壓縮和校驗 JSON。", enDesc: "Format, minify, and validate JSON." },
+  { slug: "knowledge-organizer", zh: "知识整理", tw: "知識整理", en: "Knowledge Organizer", zhDesc: "整理知识点、笔记和资料。", twDesc: "整理知識點、筆記和資料。", enDesc: "Organize knowledge points, notes, and materials." },
+  { slug: "learning", zh: "学习工具", tw: "學習工具", en: "Learning Tools", zhDesc: "学习计划、复习和资料整理。", twDesc: "學習計畫、複習和資料整理。", enDesc: "Study plans, review, and material organization." },
+  { slug: "markdown-preview", zh: "Markdown 预览", tw: "Markdown 預覽", en: "Markdown Preview", zhDesc: "预览和整理 Markdown 内容。", twDesc: "預覽和整理 Markdown 內容。", enDesc: "Preview and organize Markdown content." },
+  { slug: "meeting-notes", zh: "会议纪要", tw: "會議紀要", en: "Meeting Notes", zhDesc: "生成会议纪要和行动项。", twDesc: "生成會議紀要和行動項。", enDesc: "Generate meeting notes and action items." },
+  { slug: "mortgage-calculator", zh: "房贷计算", tw: "房貸計算", en: "Mortgage Calculator", zhDesc: "计算房贷月供和利息。", twDesc: "計算房貸月供和利息。", enDesc: "Calculate mortgage payments and interest." },
+  { slug: "office", zh: "办公工具", tw: "辦公工具", en: "Office Tools", zhDesc: "办公文书、流程和协作工具。", twDesc: "辦公文書、流程和協作工具。", enDesc: "Office documents, workflows, and collaboration tools." },
+  { slug: "okr-template", zh: "OKR 模板", tw: "OKR 模板", en: "OKR Template", zhDesc: "生成目标和关键结果。", twDesc: "生成目標和關鍵結果。", enDesc: "Generate objectives and key results." },
+  { slug: "pinyin-card", zh: "拼音卡片", tw: "拼音卡片", en: "Pinyin Cards", zhDesc: "生成拼音学习卡片。", twDesc: "生成拼音學習卡片。", enDesc: "Generate pinyin learning cards." },
+  { slug: "poetry", zh: "诗词工具", tw: "詩詞工具", en: "Poetry", zhDesc: "诗词学习、整理和创作辅助。", twDesc: "詩詞學習、整理和創作輔助。", enDesc: "Poetry learning, organization, and writing assistance." },
+  { slug: "prd-template", zh: "PRD 模板", tw: "PRD 模板", en: "PRD Template", zhDesc: "生成产品需求文档结构。", twDesc: "生成產品需求文檔結構。", enDesc: "Generate product requirement document structure." },
+  { slug: "prompt-template", zh: "提示词模板", tw: "提示詞模板", en: "Prompt Templates", zhDesc: "生成可复用 AI 提示词。", twDesc: "生成可複用 AI 提示詞。", enDesc: "Generate reusable AI prompts." },
+  { slug: "qr-code", zh: "二维码", tw: "QR Code", en: "QR Code", zhDesc: "生成二维码内容。", twDesc: "生成 QR Code 內容。", enDesc: "Generate QR code content." },
+  { slug: "resume-template", zh: "简历模板", tw: "履歷模板", en: "Resume Template", zhDesc: "生成简历结构和内容。", twDesc: "生成履歷結構和內容。", enDesc: "Generate resume structure and content." },
+  { slug: "savings-goal", zh: "储蓄目标", tw: "儲蓄目標", en: "Savings Goal", zhDesc: "规划储蓄目标和周期。", twDesc: "規劃儲蓄目標和週期。", enDesc: "Plan savings goals and timelines." },
+  { slug: "slide-outline", zh: "幻灯片提纲", tw: "簡報提綱", en: "Slide Outline", zhDesc: "生成演示文稿提纲。", twDesc: "生成簡報提綱。", enDesc: "Generate presentation outlines." },
+  { slug: "sql-formatter", zh: "SQL 格式化", tw: "SQL 格式化", en: "SQL Formatter", zhDesc: "格式化和整理 SQL。", twDesc: "格式化和整理 SQL。", enDesc: "Format and organize SQL." },
+  { slug: "study-planner", zh: "学习计划", tw: "學習計畫", en: "Study Planner", zhDesc: "生成学习目标和计划。", twDesc: "生成學習目標和計畫。", enDesc: "Generate study goals and plans." },
+  { slug: "summary-outline", zh: "总结提纲", tw: "總結提綱", en: "Summary Outline", zhDesc: "把内容整理成摘要和提纲。", twDesc: "把內容整理成摘要和提綱。", enDesc: "Turn content into summaries and outlines." },
+  { slug: "tech-learning-path", zh: "技术学习路径", tw: "技術學習路徑", en: "Tech Learning Path", zhDesc: "规划技术学习路线。", twDesc: "規劃技術學習路線。", enDesc: "Plan technical learning paths." },
+  { slug: "text-diff", zh: "文本对比", tw: "文字對比", en: "Text Diff", zhDesc: "对比两段文本差异。", twDesc: "對比兩段文字差異。", enDesc: "Compare differences between two texts." },
+  { slug: "timestamp-converter", zh: "时间戳转换", tw: "時間戳轉換", en: "Timestamp Converter", zhDesc: "转换秒、毫秒和日期时间。", twDesc: "轉換秒、毫秒和日期時間。", enDesc: "Convert seconds, milliseconds, and date time." },
+  { slug: "url-codec", zh: "URL 编解码", tw: "URL 編解碼", en: "URL Codec", zhDesc: "URL 编码和解码。", twDesc: "URL 編碼和解碼。", enDesc: "Encode and decode URLs." },
 ];
 
-const iconStyle = {
-  width: 34,
-  height: 34,
-  borderRadius: 17,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: 16,
-  fontWeight: 900,
-  background:
-    "linear-gradient(145deg, rgba(255,255,255,0.94), rgba(243,246,249,0.78))",
-  border: "1px solid rgba(255,255,255,0.95)",
-  boxShadow:
-    "0 8px 20px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.98)",
-  color: "#111827",
-} as const;
-
-const groupIconStyle = {
-  ...iconStyle,
-  width: 38,
-  height: 38,
-  borderRadius: 19,
-  fontSize: 18,
-};
-
-function ToolCard({ item, locale }: { item: ToolItem; locale: Locale }) {
-  const isOnline = item.status === "online";
-
-  const content = (
-    <article
-      className={`card liquidGlassCard ${
-        !isOnline ? "liquidGlassCardPlanned" : ""
-      }`}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          marginBottom: 14,
-        }}
-      >
-        <span aria-hidden="true" style={iconStyle}>
-          {item.icon}
-        </span>
-
-        <span
-          className={isOnline ? "liquidGlassPill" : "liquidGlassPillMuted"}
-          style={{ minHeight: 28, padding: "7px 12px", fontSize: 12 }}
-        >
-          {t(item.badge ?? statusText[item.status], locale)}
-        </span>
-      </div>
-
-      <h3>{t(item.title, locale)}</h3>
-      <p>{t(item.desc, locale)}</p>
-    </article>
-  );
-
-  if (!isOnline) {
-    return <div style={{ cursor: "default" }}>{content}</div>;
-  }
+export default function Page({ params }: { params: { locale: string } }) {
+  const locale = getLocale(params?.locale);
+  const t = copy[locale];
 
   return (
-    <Link href={`/${locale}${item.href}`} style={{ textDecoration: "none" }}>
-      {content}
-    </Link>
-  );
-}
+    <main className="toolIndexRoot">
+      <style>{`
+        .toolIndexRoot {
+          min-height: 100vh;
+          background: #e9ebef;
+          color: #05070a;
+          padding: 124px 24px 110px;
+          overflow: hidden;
+        }
 
-export default function ToolPage({ params }: PageParams) {
-  const locale = normalizeLocale(params?.locale);
+        .toolIndexShell {
+          width: min(1240px, calc(100vw - 48px));
+          margin: 0 auto;
+        }
 
-  return (
-    <main className="subpage-main">
-      <div className="subpage-container">
-        <section className="subpage-hero">
-          <h1>{t({ zh: "工具中心", en: "Tool Center", tw: "工具中心" }, locale)}</h1>
-          <p>
-            {t(
-              {
-                zh: "这里集中放置可直接使用的小工具：文本、数据、学习、技术、办公、金融计算和 AI 辅助。已上线工具可直接打开；规划中工具会陆续补齐。",
-                en: "A collection of ready-to-use tools for text, data, learning, development, office work, finance, and AI assistance. Online tools can be opened directly; planned tools will be added gradually.",
-                tw: "這裡集中放置可直接使用的小工具：文字、資料、學習、技術、辦公、金融計算和 AI 輔助。已上線工具可直接打開；規劃中工具會陸續補齊。",
-              },
-              locale
-            )}
-          </p>
+        .toolIndexHero {
+          min-height: 360px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .toolIndexHero h1 {
+          margin: 0;
+          font-size: clamp(44px, 5.6vw, 80px);
+          line-height: .96;
+          letter-spacing: -.07em;
+          font-weight: 950;
+        }
+
+        .toolIndexHero p {
+          margin: 18px 0 0;
+          max-width: 980px;
+          font-size: clamp(20px, 2.2vw, 30px);
+          line-height: 1.36;
+          letter-spacing: -.035em;
+          color: #5b6678;
+          font-weight: 720;
+          text-wrap: balance;
+        }
+
+        .toolIndexMeta {
+          margin-top: 22px;
+          color: #6b7280;
+          font-size: 14px;
+          font-weight: 850;
+        }
+
+        .toolIndexDivider {
+          width: 100vw;
+          height: 30px;
+          margin-left: calc(50% - 50vw);
+          margin-right: calc(50% - 50vw);
+          background: #ffffff;
+        }
+
+        .toolGrid {
+          padding-top: 62px;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 22px;
+        }
+
+        .toolCard {
+          min-height: 180px;
+          border-radius: 32px;
+          padding: 28px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          background: #d8dee8;
+          color: #05070a;
+          text-decoration: none;
+        }
+
+        .toolCard:hover {
+          background: #d1d8e3;
+          text-decoration: none;
+        }
+
+        .toolCard h2 {
+          margin: 0 0 12px;
+          font-size: 24px;
+          line-height: 1.08;
+          letter-spacing: -.045em;
+          font-weight: 950;
+        }
+
+        .toolCard p {
+          margin: 0;
+          color: #4b5563;
+          font-size: 15px;
+          line-height: 1.62;
+          font-weight: 650;
+        }
+
+        @media (max-width: 760px) {
+          .toolIndexRoot {
+            padding: 92px 18px 90px;
+          }
+          .toolIndexShell {
+            width: calc(100vw - 36px);
+          }
+          .toolIndexHero {
+            min-height: 320px;
+          }
+          .toolGrid {
+            grid-template-columns: 1fr;
+            padding-top: 46px;
+          }
+        }
+      `}</style>
+
+      <div className="toolIndexShell">
+        <section className="toolIndexHero">
+          <h1>{t.title}</h1>
+          <p>{t.desc}</p>
+          <div className="toolIndexMeta">{tools.length} {t.count}</div>
         </section>
 
-        {groups.map((group) => (
-          <section key={group.key} className="subpage-section">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                marginBottom: 8,
-              }}
-            >
-              <span aria-hidden="true" style={groupIconStyle}>
-                {group.icon}
-              </span>
-              <h2 style={{ margin: 0 }}>{t(group.title, locale)}</h2>
-            </div>
+        <div className="toolIndexDivider" aria-hidden="true" />
 
-            <p>{t(group.desc, locale)}</p>
-
-            <div className="card-grid">
-              {group.tools.map((item) => (
-                <ToolCard
-                  key={`${group.key}-${item.href}`}
-                  item={item}
-                  locale={locale}
-                />
-              ))}
-            </div>
-          </section>
-        ))}
-
-        <div className="disclaimer-box">
-          <p>
-            {t(
-              {
-                zh: "提示：涉及儿童学习的工具仅用于生成学习材料和练习模板，不采集儿童个人信息；金融计算类工具仅供估算和学习参考，不构成投资建议。",
-                en: "Note: Children’s learning tools are only for generating learning materials and practice templates and do not collect children’s personal information. Finance calculators are for estimation and learning only and are not investment advice.",
-                tw: "提示：涉及兒童學習的工具僅用於生成學習材料和練習模板，不採集兒童個人資訊；金融計算類工具僅供估算和學習參考，不構成投資建議。",
-              },
-              locale
-            )}
-          </p>
-        </div>
+        <section className="toolGrid">
+          {tools.map((tool) => (
+            <a className="toolCard" href={localePath(locale, `/tool/${tool.slug}`)} key={tool.slug}>
+              <h2>{locale === "en" ? tool.en : locale === "zh-TW" ? tool.tw : tool.zh}</h2>
+              <p>{locale === "en" ? tool.enDesc : locale === "zh-TW" ? tool.twDesc : tool.zhDesc}</p>
+            </a>
+          ))}
+        </section>
       </div>
     </main>
   );

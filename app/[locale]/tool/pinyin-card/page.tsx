@@ -1,4 +1,5 @@
-﻿"use client";
-import * as React from "react";
-import { useParams } from "next/navigation";function getLocale(v:any){return v==="en"?"en":v==="zh-TW"?"zh-TW":"zh"}const text:any={zh:{title:"工具页面恢复中",desc:"这个工具页面已恢复为稳定临时版，先用于恢复全站编译。",back:"返回工具中心"},["zh-TW"]:{title:"工具頁面恢復中",desc:"這個工具頁面已恢復為穩定臨時版，先用於恢復全站編譯。",back:"返回工具中心"},en:{title:"Tool Page Restored",desc:"This tool page has been reset to a stable temporary version so the project can compile.",back:"Back to Tool Center"}};export default function StableToolPage(){const h=React.createElement;const p=useParams();const locale=getLocale(p?.locale);const t=text[locale];return h("main",{className:"subpage-main"},h("div",{className:"subpage-container"},h("section",{className:"subpage-hero"},h("h1",null,t.title),h("p",null,t.desc)),h("section",{className:"subpage-section"},h("div",{className:"card liquidGlassCard",style:{textAlign:"center"}},h("h3",null,"Stable temporary page"),h("p",{style:{color:"#4b5563",lineHeight:1.8}},"Full functionality will be restored step by step."),h("a",{href:"/"+locale+"/tool",className:"liquidGlassPill",style:{textDecoration:"none",marginTop:16}},t.back)))))}
+import RealToolPage from "@/components/tools/RealToolPage";
 
+type Locale="zh"|"zh-TW"|"en";
+function getLocale(raw?:string):Locale{if(raw==="en")return"en";if(raw==="zh-TW"||raw==="zh-tw")return"zh-TW";return"zh";}
+export default function Page({params}:{params:{locale:string}}){return <RealToolPage slug="pinyin-card" locale={getLocale(params?.locale)}/>;}

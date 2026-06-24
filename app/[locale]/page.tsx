@@ -1,1332 +1,972 @@
-
 "use client";
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Locale = "zh" | "zh-TW" | "en";
-type LocalText = { zh: string; en: string; tw: string };
-type ToolItem = { icon: string; title: LocalText; desc: LocalText; href: string; accent: string };
-type ToolGroup = { key: string; title: LocalText; desc: LocalText; tools: ToolItem[] };
+type CardItem = { title: string; desc: string };
+type SectionCopy = { kicker: string; title: string; desc: string; items: CardItem[] };
+type StatItem = { value: string; label: string };
+type PageCopy = {
+  brand: string; slogan: string; desc: string; explore: string; contact: string;
+  finalTitle: string; finalDesc: string; finalButton: string;
+  products: SectionCopy; solutions: SectionCopy; ai: SectionCopy; development: SectionCopy;
+  projects: SectionCopy; why: SectionCopy; statsTitle: string; statsDesc: string; stats: StatItem[];
+  testimonials: SectionCopy; partners: SectionCopy; contactSection: SectionCopy;
+};
 
-function normalizeLocale(rawLocale: unknown): Locale {
-  if (rawLocale === "en") return "en";
-  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
+function getLocale(raw?: string): Locale {
+  if (raw === "en") return "en";
+  if (raw === "zh-TW") return "zh-TW";
   return "zh";
 }
 
-function text(value: LocalText, locale: Locale) {
-  return locale === "en" ? value.en : locale === "zh-TW" ? value.tw : value.zh;
-}
-
 function localePath(locale: Locale, path: string) {
-  return locale === "en" ? (path === "/" ? "/" : path) : `/${locale}${path === "/" ? "" : path}`;
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  return `/${locale}${clean === "/" ? "" : clean}`;
 }
 
-const copy = {
-  heroTitle: { zh: "九域", en: "NinesPro", tw: "九域" },
-  heroSubtitle: {
-    zh: "尽知天下事，弹指皆可得",
-    en: "All things in the world, available at your fingertips",
-    tw: "盡知天下事，彈指皆可得",
+const copy: Record<Locale, PageCopy> = {
+  "zh": {
+    "brand": "NINESPRO",
+    "slogan": "尽知天下事，弹指皆可得。",
+    "desc": "设计并工程化下一代 AI 软件、企业平台、云端系统与数字体验。",
+    "explore": "探索产品",
+    "contact": "联系我们",
+    "finalTitle": "启动你的下一个项目。",
+    "finalDesc": "告诉我们你想构建什么，NINESPRO 帮你把想法变成现实。",
+    "finalButton": "联系我们",
+    "products": {
+      "kicker": "产品",
+      "title": "智能、规模与速度。",
+      "desc": "将 AI、云端、设计与企业工程整合为面向未来的产品体系。",
+      "items": [
+        {
+          "title": "Nines AI",
+          "desc": "面向知识、写作、研究与自动化的 AI Agent 与智能工作流。"
+        },
+        {
+          "title": "Nines Cloud",
+          "desc": "云端系统、API、仪表盘与数字产品基础设施。"
+        },
+        {
+          "title": "Nines Studio",
+          "desc": "极简网站、界面、品牌系统与数字体验。"
+        },
+        {
+          "title": "Nines Enterprise",
+          "desc": "企业定制软件、内部平台与自动化系统。"
+        },
+        {
+          "title": "Nines Tools",
+          "desc": "面向开发、文档、文本处理和效率场景的在线工具。"
+        },
+        {
+          "title": "Nines Data",
+          "desc": "数据看板、报告、可视化与商业智能系统。"
+        },
+        {
+          "title": "Nines Flow",
+          "desc": "审批、任务、流程与自动执行的工作流系统。"
+        },
+        {
+          "title": "Nines Labs",
+          "desc": "AI 产品原型与未来数字体验实验空间。"
+        }
+      ]
+    },
+    "solutions": {
+      "kicker": "解决方案",
+      "title": "从想法到系统。",
+      "desc": "把业务问题转化为清晰、可执行、可扩展的数字系统。",
+      "items": [
+        {
+          "title": "业务自动化",
+          "desc": "用 AI 工作流和定制软件替代重复劳动。"
+        },
+        {
+          "title": "AI 转型",
+          "desc": "把大模型、Agent 和自动化接入真实业务流程。"
+        },
+        {
+          "title": "数字平台",
+          "desc": "构建 SaaS、门户、仪表盘和内部工具。"
+        },
+        {
+          "title": "数据智能",
+          "desc": "把数据转化为洞察、报告和决策系统。"
+        },
+        {
+          "title": "创业系统",
+          "desc": "MVP、产品原型、落地页和可扩展产品基础。"
+        },
+        {
+          "title": "企业运营",
+          "desc": "用于管理、协作和流程控制的内部平台。"
+        },
+        {
+          "title": "教育学习",
+          "desc": "学习工具、知识系统和 AI 辅助学习体验。"
+        },
+        {
+          "title": "定制开发",
+          "desc": "把独特业务流程转化为可靠软件系统。"
+        }
+      ]
+    },
+    "ai": {
+      "kicker": "AI",
+      "title": "以智能为核心。",
+      "desc": "围绕 Agent、知识系统、文档智能和自动化执行，构建真正可落地的 AI 能力。",
+      "items": [
+        {
+          "title": "AI 代理",
+          "desc": "理解任务、拆解流程、调用工具并自动完成多步骤工作。"
+        },
+        {
+          "title": "知识系统",
+          "desc": "把文档、数据、经验与业务规则组织成可搜索的知识系统。"
+        },
+        {
+          "title": "文档智能",
+          "desc": "面向合同、报告、表格和资料的解析、总结与抽取。"
+        },
+        {
+          "title": "研究助手",
+          "desc": "用于调研、写作、分析和决策辅助的智能工作空间。"
+        }
+      ]
+    },
+    "development": {
+      "kicker": "开发",
+      "title": "从界面到平台。",
+      "desc": "以产品化方式交付网站、SaaS、仪表盘、API、后台系统和企业内部工具。",
+      "items": [
+        {
+          "title": "网站开发",
+          "desc": "高性能官网、落地页、品牌页面与多语言站点。"
+        },
+        {
+          "title": "SaaS 平台",
+          "desc": "订阅、用户、权限、数据、运营后台和可扩展产品基础。"
+        },
+        {
+          "title": "云端接口",
+          "desc": "面向集成、自动化和外部应用的稳定 API 系统。"
+        },
+        {
+          "title": "内部工具",
+          "desc": "为团队管理、审批、协作和运营流程打造内部平台。"
+        }
+      ]
+    },
+    "projects": {
+      "kicker": "案例",
+      "title": "精选项目。",
+      "desc": "覆盖 AI 平台、SaaS 仪表盘、企业官网与品牌系统。",
+      "items": [
+        {
+          "title": "AI 平台",
+          "desc": "文档处理、知识整理与工作流自动化空间。"
+        },
+        {
+          "title": "SaaS 仪表盘",
+          "desc": "用于业务数据和运营洞察的分析仪表盘。"
+        },
+        {
+          "title": "企业官网",
+          "desc": "面向品牌展示、转化与扩展的企业官网。"
+        },
+        {
+          "title": "品牌系统",
+          "desc": "面向数字产品长期增长的极简识别系统。"
+        }
+      ]
+    },
+    "why": {
+      "kicker": "为什么选择 NINESPRO",
+      "title": "不是外包，是系统能力。",
+      "desc": "从策略、设计、工程、AI 到云端架构，用统一标准把想法变成可运行、可增长的产品。",
+      "items": [
+        {
+          "title": "产品思维",
+          "desc": "不只做页面，而是从产品、路径、转化和长期增长设计系统。"
+        },
+        {
+          "title": "AI 原生",
+          "desc": "把 AI 能力作为底层能力，而不是后期附加功能。"
+        },
+        {
+          "title": "工程质量",
+          "desc": "重视结构、性能、可维护性和长期扩展。"
+        },
+        {
+          "title": "设计精度",
+          "desc": "追求极简、清晰、高级且具有品牌一致性的数字体验。"
+        }
+      ]
+    },
+    "statsTitle": "信任来自结果。",
+    "statsDesc": "为面向未来的产品、团队和组织构建稳定的数字基础。",
+    "stats": [
+      {
+        "value": "100+",
+        "label": "项目交付"
+      },
+      {
+        "value": "99.9%",
+        "label": "可用性目标"
+      },
+      {
+        "value": "24/7",
+        "label": "技术支持"
+      },
+      {
+        "value": "50+",
+        "label": "客户与团队"
+      }
+    ],
+    "testimonials": {
+      "kicker": "客户反馈",
+      "title": "把复杂变清晰。",
+      "desc": "我们帮助团队把分散需求变成可执行、可扩展的数字产品。",
+      "items": [
+        {
+          "title": "创始人",
+          "desc": "NINESPRO 帮我们把想法快速变成了可演示、可扩展的 MVP。"
+        },
+        {
+          "title": "运营团队",
+          "desc": "自动化系统减少了大量重复工作，让团队重新专注在关键业务上。"
+        },
+        {
+          "title": "企业客户",
+          "desc": "从官网到内部平台，整体体验更统一，交付也更稳定。"
+        }
+      ]
+    },
+    "partners": {
+      "kicker": "合作",
+      "title": "与创新者同行。",
+      "desc": "面向创业团队、企业部门、教育组织和数字服务机构。",
+      "items": [
+        {
+          "title": "创业团队",
+          "desc": "从 MVP 到可增长产品基础。"
+        },
+        {
+          "title": "企业组织",
+          "desc": "内部平台、流程系统和企业数字化。"
+        },
+        {
+          "title": "教育机构",
+          "desc": "知识系统、学习工具和 AI 辅助体验。"
+        },
+        {
+          "title": "服务机构",
+          "desc": "为品牌、技术和交付团队提供产品工程能力。"
+        }
+      ]
+    },
+    "contactSection": {
+      "kicker": "联系",
+      "title": "开始一次认真构建。",
+      "desc": "告诉我们你的项目方向、业务目标和当前问题，我们会帮助你整理成清晰的产品路径。",
+      "items": [
+        {
+          "title": "商务邮箱",
+          "desc": "support@ninespro.com"
+        },
+        {
+          "title": "合作邮箱",
+          "desc": "partner@ninespro.com"
+        },
+        {
+          "title": "销售邮箱",
+          "desc": "sales@ninespro.com"
+        }
+      ]
+    }
   },
-  heroDesc: {
-    zh: "一个简洁、安静、可持续扩展的工具空间。把文本、技术、学习、办公、金融计算和 AI 辅助整理成即开即用的卡片。",
-    en: "A calm workspace for tools, workflows, learning, finance, and AI. Everyday needs organized into ready-to-use cards.",
-    tw: "一個簡潔、安靜、可持續擴展的工具空間。把文字、技術、學習、辦公、金融計算和 AI 輔助整理成即開即用的卡片。",
+  "zh-TW": {
+    "brand": "NINESPRO",
+    "slogan": "盡知天下事，彈指皆可得。",
+    "desc": "設計並工程化下一代 AI 軟體、企業平台、雲端系統與數位體驗。",
+    "explore": "探索產品",
+    "contact": "聯絡我們",
+    "finalTitle": "啟動你的下一個項目。",
+    "finalDesc": "告訴我們你想構建什麼，NINESPRO 幫你把想法變成現實。",
+    "finalButton": "聯絡我們",
+    "products": {
+      "kicker": "產品",
+      "title": "智能、規模與速度。",
+      "desc": "將 AI、雲端、設計與企業工程整合為面向未來的產品體系。",
+      "items": [
+        {
+          "title": "Nines AI",
+          "desc": "面向知識、寫作、研究與自動化的 AI Agent 與智能工作流。"
+        },
+        {
+          "title": "Nines Cloud",
+          "desc": "雲端系統、API、儀表板與數位產品基礎設施。"
+        },
+        {
+          "title": "Nines Studio",
+          "desc": "極簡網站、介面、品牌系統與數位體驗。"
+        },
+        {
+          "title": "Nines Enterprise",
+          "desc": "企業定制軟體、內部平台與自動化系統。"
+        },
+        {
+          "title": "Nines Tools",
+          "desc": "面向開發、文檔、文字處理和效率場景的線上工具。"
+        },
+        {
+          "title": "Nines Data",
+          "desc": "數據看板、報告、視覺化與商業智能系統。"
+        },
+        {
+          "title": "Nines Flow",
+          "desc": "審批、任務、流程與自動執行的工作流系統。"
+        },
+        {
+          "title": "Nines Labs",
+          "desc": "AI 產品原型與未來數位體驗實驗空間。"
+        }
+      ]
+    },
+    "solutions": {
+      "kicker": "解決方案",
+      "title": "從想法到系統。",
+      "desc": "把業務問題轉化為清晰、可執行、可擴展的數位系統。",
+      "items": [
+        {
+          "title": "業務自動化",
+          "desc": "用 AI 工作流和定制軟體替代重複勞動。"
+        },
+        {
+          "title": "AI 轉型",
+          "desc": "把大模型、Agent 和自動化接入真實業務流程。"
+        },
+        {
+          "title": "數位平台",
+          "desc": "構建 SaaS、入口網站、儀表板和內部工具。"
+        },
+        {
+          "title": "數據智能",
+          "desc": "把數據轉化為洞察、報告和決策系統。"
+        },
+        {
+          "title": "新創系統",
+          "desc": "MVP、產品原型、落地頁和可擴展產品基礎。"
+        },
+        {
+          "title": "企業營運",
+          "desc": "用於管理、協作和流程控制的內部平台。"
+        },
+        {
+          "title": "教育學習",
+          "desc": "學習工具、知識系統和 AI 輔助學習體驗。"
+        },
+        {
+          "title": "定制開發",
+          "desc": "把獨特業務流程轉化為可靠軟體系統。"
+        }
+      ]
+    },
+    "ai": {
+      "kicker": "AI",
+      "title": "以智能为核心。",
+      "desc": "围绕 Agent、知识系统、文档智能和自动化执行，构建真正可落地的 AI 能力。",
+      "items": [
+        {
+          "title": "AI 代理",
+          "desc": "理解任务、拆解流程、调用工具并自动完成多步骤工作。"
+        },
+        {
+          "title": "知识系统",
+          "desc": "把文档、数据、经验与业务规则组织成可搜索的知识系统。"
+        },
+        {
+          "title": "文档智能",
+          "desc": "面向合同、报告、表格和资料的解析、总结与抽取。"
+        },
+        {
+          "title": "研究助手",
+          "desc": "用于调研、写作、分析和决策辅助的智能工作空间。"
+        }
+      ]
+    },
+    "development": {
+      "kicker": "开发",
+      "title": "从界面到平台。",
+      "desc": "以产品化方式交付网站、SaaS、仪表盘、API、后台系统和企业内部工具。",
+      "items": [
+        {
+          "title": "网站开发",
+          "desc": "高性能官网、落地页、品牌页面与多语言站点。"
+        },
+        {
+          "title": "SaaS 平台",
+          "desc": "订阅、用户、权限、数据、运营后台和可扩展产品基础。"
+        },
+        {
+          "title": "云端接口",
+          "desc": "面向集成、自动化和外部应用的稳定 API 系统。"
+        },
+        {
+          "title": "内部工具",
+          "desc": "为团队管理、审批、协作和运营流程打造内部平台。"
+        }
+      ]
+    },
+    "projects": {
+      "kicker": "案例",
+      "title": "精选项目。",
+      "desc": "覆盖 AI 平台、SaaS 仪表盘、企业官网与品牌系统。",
+      "items": [
+        {
+          "title": "AI 平台",
+          "desc": "文档处理、知识整理与工作流自动化空间。"
+        },
+        {
+          "title": "SaaS 仪表盘",
+          "desc": "用于业务数据和运营洞察的分析仪表盘。"
+        },
+        {
+          "title": "企业官网",
+          "desc": "面向品牌展示、转化与扩展的企业官网。"
+        },
+        {
+          "title": "品牌系统",
+          "desc": "面向数字产品长期增长的极简识别系统。"
+        }
+      ]
+    },
+    "why": {
+      "kicker": "为什么选择 NINESPRO",
+      "title": "不是外包，是系统能力。",
+      "desc": "从策略、设计、工程、AI 到云端架构，用统一标准把想法变成可运行、可增长的产品。",
+      "items": [
+        {
+          "title": "产品思维",
+          "desc": "不只做页面，而是从产品、路径、转化和长期增长设计系统。"
+        },
+        {
+          "title": "AI 原生",
+          "desc": "把 AI 能力作为底层能力，而不是后期附加功能。"
+        },
+        {
+          "title": "工程质量",
+          "desc": "重视结构、性能、可维护性和长期扩展。"
+        },
+        {
+          "title": "设计精度",
+          "desc": "追求极简、清晰、高级且具有品牌一致性的数字体验。"
+        }
+      ]
+    },
+    "statsTitle": "信任来自结果。",
+    "statsDesc": "为面向未来的产品、团队和组织构建稳定的数字基础。",
+    "stats": [
+      {
+        "value": "100+",
+        "label": "项目交付"
+      },
+      {
+        "value": "99.9%",
+        "label": "可用性目标"
+      },
+      {
+        "value": "24/7",
+        "label": "技术支持"
+      },
+      {
+        "value": "50+",
+        "label": "客户与团队"
+      }
+    ],
+    "testimonials": {
+      "kicker": "客戶反饋",
+      "title": "把複雜變清晰。",
+      "desc": "我們幫助團隊把分散需求變成可執行、可擴展的數位產品。",
+      "items": [
+        {
+          "title": "創辦人",
+          "desc": "NINESPRO 幫我們把想法快速變成了可演示、可擴展的 MVP。"
+        },
+        {
+          "title": "營運團隊",
+          "desc": "自動化系統減少了大量重複工作，讓團隊重新專注在關鍵業務上。"
+        },
+        {
+          "title": "企業客戶",
+          "desc": "從官網到內部平台，整體體驗更統一，交付也更穩定。"
+        }
+      ]
+    },
+    "partners": {
+      "kicker": "合作",
+      "title": "與創新者同行。",
+      "desc": "面向新創團隊、企業部門、教育組織和數位服務機構。",
+      "items": [
+        {
+          "title": "新創團隊",
+          "desc": "從 MVP 到可成長產品基礎。"
+        },
+        {
+          "title": "企業組織",
+          "desc": "內部平台、流程系統和企業數位化。"
+        },
+        {
+          "title": "教育機構",
+          "desc": "知識系統、學習工具和 AI 輔助體驗。"
+        },
+        {
+          "title": "服務機構",
+          "desc": "為品牌、技術和交付團隊提供產品工程能力。"
+        }
+      ]
+    },
+    "contactSection": {
+      "kicker": "聯絡",
+      "title": "開始一次認真構建。",
+      "desc": "告訴我們你的項目方向、業務目標和當前問題，我們會幫助你整理成清晰的產品路徑。",
+      "items": [
+        {
+          "title": "商務信箱",
+          "desc": "support@ninespro.com"
+        },
+        {
+          "title": "合作信箱",
+          "desc": "partner@ninespro.com"
+        },
+        {
+          "title": "銷售信箱",
+          "desc": "sales@ninespro.com"
+        }
+      ]
+    }
   },
-  primaryCta: { zh: "探索工具", en: "Explore Tools", tw: "探索工具" },
-  secondaryCta: { zh: "产品中心", en: "Product Center", tw: "產品中心" },
-  viewAll: { zh: "查看全部", en: "View all", tw: "查看全部" },
-  footerNote: {
-    zh: "九域 © 2026 版权所有",
-    en: "NinesPro © 2026 All Rights Reserved",
-    tw: "九域 © 2026 版權所有",
-  },
-  privacy: {
-    zh: "隐私与法律",
-    en: "Privacy & Legal",
-    tw: "隱私與法律",
-  },
-  contact: {
-    zh: "联系方式",
-    en: "Contact",
-    tw: "聯絡方式",
-  },
-  help: {
-    zh: "帮助中心",
-    en: "Help Center",
-    tw: "說明中心",
-  },
+  "en": {
+    "brand": "NINESPRO",
+    "slogan": "The world’s knowledge, at your fingertips.",
+    "desc": "Designing and engineering the next generation of AI-powered software, enterprise platforms, cloud systems, and digital experiences.",
+    "explore": "Explore Product",
+    "contact": "Contact Us",
+    "finalTitle": "Start your next project.",
+    "finalDesc": "Tell us what you want to build. NINESPRO will help you make it real.",
+    "finalButton": "Contact Us",
+    "products": {
+      "kicker": "Product",
+      "title": "Intelligence. Scale. Speed.",
+      "desc": "AI, cloud, design, and enterprise engineering in one future-ready product system.",
+      "items": [
+        {
+          "title": "Nines AI",
+          "desc": "AI agents and workflows for knowledge, writing, research, and automation."
+        },
+        {
+          "title": "Nines Cloud",
+          "desc": "Cloud systems, APIs, dashboards, and digital product infrastructure."
+        },
+        {
+          "title": "Nines Studio",
+          "desc": "Minimal websites, interfaces, brand systems, and digital experiences."
+        },
+        {
+          "title": "Nines Enterprise",
+          "desc": "Custom software, internal platforms, and automation systems."
+        },
+        {
+          "title": "Nines Tools",
+          "desc": "Online utilities for developers, documents, text, and productivity."
+        },
+        {
+          "title": "Nines Data",
+          "desc": "Dashboards, reports, visualization, and business intelligence."
+        },
+        {
+          "title": "Nines Flow",
+          "desc": "Workflow systems for approvals, tasks, and process automation."
+        },
+        {
+          "title": "Nines Labs",
+          "desc": "Experimental AI prototypes and future digital experiences."
+        }
+      ]
+    },
+    "solutions": {
+      "kicker": "Solution",
+      "title": "From idea to system.",
+      "desc": "Turn business problems into clear, executable, and scalable digital systems.",
+      "items": [
+        {
+          "title": "Business Automation",
+          "desc": "Replace repetitive work with AI workflows and custom software."
+        },
+        {
+          "title": "AI Transformation",
+          "desc": "Bring language models, agents, and automation into real business processes."
+        },
+        {
+          "title": "Digital Platforms",
+          "desc": "Build SaaS products, portals, dashboards, and internal tools."
+        },
+        {
+          "title": "Data Intelligence",
+          "desc": "Turn data into insights, reports, and decision systems."
+        },
+        {
+          "title": "Startup Systems",
+          "desc": "MVPs, prototypes, landing pages, and scalable product foundations."
+        },
+        {
+          "title": "Enterprise Operations",
+          "desc": "Internal platforms for management, collaboration, and workflow control."
+        },
+        {
+          "title": "Education & Learning",
+          "desc": "Learning tools, knowledge systems, and AI-assisted study experiences."
+        },
+        {
+          "title": "Custom Development",
+          "desc": "Transform unique processes into reliable software systems."
+        }
+      ]
+    },
+    "ai": {
+      "kicker": "AI",
+      "title": "Intelligence at the core.",
+      "desc": "Agents, knowledge systems, document intelligence, and automation built for real workflows.",
+      "items": [
+        {
+          "title": "AI Agents",
+          "desc": "Understand tasks, break down processes, call tools, and execute multi-step work."
+        },
+        {
+          "title": "Knowledge Systems",
+          "desc": "Organize documents, data, experience, and rules into searchable systems."
+        },
+        {
+          "title": "Document Intelligence",
+          "desc": "Parse, summarize, and extract contracts, reports, forms, and files."
+        },
+        {
+          "title": "Research Assistants",
+          "desc": "AI workspaces for research, writing, analysis, and decision support."
+        }
+      ]
+    },
+    "development": {
+      "kicker": "Development",
+      "title": "From interface to platform.",
+      "desc": "Websites, SaaS products, dashboards, APIs, internal tools, and enterprise systems.",
+      "items": [
+        {
+          "title": "Web Development",
+          "desc": "High-performance websites, landing pages, brand pages, and multilingual sites."
+        },
+        {
+          "title": "SaaS Platforms",
+          "desc": "Subscriptions, users, permissions, data, admin panels, and scalable foundations."
+        },
+        {
+          "title": "Cloud APIs",
+          "desc": "Reliable APIs for integrations, automation, and external applications."
+        },
+        {
+          "title": "Internal Tools",
+          "desc": "Internal platforms for management, approvals, collaboration, and operations."
+        }
+      ]
+    },
+    "projects": {
+      "kicker": "Case Studies",
+      "title": "Featured projects.",
+      "desc": "AI platforms, SaaS dashboards, enterprise websites, and brand systems.",
+      "items": [
+        {
+          "title": "AI Platform",
+          "desc": "Document processing, knowledge organization, and workflow automation."
+        },
+        {
+          "title": "SaaS Dashboard",
+          "desc": "Analytics dashboard for business data and operational insights."
+        },
+        {
+          "title": "Enterprise Website",
+          "desc": "Corporate website for brand presence, conversion, and scalability."
+        },
+        {
+          "title": "Brand System",
+          "desc": "Minimal identity system for long-term digital product growth."
+        }
+      ]
+    },
+    "why": {
+      "kicker": "Why NINESPRO",
+      "title": "Not outsourcing. System capability.",
+      "desc": "Strategy, design, engineering, AI, and cloud architecture in one product standard.",
+      "items": [
+        {
+          "title": "Product Thinking",
+          "desc": "We design systems around product paths, conversion, and long-term growth."
+        },
+        {
+          "title": "AI Native",
+          "desc": "AI is a core capability, not a feature added at the end."
+        },
+        {
+          "title": "Engineering Quality",
+          "desc": "Structure, performance, maintainability, and long-term scalability."
+        },
+        {
+          "title": "Design Precision",
+          "desc": "Minimal, clear, premium, and consistent digital experiences."
+        }
+      ]
+    },
+    "statsTitle": "Trust comes from results.",
+    "statsDesc": "Stable digital foundations for future-facing products, teams, and organizations.",
+    "stats": [
+      {
+        "value": "100+",
+        "label": "Projects Delivered"
+      },
+      {
+        "value": "99.9%",
+        "label": "Uptime Target"
+      },
+      {
+        "value": "24/7",
+        "label": "Support"
+      },
+      {
+        "value": "50+",
+        "label": "Clients & Teams"
+      }
+    ],
+    "testimonials": {
+      "kicker": "Testimonials",
+      "title": "Turning complexity into clarity.",
+      "desc": "We help teams transform scattered requirements into scalable digital products.",
+      "items": [
+        {
+          "title": "Founder",
+          "desc": "NINESPRO helped us turn an idea into a demo-ready and scalable MVP."
+        },
+        {
+          "title": "Operations Team",
+          "desc": "Automation reduced repetitive work and helped the team focus on key operations."
+        },
+        {
+          "title": "Enterprise Client",
+          "desc": "From website to internal platform, the experience became more unified and stable."
+        }
+      ]
+    },
+    "partners": {
+      "kicker": "Partners",
+      "title": "Built with innovators.",
+      "desc": "For startups, enterprises, education teams, and digital service organizations.",
+      "items": [
+        {
+          "title": "Startups",
+          "desc": "From MVP to a scalable product foundation."
+        },
+        {
+          "title": "Enterprises",
+          "desc": "Internal platforms, workflow systems, and digital operations."
+        },
+        {
+          "title": "Education",
+          "desc": "Knowledge systems, learning tools, and AI-assisted experiences."
+        },
+        {
+          "title": "Agencies",
+          "desc": "Product engineering capability for brand, tech, and delivery teams."
+        }
+      ]
+    },
+    "contactSection": {
+      "kicker": "Contact",
+      "title": "Start building seriously.",
+      "desc": "Share your project direction, business goals, and current challenges.",
+      "items": [
+        {
+          "title": "Business Email",
+          "desc": "support@ninespro.com"
+        },
+        {
+          "title": "Partnership",
+          "desc": "partner@ninespro.com"
+        },
+        {
+          "title": "Sales",
+          "desc": "sales@ninespro.com"
+        }
+      ]
+    }
+  }
 };
 
-const groups: ToolGroup[] = [
-  {
-    key: "popular",
-    title: { zh: "热门工具", en: "Popular Tools", tw: "熱門工具" },
-    desc: {
-      zh: "高频、轻量、打开就能用，适合日常处理文本、数据和文档。",
-      en: "Frequently used lightweight tools for text, data, and document workflows.",
-      tw: "高頻、輕量、打開就能用，適合日常處理文字、資料和文件。",
-    },
-    tools: [
-      {
-        icon: "{}",
-        title: { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化" },
-        desc: {
-          zh: "格式化、压缩和校验 JSON。",
-          en: "Format, minify, and validate JSON.",
-          tw: "格式化、壓縮和校驗 JSON。",
-        },
-        href: "/tool/json-formatter",
-        accent: "#e8f1ff",
-      },
-      {
-        icon: "≠",
-        title: { zh: "文本对比", en: "Text Diff", tw: "文字對比" },
-        desc: {
-          zh: "对比两段文本，查看新增、删除和相同内容。",
-          en: "Compare two texts and review additions, removals, and unchanged lines.",
-          tw: "對比兩段文字，查看新增、刪除和相同內容。",
-        },
-        href: "/tool/text-diff",
-        accent: "#f2f4f7",
-      },
-      {
-        icon: "%",
-        title: { zh: "URL 编码 / 解码", en: "URL Encode / Decode", tw: "URL 編碼 / 解碼" },
-        desc: {
-          zh: "处理 URL 参数、查询字符串和特殊字符。",
-          en: "Encode and decode URL parameters, query strings, and special characters.",
-          tw: "處理 URL 參數、查詢字串和特殊字元。",
-        },
-        href: "/tool/url-codec",
-        accent: "#f6efe5",
-      },
-      {
-        icon: "64",
-        title: { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具" },
-        desc: {
-          zh: "Base64 编码与解码。",
-          en: "Encode and decode Base64 content.",
-          tw: "Base64 編碼與解碼。",
-        },
-        href: "/tool/base64",
-        accent: "#edf7f3",
-      },
-      {
-        icon: "📄",
-        title: { zh: "文书模板生成器", en: "Document Template", tw: "文書模板生成器" },
-        desc: {
-          zh: "快速生成常见文书、说明和模板结构。",
-          en: "Generate common document templates and structured drafts.",
-          tw: "快速生成常見文書、說明和模板結構。",
-        },
-        href: "/tool/document-template",
-        accent: "#f3f0ff",
-      },
-      {
-        icon: "∑",
-        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
-        desc: {
-          zh: "估算长期复利增长和每月追加效果。",
-          en: "Estimate long-term compound growth and monthly contributions.",
-          tw: "估算長期複利增長和每月追加效果。",
-        },
-        href: "/tool/compound-interest",
-        accent: "#edf6ff",
-      },
-    ],
-  },
-  {
-    key: "learning",
-    title: { zh: "学习工具", en: "Learning Tools", tw: "學習工具" },
-    desc: {
-      zh: "从幼儿启蒙、小学练习到技术自学，生成可打印、可练习、可复盘的材料。",
-      en: "From early learning to technical self-study, generate printable, practice-ready, and reviewable materials.",
-      tw: "從幼兒啟蒙、小學練習到技術自學，生成可列印、可練習、可復盤的材料。",
-    },
-    tools: [
-      {
-        icon: "🔤",
-        title: { zh: "拼音卡片生成器", en: "Pinyin Cards", tw: "拼音卡片生成器" },
-        desc: {
-          zh: "生成拼音、声母、韵母和简单词语练习卡。",
-          en: "Generate pinyin, initials, finals, and simple word practice cards.",
-          tw: "生成拼音、聲母、韻母和簡單詞語練習卡。",
-        },
-        href: "/tool/pinyin-card",
-        accent: "#fff0e4",
-      },
-      {
-        icon: "🔢",
-        title: { zh: "口算练习生成器", en: "Arithmetic Practice", tw: "口算練習生成器" },
-        desc: {
-          zh: "按年级和范围生成加减乘除练习。",
-          en: "Generate arithmetic practice by grade level and range.",
-          tw: "按年級和範圍生成加減乘除練習。",
-        },
-        href: "/tool/arithmetic-practice",
-        accent: "#eaf5ff",
-      },
-      {
-        icon: "✍️",
-        title: { zh: "作文提纲生成器", en: "Essay Outline", tw: "作文提綱生成器" },
-        desc: {
-          zh: "生成作文结构、素材提示和段落提纲。",
-          en: "Generate essay structure, material prompts, and paragraph outlines.",
-          tw: "生成作文結構、素材提示和段落提綱。",
-        },
-        href: "/tool/essay-outline",
-        accent: "#f5efff",
-      },
-      {
-        icon: "🗓️",
-        title: { zh: "学习计划生成器", en: "Study Planner", tw: "學習計劃生成器" },
-        desc: {
-          zh: "按目标、天数和时间生成复习计划。",
-          en: "Generate study plans by goal, duration, and available time.",
-          tw: "按目標、天數和時間生成複習計劃。",
-        },
-        href: "/tool/study-planner",
-        accent: "#eaf7f1",
-      },
-      {
-        icon: "🧭",
-        title: { zh: "技术学习路线", en: "Tech Learning Path", tw: "技術學習路線" },
-        desc: {
-          zh: "按方向生成前端、后端、AI、网络和系统学习路线。",
-          en: "Generate learning paths for frontend, backend, AI, networking, and systems.",
-          tw: "按方向生成前端、後端、AI、網路和系統學習路線。",
-        },
-        href: "/tool/tech-learning-path",
-        accent: "#e8f0ff",
-      },
-    ],
-  },
-  {
-    key: "developer",
-    title: { zh: "技术工具", en: "Developer Tools", tw: "技術工具" },
-    desc: {
-      zh: "开发、排查、格式化和调试常用工具，适合工程和技术学习。",
-      en: "Common tools for development, troubleshooting, formatting, and debugging.",
-      tw: "開發、排查、格式化和除錯常用工具，適合工程和技術學習。",
-    },
-    tools: [
-      {
-        icon: "MD",
-        title: { zh: "Markdown 预览", en: "Markdown Preview", tw: "Markdown 預覽" },
-        desc: {
-          zh: "实时预览 Markdown 文档。",
-          en: "Preview Markdown documents in real time.",
-          tw: "即時預覽 Markdown 文件。",
-        },
-        href: "/tool/markdown-preview",
-        accent: "#eef2f7",
-      },
-      {
-        icon: ".*",
-        title: { zh: "正则表达式测试器", en: "Regex Tester", tw: "正則表達式測試器" },
-        desc: {
-          zh: "测试匹配结果、分组和替换逻辑。",
-          en: "Test matches, groups, and replacement logic.",
-          tw: "測試匹配結果、分組和替換邏輯。",
-        },
-        href: "/tool/regex-tester",
-        accent: "#f5efff",
-      },
-      {
-        icon: "⏱️",
-        title: { zh: "时间戳转换", en: "Timestamp Converter", tw: "時間戳轉換" },
-        desc: {
-          zh: "Unix 时间戳与日期时间互转。",
-          en: "Convert Unix timestamps and date-time values.",
-          tw: "Unix 時間戳與日期時間互轉。",
-        },
-        href: "/tool/timestamp-converter",
-        accent: "#eaf7f1",
-      },
-      {
-        icon: "QR",
-        title: { zh: "二维码生成器", en: "QR Code Generator", tw: "QR Code 生成器" },
-        desc: {
-          zh: "输入文本或链接，生成二维码。",
-          en: "Generate QR codes from text or links.",
-          tw: "輸入文字或連結，生成 QR Code。",
-        },
-        href: "/tool/qr-code",
-        accent: "#f8f8f8",
-      },
-      {
-        icon: "SQL",
-        title: { zh: "SQL 格式化", en: "SQL Formatter", tw: "SQL 格式化" },
-        desc: {
-          zh: "整理 SQL 缩进、换行和可读性。",
-          en: "Format SQL indentation, line breaks, and readability.",
-          tw: "整理 SQL 縮排、換行和可讀性。",
-        },
-        href: "/tool/sql-formatter",
-        accent: "#edf6ff",
-      },
-    ],
-  },
-  {
-    key: "office",
-    title: { zh: "办公文档", en: "Office & Documents", tw: "辦公文件" },
-    desc: {
-      zh: "把高频文档、会议、日报、计划和简历内容变成模板。",
-      en: "Turn common documents, meetings, reports, plans, and resumes into templates.",
-      tw: "把高頻文件、會議、日報、計劃和履歷內容變成模板。",
-    },
-    tools: [
-      {
-        icon: "📝",
-        title: { zh: "会议纪要模板", en: "Meeting Notes", tw: "會議紀要模板" },
-        desc: {
-          zh: "生成会议纪要、行动项和责任人清单。",
-          en: "Generate meeting notes, action items, and owner lists.",
-          tw: "生成會議紀要、行動項和負責人清單。",
-        },
-        href: "/tool/meeting-notes",
-        accent: "#fff6eb",
-      },
-      {
-        icon: "📧",
-        title: { zh: "邮件模板生成器", en: "Email Template", tw: "郵件模板生成器" },
-        desc: {
-          zh: "生成商务、通知、跟进和说明类邮件。",
-          en: "Generate business, notice, follow-up, and explanatory emails.",
-          tw: "生成商務、通知、跟進和說明類郵件。",
-        },
-        href: "/tool/email-template",
-        accent: "#edf6ff",
-      },
-      {
-        icon: "CV",
-        title: { zh: "简历模板生成器", en: "Resume Template", tw: "履歷模板生成器" },
-        desc: {
-          zh: "生成简历结构、项目描述和技能清单。",
-          en: "Generate resume structure, project descriptions, and skills lists.",
-          tw: "生成履歷結構、專案描述和技能清單。",
-        },
-        href: "/tool/resume-template",
-        accent: "#f3efff",
-      },
-      {
-        icon: "📊",
-        title: { zh: "PPT 大纲生成器", en: "Slide Outline", tw: "PPT 大綱生成器" },
-        desc: {
-          zh: "把主题整理成演示结构和页面标题。",
-          en: "Turn a topic into a presentation structure and slide titles.",
-          tw: "把主題整理成簡報結構和頁面標題。",
-        },
-        href: "/tool/slide-outline",
-        accent: "#eaf7f1",
-      },
-    ],
-  },
-  {
-    key: "finance",
-    title: { zh: "金融计算", en: "Finance Calculators", tw: "金融計算" },
-    desc: {
-      zh: "用于学习、测算和辅助判断的轻量计算工具，结果仅供估算参考。",
-      en: "Lightweight calculators for learning, estimation, and support. Results are for reference only.",
-      tw: "用於學習、測算和輔助判斷的輕量計算工具，結果僅供估算參考。",
-    },
-    tools: [
-      {
-        icon: "∑",
-        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
-        desc: {
-          zh: "估算长期复利增长和每月追加效果。",
-          en: "Estimate long-term compound growth and monthly contributions.",
-          tw: "估算長期複利增長和每月追加效果。",
-        },
-        href: "/tool/compound-interest",
-        accent: "#edf6ff",
-      },
-      {
-        icon: "🏠",
-        title: { zh: "房贷计算器", en: "Mortgage Calculator", tw: "房貸計算器" },
-        desc: {
-          zh: "估算月供、总利息和还款结构。",
-          en: "Estimate monthly payments, total interest, and repayment structure.",
-          tw: "估算月供、總利息和還款結構。",
-        },
-        href: "/tool/mortgage-calculator",
-        accent: "#fff6eb",
-      },
-      {
-        icon: "💰",
-        title: { zh: "储蓄目标计算器", en: "Savings Goal", tw: "儲蓄目標計算器" },
-        desc: {
-          zh: "按目标金额和时间估算每月储蓄。",
-          en: "Estimate monthly savings by goal amount and time frame.",
-          tw: "按目標金額和時間估算每月儲蓄。",
-        },
-        href: "/tool/savings-goal",
-        accent: "#eaf7f1",
-      },
-      {
-        icon: "📉",
-        title: { zh: "通胀购买力", en: "Inflation Impact", tw: "通膨購買力" },
-        desc: {
-          zh: "估算通胀对未来购买力的影响。",
-          en: "Estimate the impact of inflation on future purchasing power.",
-          tw: "估算通膨對未來購買力的影響。",
-        },
-        href: "/tool/inflation-impact",
-        accent: "#f3efff",
-      },
-    ],
-  },
-  {
-    key: "ai",
-    title: { zh: "AI 辅助", en: "AI Assistants", tw: "AI 輔助" },
-    desc: {
-      zh: "面向写作、学习、知识整理和工作流的 AI 辅助入口。",
-      en: "AI-assisted entry points for writing, learning, knowledge organization, and workflows.",
-      tw: "面向寫作、學習、知識整理和工作流的 AI 輔助入口。",
-    },
-    tools: [
-      {
-        icon: "🧠",
-        title: { zh: "知识整理助手", en: "Knowledge Organizer", tw: "知識整理助手" },
-        desc: {
-          zh: "把零散内容整理成结构化笔记和清单。",
-          en: "Turn scattered content into structured notes and lists.",
-          tw: "把零散內容整理成結構化筆記和清單。",
-        },
-        href: "/tool/knowledge-organizer",
-        accent: "#eef2ff",
-      },
-      {
-        icon: "🪄",
-        title: { zh: "提示词模板", en: "Prompt Templates", tw: "提示詞模板" },
-        desc: {
-          zh: "生成写作、学习、代码和分析类提示词模板。",
-          en: "Generate prompt templates for writing, learning, coding, and analysis.",
-          tw: "生成寫作、學習、程式碼和分析類提示詞模板。",
-        },
-        href: "/tool/prompt-template",
-        accent: "#fff6eb",
-      },
-      {
-        icon: "🧾",
-        title: { zh: "摘要与提纲", en: "Summary & Outline", tw: "摘要與提綱" },
-        desc: {
-          zh: "把长文本整理成摘要、要点和提纲。",
-          en: "Turn long text into summaries, key points, and outlines.",
-          tw: "把長文字整理成摘要、要點和提綱。",
-        },
-        href: "/tool/summary-outline",
-        accent: "#eaf7f1",
-      },
-      {
-        icon: "🧬",
-        title: { zh: "Agent 流程草图", en: "Agent Workflow Draft", tw: "Agent 流程草圖" },
-        desc: {
-          zh: "把业务流程拆成角色、步骤和自动化节点。",
-          en: "Break business workflows into roles, steps, and automation nodes.",
-          tw: "把業務流程拆成角色、步驟和自動化節點。",
-        },
-        href: "/tool/agent-workflow",
-        accent: "#edf6ff",
-      },
-    ],
-  },
-];
+function SectionGap() { return <div className="homeSectionGap" aria-hidden="true" />; }
 
-function GlassButton({ href, children }: { href: string; children: ReactNode }) {
+function StatSection({ title, desc, stats }: { title: string; desc: string; stats: StatItem[] }) {
   return (
-    <Link href={href} className="glass-button">
-      {children}
-    </Link>
-  );
-}
-
-function ToolCard({ item, locale, index }: { item: ToolItem; locale: Locale; index: number }) {
-  return (
-    <Link href={localePath(locale, item.href)} className="home-tool-card">
-      <article>
-        <div className="card-visual" style={{ background: item.accent }}>
-          <span>{item.icon}</span>
-          <div className="orb orb-one" />
-          <div className="orb orb-two" />
-        </div>
-
-        <div className="card-body">
-          <div className="card-index">{String(index + 1).padStart(2, "0")}</div>
-          <h3>{text(item.title, locale)}</h3>
-          <p>{text(item.desc, locale)}</p>
-        </div>
-      </article>
-    </Link>
-  );
-}
-
-function ToolCarousel({ group, locale }: { group: ToolGroup; locale: Locale }) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const directionRef = useRef<"left" | "right" | null>(null);
-  const [activeDot, setActiveDot] = useState(0);
-
-  const updateDot = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const max = el.scrollWidth - el.clientWidth;
-    if (max <= 0) {
-      setActiveDot(0);
-      return;
-    }
-
-    const ratio = el.scrollLeft / max;
-    if (ratio < 0.34) setActiveDot(0);
-    else if (ratio < 0.67) setActiveDot(1);
-    else setActiveDot(2);
-  };
-
-  const stopAutoScroll = () => {
-    directionRef.current = null;
-
-    if (rafRef.current !== null) {
-      window.cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  };
-
-  const smoothStep = () => {
-    const el = scrollRef.current;
-    const direction = directionRef.current;
-
-    if (!el || !direction) {
-      rafRef.current = null;
-      return;
-    }
-
-    el.scrollLeft += direction === "left" ? -2.6 : 2.6;
-    updateDot();
-    rafRef.current = window.requestAnimationFrame(smoothStep);
-  };
-
-  const startAutoScroll = (direction: "left" | "right") => {
-    directionRef.current = direction;
-
-    if (rafRef.current === null) {
-      rafRef.current = window.requestAnimationFrame(smoothStep);
-    }
-  };
-
-  const scrollByPage = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    el.scrollBy({
-      left: direction === "left" ? -el.clientWidth * 0.78 : el.clientWidth * 0.78,
-      behavior: "smooth",
-    });
-  };
-
-  const scrollToDot = (dot: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const max = el.scrollWidth - el.clientWidth;
-    const ratio = dot === 0 ? 0 : dot === 1 ? 0.5 : 1;
-
-    el.scrollTo({ left: max * ratio, behavior: "smooth" });
-    setActiveDot(dot);
-  };
-
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const edge = 130;
-
-    if (x < edge) startAutoScroll("left");
-    else if (x > rect.width - edge) startAutoScroll("right");
-    else stopAutoScroll();
-  };
-
-  useEffect(() => {
-    return () => stopAutoScroll();
-  }, []);
-
-  return (
-    <section className="tool-row-section">
-      <div className="section-head">
-        <div className="section-copy-float">
-          <h2>{text(group.title, locale)}</h2>
-          <p>{text(group.desc, locale)}</p>
-        </div>
-
-        <GlassButton href={localePath(locale, "/tool")}>{text(copy.viewAll, locale)}</GlassButton>
-      </div>
-
-      <div className="carousel-shell" onMouseMove={handleMouseMove} onMouseLeave={stopAutoScroll}>
-        <button
-          type="button"
-          className="carousel-arrow carousel-arrow-left"
-          aria-label="Previous"
-          onClick={() => scrollByPage("left")}
-          onMouseEnter={() => startAutoScroll("left")}
-          onMouseLeave={stopAutoScroll}
-        >
-          ‹
-        </button>
-
-        <div ref={scrollRef} className="tool-scroll" onScroll={updateDot}>
-          {group.tools.map((item, index) => (
-            <ToolCard key={`${group.key}-${item.href}`} item={item} locale={locale} index={index} />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="carousel-arrow carousel-arrow-right"
-          aria-label="Next"
-          onClick={() => scrollByPage("right")}
-          onMouseEnter={() => startAutoScroll("right")}
-          onMouseLeave={stopAutoScroll}
-        >
-          ›
-        </button>
-      </div>
-
-      <div className="carousel-dots">
-        {[0, 1, 2].map((dot) => (
-          <button
-            key={dot}
-            type="button"
-            aria-label={`Slide ${dot + 1}`}
-            className={dot === activeDot ? "dot active" : "dot"}
-            onClick={() => scrollToDot(dot)}
-          />
-        ))}
+    <section className="homeLayer homeStatsLayer">
+      <div className="homeLayerInner">
+        <div className="homeMotionZone homeStatsHeadZone"><div className="homeLayerHead"><p className="homeLayerKicker">{title}</p><h2 className="homeLayerTitle">{desc}</h2></div></div>
+        <div className="homeStatsGrid">{stats.map((item) => <article className="homeCard homeStatCard" key={item.value}><strong>{item.value}</strong><span>{item.label}</span></article>)}</div>
       </div>
     </section>
   );
 }
 
-export default function Home() {
-  const params = useParams();
-  const locale = normalizeLocale(params?.locale);
+function ChevronLeft() { return <span className="homeArrowGlyph" aria-hidden="true">‹</span>; }
+function ChevronRight() { return <span className="homeArrowGlyph" aria-hidden="true">›</span>; }
+
+function ShowcaseSection({ section }: { section: SectionCopy }) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const lastTimeRef = useRef<number | null>(null);
+  const directionRef = useRef<0 | 1 | -1>(0);
+  const pageRef = useRef(0);
+  const [activePage, setActivePage] = useState(0);
+
+  const getMaxScroll = () => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    return Math.max(0, track.scrollWidth - track.clientWidth);
+  };
+
+  const updatePage = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const maxScroll = getMaxScroll();
+    const nextPage = maxScroll <= 0 ? 0 : Math.min(2, Math.max(0, Math.round((track.scrollLeft / maxScroll) * 2)));
+    if (pageRef.current !== nextPage) { pageRef.current = nextPage; setActivePage(nextPage); }
+  };
+
+  const stopContinuousScroll = () => {
+    directionRef.current = 0;
+    lastTimeRef.current = null;
+    if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+  };
+
+  const setPage = (page: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    stopContinuousScroll();
+    const nextPage = Math.min(2, Math.max(0, page));
+    const maxScroll = getMaxScroll();
+    track.style.scrollBehavior = "smooth";
+    track.scrollTo({ left: (maxScroll * nextPage) / 2, behavior: "smooth" });
+    pageRef.current = nextPage;
+    setActivePage(nextPage);
+  };
+
+  const continuousStep = (time: number) => {
+    const track = trackRef.current;
+    const direction = directionRef.current;
+    if (!track || direction === 0) return;
+    const lastTime = lastTimeRef.current ?? time;
+    const delta = Math.min(32, time - lastTime);
+    lastTimeRef.current = time;
+    const maxScroll = getMaxScroll();
+    const speedPxPerSecond = 360;
+    track.style.scrollBehavior = "auto";
+    track.scrollLeft += direction * speedPxPerSecond * (delta / 1000);
+    if (direction > 0 && track.scrollLeft >= maxScroll - 1) { track.scrollLeft = maxScroll; stopContinuousScroll(); updatePage(); return; }
+    if (direction < 0 && track.scrollLeft <= 1) { track.scrollLeft = 0; stopContinuousScroll(); updatePage(); return; }
+    updatePage();
+    rafRef.current = requestAnimationFrame(continuousStep);
+  };
+
+  const startContinuousScroll = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const maxScroll = getMaxScroll();
+    if ((direction > 0 && track.scrollLeft >= maxScroll - 1) || (direction < 0 && track.scrollLeft <= 1)) return;
+    directionRef.current = direction;
+    lastTimeRef.current = null;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(continuousStep);
+  };
+
+  useEffect(() => () => stopContinuousScroll(), []);
 
   return (
-    <main className="home-shell">
-      <section className="home-hero">
-        <div className="hero-bg">
-          <div className="hero-orb hero-orb-a" />
-          <div className="hero-orb hero-orb-b" />
-          <div className="hero-orb hero-orb-c" />
+    <section className="homeLayer">
+      <div className="homeLayerInner">
+        <div className="homeMotionZone"><div className="homeLayerHead"><p className="homeLayerKicker">{section.kicker}</p><h2 className="homeLayerTitle">{section.title}</h2><p className="homeLayerDesc">{section.desc}</p></div></div>
+        <div className="homeCarouselShell" onMouseLeave={stopContinuousScroll}>
+          <button type="button" className="homeArrow homeArrowLeft" onMouseEnter={() => startContinuousScroll(-1)} onMouseLeave={stopContinuousScroll} onFocus={() => startContinuousScroll(-1)} onBlur={stopContinuousScroll} onClick={() => setPage(pageRef.current - 1)} aria-label="Previous"><ChevronLeft /></button>
+          <button type="button" className="homeArrow homeArrowRight" onMouseEnter={() => startContinuousScroll(1)} onMouseLeave={stopContinuousScroll} onFocus={() => startContinuousScroll(1)} onBlur={stopContinuousScroll} onClick={() => setPage(pageRef.current + 1)} aria-label="Next"><ChevronRight /></button>
+          <div ref={trackRef} className="homeTrack" onScroll={updatePage}>{section.items.map((item) => <article className="homeCard" key={item.title}><div className="homeCardContent"><h3>{item.title}</h3><p>{item.desc}</p></div></article>)}</div>
         </div>
-
-        <div className="hero-content">
-          <h1>{text(copy.heroTitle, locale)}</h1>
-          <p className="hero-subtitle">{text(copy.heroSubtitle, locale)}</p>
-          <p className="hero-desc">{text(copy.heroDesc, locale)}</p>
-
-          <div className="hero-actions">
-            <GlassButton href={localePath(locale, "/tool")}>{text(copy.primaryCta, locale)}</GlassButton>
-            <GlassButton href={localePath(locale, "/product")}>{text(copy.secondaryCta, locale)}</GlassButton>
-          </div>
-        </div>
-      </section>
-
-      {groups.map((group) => (
-        <ToolCarousel key={group.key} group={group} locale={locale} />
-      ))}
-
-      <footer className="home-footer">
-        <div className="home-footer-inner">
-          <span>{text(copy.footerNote, locale)}</span>
-
-          <nav className="home-footer-links" aria-label="Footer links">
-            <Link href={localePath(locale, "/privacy")}>{text(copy.privacy, locale)}</Link>
-            <Link href={localePath(locale, "/contact")}>{text(copy.contact, locale)}</Link>
-            <Link href={localePath(locale, "/help")}>{text(copy.help, locale)}</Link>
-          </nav>
-        </div>
-      </footer>
-
-      <style jsx global>{`
-        html {
-          scroll-behavior: smooth;
-        }
-
-        body {
-          background: #ffffff;
-        }
-
-        .home-shell {
-          background: #ffffff;
-          color: #111827;
-          overflow-x: hidden;
-          padding-top: 0;
-        }
-
-        .home-hero {
-          position: relative;
-          min-height: 92vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 118px 24px 88px;
-          background:
-            radial-gradient(circle at 18% 22%, rgba(213, 226, 244, 0.72), transparent 34%),
-            radial-gradient(circle at 82% 24%, rgba(246, 238, 225, 0.68), transparent 32%),
-            linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
-          overflow: hidden;
-        }
-
-        .hero-bg {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-        }
-
-        .hero-orb {
-          position: absolute;
-          border-radius: 999px;
-          filter: blur(24px);
-          opacity: 0.55;
-        }
-
-        .hero-orb-a {
-          width: 360px;
-          height: 360px;
-          left: -120px;
-          top: 120px;
-          background: rgba(210, 225, 245, 0.72);
-        }
-
-        .hero-orb-b {
-          width: 430px;
-          height: 430px;
-          right: -150px;
-          top: 120px;
-          background: rgba(246, 237, 224, 0.76);
-        }
-
-        .hero-orb-c {
-          width: 280px;
-          height: 280px;
-          left: 45%;
-          bottom: -100px;
-          background: rgba(232, 238, 247, 0.7);
-        }
-
-        /* NINE 可调：第一屏“九域”整组文字移动范围 */
-        .hero-content {
-          position: absolute;
-          z-index: 1;
-          width: min(1040px, calc(100vw - 48px));
-          text-align: center;
-          animation: heroFloat 46s linear infinite;
-          will-change: left, top, transform;
-        }
-
-        /* NINE 可调：第一屏移动路线；left/top 越小越贴边，top 要避开导航栏 */
-        @keyframes heroFloat {
-          0% {
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(1);
-          }
-
-          14% {
-            left: 24px;
-            top: 86px;
-            transform: translate(0, 0) scale(0.985);
-          }
-
-          28% {
-            left: calc(100% - 24px);
-            top: 86px;
-            transform: translate(-100%, 0) scale(1.01);
-          }
-
-          42% {
-            left: calc(100% - 24px);
-            top: calc(100% - 72px);
-            transform: translate(-100%, -100%) scale(1);
-          }
-
-          56% {
-            left: 24px;
-            top: calc(100% - 72px);
-            transform: translate(0, -100%) scale(0.99);
-          }
-
-          70% {
-            left: 50%;
-            top: calc(100% - 72px);
-            transform: translate(-50%, -100%) scale(1.015);
-          }
-
-          84% {
-            left: 24px;
-            top: 50%;
-            transform: translate(0, -50%) scale(0.995);
-          }
-
-          100% {
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(1);
-          }
-        }
-
-        .home-hero h1 {
-          font-size: clamp(30px, 4.2vw, 56px);
-          line-height: 1.02;
-          letter-spacing: -0.045em;
-          margin: 0;
-          font-weight: 820;
-        }
-
-        .hero-subtitle {
-          margin: 18px auto 0;
-          max-width: 840px;
-          font-size: clamp(22px, 3vw, 36px);
-          line-height: 1.12;
-          letter-spacing: -0.04em;
-          font-weight: 760;
-          color: #111827;
-        }
-
-        .hero-desc {
-          margin: 18px auto 0;
-          max-width: 760px;
-          font-size: 15px;
-          line-height: 1.72;
-          color: #4b5563;
-          font-weight: 400;
-        }
-
-        .hero-actions {
-          margin-top: 30px;
-          display: flex;
-          justify-content: center;
-          gap: 14px;
-          flex-wrap: wrap;
-        }
-
-        .glass-button {
-          min-width: 148px;
-          min-height: 48px;
-          border-radius: 999px;
-          padding: 0 22px;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 500;
-          color: #111827;
-          background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(246, 248, 251, 0.76));
-          border: 1px solid rgba(255, 255, 255, 0.95);
-          box-shadow:
-            0 18px 40px rgba(15, 23, 42, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(18px);
-          -webkit-backdrop-filter: blur(18px);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          line-height: 1;
-          transition:
-            transform 180ms ease,
-            box-shadow 180ms ease,
-            background 180ms ease;
-        }
-
-        .glass-button:hover {
-          transform: translateY(-2px);
-          background: rgba(255, 255, 255, 0.98);
-        }
-
-        .tool-row-section {
-          position: relative;
-          min-height: 632px;
-          padding: 58px 0 60px;
-          border-top: 14px solid #ffffff;
-          background: #f1f2f4;
-          box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.82),
-            inset 0 -1px 0 rgba(15, 23, 42, 0.04);
-          overflow: hidden;
-        }
-
-        .section-head {
-          position: relative;
-          z-index: 1;
-          width: calc(100vw - 96px);
-          margin: 0 auto 26px;
-          min-height: 118px;
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: 28px;
-        }
-
-        .section-head > .glass-button {
-          position: absolute;
-          right: 0;
-          top: 0;
-        }
-
-        .section-copy-float {
-          max-width: 620px;
-          padding-right: 190px;
-          animation: sectionFloat 48s linear infinite;
-          will-change: transform;
-        }
-
-        .tool-row-section:nth-of-type(2n) .section-copy-float {
-          animation-duration: 54s;
-          animation-direction: reverse;
-        }
-
-        .tool-row-section:nth-of-type(3n) .section-copy-float {
-          animation-duration: 60s;
-        }
-
-        /* NINE 可调：每层标题文字移动范围 */
-        @keyframes sectionFloat {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-
-          20% {
-            transform: translate3d(22vw, 14px, 0);
-          }
-
-          40% {
-            transform: translate3d(calc(100vw - 760px), -10px, 0);
-          }
-
-          60% {
-            transform: translate3d(calc(100vw - 700px), 22px, 0);
-          }
-
-          80% {
-            transform: translate3d(12vw, -4px, 0);
-          }
-
-          100% {
-            transform: translate3d(0, 0, 0);
-          }
-        }
-
-        .section-head h2 {
-          margin: 0;
-          font-size: clamp(22px, 3vw, 36px);
-          line-height: 1.08;
-          letter-spacing: -0.04em;
-          font-weight: 760;
-          color: #111827;
-        }
-
-        .section-head p {
-          max-width: 700px;
-          margin: 12px 0 0;
-          font-size: 14px;
-          line-height: 1.7;
-          color: #4b5563;
-          font-weight: 400;
-        }
-
-        .carousel-shell {
-          position: relative;
-          z-index: 1;
-          width: 100%;
-        }
-
-        .tool-scroll {
-          width: 100%;
-          display: flex;
-          gap: 28px;
-          overflow-x: auto;
-          padding: 0 max(72px, calc((100vw - 1300px) / 2)) 8px;
-          scroll-padding-left: max(72px, calc((100vw - 1300px) / 2));
-          scrollbar-width: none;
-          scroll-behavior: auto;
-        }
-
-        .tool-scroll::-webkit-scrollbar {
-          display: none;
-        }
-
-        .home-tool-card {
-          flex: 0 0 min(430px, 78vw);
-          text-decoration: none;
-          color: inherit;
-        }
-
-        .home-tool-card article {
-          height: 418px;
-          border-radius: 34px;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.92);
-          border: 1px solid rgba(255, 255, 255, 0.96);
-          box-shadow:
-            0 22px 62px rgba(15, 23, 42, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.98);
-          transition:
-            transform 220ms ease,
-            box-shadow 220ms ease,
-            background 220ms ease;
-        }
-
-        .home-tool-card:hover article {
-          transform: translateY(-6px);
-          background: rgba(255, 255, 255, 0.97);
-        }
-
-        .card-visual {
-          position: relative;
-          height: 214px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .card-visual span {
-          position: relative;
-          z-index: 2;
-          min-width: 84px;
-          height: 84px;
-          padding: 0 18px;
-          border-radius: 30px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255, 255, 255, 0.8);
-          border: 1px solid rgba(255, 255, 255, 0.92);
-          box-shadow:
-            0 18px 45px rgba(15, 23, 42, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
-          font-size: 26px;
-          font-weight: 650;
-          color: #111827;
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-        }
-
-        .orb {
-          position: absolute;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.7);
-          filter: blur(8px);
-        }
-
-        .orb-one {
-          width: 176px;
-          height: 176px;
-          right: -36px;
-          top: -42px;
-        }
-
-        .orb-two {
-          width: 134px;
-          height: 134px;
-          left: -34px;
-          bottom: -38px;
-        }
-
-        .card-body {
-          padding: 23px 28px 28px;
-        }
-
-        .card-index {
-          font-size: 12px;
-          font-weight: 500;
-          color: #9ca3af;
-          margin-bottom: 12px;
-          letter-spacing: 0.12em;
-        }
-
-        .card-body h3 {
-          margin: 0;
-          font-size: 24px;
-          line-height: 1.1;
-          letter-spacing: -0.035em;
-          color: #111827;
-          font-weight: 680;
-        }
-
-        .card-body p {
-          margin: 12px 0 0;
-          color: #4b5563;
-          font-size: 14px;
-          line-height: 1.65;
-          font-weight: 400;
-        }
-
-        .carousel-arrow {
-          position: absolute;
-          top: 50%;
-          z-index: 8;
-          width: 60px;
-          height: 60px;
-          border-radius: 999px;
-          border: 1px solid rgba(255, 255, 255, 0.96);
-          background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(244, 247, 250, 0.76));
-          box-shadow:
-            0 22px 58px rgba(15, 23, 42, 0.17),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
-          color: #111827;
-          font-size: 38px;
-          line-height: 1;
-          cursor: pointer;
-          transform: translateY(-50%);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding-bottom: 4px;
-          opacity: 0.94;
-          transition:
-            box-shadow 180ms ease,
-            opacity 180ms ease;
-        }
-
-        .carousel-arrow:hover {
-          transform: translateY(-50%);
-          opacity: 1;
-        }
-
-        .carousel-arrow-left {
-          left: 14px;
-        }
-
-        .carousel-arrow-right {
-          right: 14px;
-        }
-
-        .carousel-dots {
-          display: flex;
-          justify-content: center;
-          gap: 13px;
-          margin-top: 24px;
-        }
-
-        /* NINE 可调：轮播小圆点，未选中颜色 */
-        .dot {
-          width: 13px;
-          height: 13px;
-          padding: 0;
-          border-radius: 999px;
-          border: 1px solid rgba(17, 24, 39, 0.16);
-          background: #9ca3af;
-          cursor: pointer;
-          transition:
-            width 180ms ease,
-            background 180ms ease;
-        }
-
-        /* NINE 可调：轮播小圆点，当前选中颜色 */
-        .dot.active {
-          width: 38px;
-          background: #4b5563;
-        }
-
-        /* NINE 可调：首页 footer 整体位置；你现在改过的参数我保留了 */
-        .home-footer {
-          background: #ffffff;
-          border-top: 1px solid rgba(15, 23, 42, 0.06);
-          padding: 12px 20px 3px;
-          color: #374151;
-        }
-
-        .home-footer-inner {
-          width: min(1280px, calc(100vw - 48px));
-          margin: 0 auto;
-          min-height: 42px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 28px;
-          flex-wrap: wrap;
-          font-size: 15px;
-          font-weight: 400;
-          line-height: 1.45;
-        }
-
-        /* NINE 可调：首页 footer 文字颜色 / 字号 / 粗细 */
-        .home-footer span,
-        .home-footer a,
-        .home-footer-links a {
-          color: #374151 !important;
-          -webkit-text-fill-color: #374151 !important;
-          font-size: 15px !important;
-          font-weight: 400 !important;
-          line-height: 1.45 !important;
-          text-decoration: none !important;
-          font-family: inherit !important;
-          opacity: 1 !important;
-        }
-
-        /* NINE 可调：首页 footer 链接间距 */
-        .home-footer-links {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 28px;
-          flex-wrap: wrap;
-        }
-
-        @media (max-width: 760px) {
-          .home-hero {
-            min-height: 86vh;
-            padding: 108px 18px 68px;
-          }
-
-          /* NINE 可调：移动端第一屏移动范围 */
-          .hero-content {
-            width: calc(100vw - 36px);
-            animation: heroFloatMobile 38s linear infinite;
-          }
-
-          @keyframes heroFloatMobile {
-            0% {
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%) scale(1);
-            }
-
-            20% {
-              left: 18px;
-              top: 76px;
-              transform: translate(0, 0) scale(0.99);
-            }
-
-            40% {
-              left: calc(100% - 18px);
-              top: 76px;
-              transform: translate(-100%, 0) scale(1.01);
-            }
-
-            60% {
-              left: calc(100% - 18px);
-              top: calc(100% - 52px);
-              transform: translate(-100%, -100%) scale(1);
-            }
-
-            80% {
-              left: 18px;
-              top: calc(100% - 52px);
-              transform: translate(0, -100%) scale(0.995);
-            }
-
-            100% {
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%) scale(1);
-            }
-          }
-
-          .hero-desc {
-            font-size: 15px;
-          }
-
-          .tool-row-section {
-            min-height: 620px;
-            padding: 56px 0 64px;
-          }
-
-          .section-head {
-            width: calc(100vw - 36px);
-            min-height: auto;
-            align-items: start;
-            flex-direction: column;
-            margin-bottom: 24px;
-          }
-
-          .section-head > .glass-button {
-            position: static;
-          }
-
-          .section-copy-float {
-            padding-right: 0;
-            animation: none;
-          }
-
-          .section-head h2 {
-            font-size: clamp(24px, 8vw, 36px);
-          }
-
-          .section-head p {
-            font-size: 14px;
-          }
-
-          .tool-scroll {
-            gap: 18px;
-            padding-left: 28px;
-            padding-right: 28px;
-            scroll-padding-left: 28px;
-          }
-
-          .home-tool-card {
-            flex-basis: 84vw;
-          }
-
-          .home-tool-card article {
-            height: 390px;
-            border-radius: 30px;
-          }
-
-          .card-visual {
-            height: 196px;
-          }
-
-          .card-body h3 {
-            font-size: 22px;
-          }
-
-          .carousel-arrow {
-            width: 48px;
-            height: 48px;
-            font-size: 30px;
-          }
-
-          .carousel-arrow-left {
-            left: 8px;
-          }
-
-          .carousel-arrow-right {
-            right: 8px;
-          }
-
-          .dot {
-            width: 11px;
-            height: 11px;
-          }
-
-          .dot.active {
-            width: 32px;
-          }
-
-          /* NINE 可调：移动端 footer 位置 */
-          .home-footer {
-            padding: 24px 18px 30px;
-          }
-
-          .home-footer-inner,
-          .home-footer-links {
-            gap: 18px;
-          }
-
-          .home-footer span,
-          .home-footer a,
-          .home-footer-links a {
-            font-size: 14px !important;
-          }
-        }
+        <div className="homeDots">{[0, 1, 2].map((page) => <button key={page} type="button" aria-current={activePage === page ? "true" : undefined} onClick={() => setPage(page)} />)}</div>
+      </div>
+    </section>
+  );
+}
+
+export default function HomePage({ params }: { params: { locale: string } }) {
+  const locale = getLocale(params?.locale);
+  const t = copy[locale];
+
+  return (
+    <main className="homeRoot">
+      <style>{`
+        .homeRoot { background: #e9ebef; color: #05070a; }
+        .homeSectionGap { height: 30px; background: #ffffff; }
+        .homeHero { min-height: 100vh; min-height: 100svh; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 120px 24px 80px; background: radial-gradient(circle at 18% 24%, rgba(126,177,231,0.13), rgba(233,235,239,0) 28%), radial-gradient(circle at 82% 74%, rgba(15,23,42,0.035), rgba(233,235,239,0) 32%), #e9ebef; }
+        .homeHeroInner { --motion-x: max(0px, calc((100vw - min(1120px, calc(100vw - 48px))) / 2 - 8px)); --motion-y: 86px; position: relative; z-index: 3; width: min(1120px, calc(100vw - 48px)); text-align: center; animation: homeEdgeMove 38s linear infinite alternate; will-change: transform; }
+        @keyframes homeEdgeMove { 0% { transform: translate3d(calc(-1 * var(--motion-x)), calc(-1 * var(--motion-y)), 0); } 25% { transform: translate3d(var(--motion-x), calc(-0.72 * var(--motion-y)), 0); } 50% { transform: translate3d(var(--motion-x), var(--motion-y), 0); } 75% { transform: translate3d(calc(-1 * var(--motion-x)), var(--motion-y), 0); } 100% { transform: translate3d(calc(-1 * var(--motion-x)), calc(-1 * var(--motion-y)), 0); } }
+        @keyframes homeLayerSafeMove { 0% { transform: translate3d(0, 0, 0); } 25% { transform: translate3d(var(--motion-x), 0, 0); } 50% { transform: translate3d(var(--motion-x), var(--motion-y), 0); } 75% { transform: translate3d(0, var(--motion-y), 0); } 100% { transform: translate3d(0, 0, 0); } }
+        .homeBrand { margin: 0; font-size: clamp(48px, 5.4vw, 80px); line-height: .92; letter-spacing: -.075em; font-weight: 950; }
+        .homeSlogan, .homeLayerKicker { margin: 16px 0 0; font-size: clamp(40px, 7vw, 56px); line-height: .98; letter-spacing: -.07em; font-weight: 950; }
+        .homeDesc, .homeLayerTitle { margin: 16px auto 0; max-width: 1120px; font-size: clamp(21px, 2.15vw, 32px); line-height: 1.28; letter-spacing: -.035em; color: #475467; font-weight: 760; text-wrap: balance; }
+        .homeActions { margin-top: 32px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+        .homeGlassButton { min-height: 46px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; text-decoration: none; color: #111827; font-size: 14px; font-weight: 850; background: radial-gradient(circle at 18% 8%, rgba(255,255,255,.78), rgba(255,255,255,.26) 42%, rgba(255,255,255,.08) 76%); background-color: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.52); box-shadow: 0 10px 26px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.68), inset 0 -8px 16px rgba(15,23,42,.025); backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%); }
+        .homeLayer { position: relative; overflow: hidden; background: #e9ebef; padding: 88px 0 96px; }
+        .homeLayerInner { position: relative; z-index: 2; width: min(1240px, calc(100vw - 48px)); margin: 0 auto; }
+        .homeMotionZone { position: relative; height: 370px; margin-bottom: 34px; overflow: hidden; }
+        .homeStatsHeadZone { height: 270px; }
+        .homeLayerHead { --motion-x: max(0px, calc(min(1240px, calc(100vw - 48px)) - min(980px, calc(100vw - 48px)))); --motion-y: 120px; position: absolute; left: 0; top: 0; max-width: min(980px, calc(100vw - 48px)); animation: homeLayerSafeMove 34s linear infinite alternate; will-change: transform; }
+        .homeLayerKicker { margin-top: 0; }
+        .homeLayerTitle { margin-left: 0; margin-right: 0; }
+        .homeLayerDesc { margin-top: 14px; max-width: 880px; font-size: 17px; line-height: 1.58; color: #586275; font-weight: 620; text-wrap: balance; }
+        .homeCarouselShell { position: relative; width: 100vw; margin-left: calc((100vw - min(1240px, calc(100vw - 48px))) / -2); }
+        .homeTrack { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(300px, calc((min(1240px, calc(100vw - 48px)) - 48px) / 3)); gap: 24px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: none; scroll-behavior: auto; scrollbar-width: none; padding: 4px max(140px, calc((100vw - 1240px) / 2 + 140px)) 14px; will-change: scroll-position; }
+        .homeTrack::-webkit-scrollbar { display: none; }
+        .homeGrid, .homeStatsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .homeCard { scroll-snap-align: none; min-height: 300px; border-radius: 44px; padding: 34px; display: flex; align-items: center; background: #d8dee8; border: none; box-shadow: none; }
+        .homeCard:hover { background: #d1d8e3; box-shadow: none; transform: none; }
+        .homeCardContent { display: block; max-width: 390px; }
+        .homeCard h3 { margin: 0 0 14px; font-size: 26px; line-height: 1.06; letter-spacing: -.045em; font-weight: 950; }
+        .homeCard p { margin: 0; max-width: 390px; font-size: 16px; line-height: 1.58; color: #4b5563; font-weight: 620; text-wrap: balance; }
+        .homeStatCard { min-height: 220px; justify-content: center; text-align: center; }
+        .homeStatCard strong { display: block; font-size: clamp(44px, 5vw, 76px); line-height: 1; letter-spacing: -.06em; font-weight: 950; }
+        .homeStatCard span { display: block; margin-top: 12px; color: #4b5563; font-size: 16px; font-weight: 700; }
+        .homeArrow { position: absolute; top: 50%; z-index: 30; width: 54px; height: 54px; padding: 0; border-radius: 999px; border: 1px solid rgba(255,255,255,.5); display: flex; align-items: center; justify-content: center; color: rgba(17,24,39,.88); background: radial-gradient(circle at 22% 14%, rgba(255,255,255,.68), rgba(255,255,255,.22) 38%, rgba(255,255,255,.07) 76%); background-color: rgba(255,255,255,.14); box-shadow: 0 12px 34px rgba(15,23,42,.11), inset 0 1px 0 rgba(255,255,255,.68), inset 0 -8px 18px rgba(15,23,42,.035); backdrop-filter: blur(9px) saturate(150%); -webkit-backdrop-filter: blur(9px) saturate(150%); cursor: pointer; transform: translate3d(0,-50%,0); opacity: .88; line-height: 1; }
+        .homeArrowGlyph { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 37px; font-weight: 750; line-height: 1; transform: translateY(-2px); pointer-events: none; }
+        .homeArrow:hover, .homeArrow:active, .homeArrow:focus, .homeArrow:focus-visible { top: 50%; transform: translate3d(0,-50%,0); opacity: .96; background-color: rgba(255,255,255,.2); border-color: rgba(126,177,231,.55); }
+        .homeArrowLeft { left: 24px; } .homeArrowRight { right: 38px; }
+        .homeDots { margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 12px; }
+        .homeDots button { width: 12px; height: 12px; padding: 0; border: none; border-radius: 999px; background: rgba(15,23,42,.24); cursor: pointer; transition: width 160ms linear, background-color 160ms linear; }
+        .homeDots button[aria-current="true"] { width: 34px; background: rgba(15,23,42,.78); }
+        .homeCta { position: relative; min-height: 560px; padding: 110px 24px 128px; text-align: center; background: #e9ebef; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .homeCtaInner { --motion-x: max(0px, calc((100vw - min(1120px, calc(100vw - 48px))) / 2 - 8px)); --motion-y: 92px; position: relative; z-index: 2; width: min(1120px, calc(100vw - 48px)); animation: homeEdgeMove 38s linear infinite alternate; will-change: transform; }
+        .homeCta h2 { margin: 0; font-size: clamp(40px, 7vw, 56px); line-height: .98; letter-spacing: -.07em; font-weight: 950; }
+        .homeCta p { margin: 18px auto 0; max-width: 1100px; font-size: clamp(21px, 2.2vw, 32px); line-height: 1.28; color: #475467; font-weight: 760; text-wrap: balance; }
+        @media (max-width: 760px) { .homeHero { padding: 104px 18px 70px; } .homeHeroInner, .homeLayerHead, .homeCtaInner { animation: none; } .homeMotionZone, .homeStatsHeadZone { height: auto; margin-bottom: 34px; overflow: visible; } .homeLayerHead { position: relative; } .homeTrack { grid-auto-columns: minmax(280px, 86vw); padding-left: 84px; padding-right: 84px; } .homeArrowLeft { left: 10px; } .homeArrowRight { right: 10px; } }
       `}</style>
+
+      <section className="homeHero"><div className="homeHeroInner"><h1 className="homeBrand">{t.brand}</h1><p className="homeSlogan">{t.slogan}</p><p className="homeDesc">{t.desc}</p><div className="homeActions"><a href={localePath(locale,"/product")} className="homeGlassButton">{t.explore}</a><a href={localePath(locale,"/contact")} className="homeGlassButton">{t.contact}</a></div></div></section>
+      <SectionGap/><ShowcaseSection section={t.products}/><SectionGap/><ShowcaseSection section={t.solutions}/><SectionGap/><ShowcaseSection section={t.ai}/><SectionGap/><ShowcaseSection section={t.development}/><SectionGap/><ShowcaseSection section={t.projects}/><SectionGap/><ShowcaseSection section={t.why}/><SectionGap/><StatSection title={t.statsTitle} desc={t.statsDesc} stats={t.stats}/><SectionGap/><ShowcaseSection section={t.testimonials}/><SectionGap/><ShowcaseSection section={t.partners}/><SectionGap/><ShowcaseSection section={t.contactSection}/><SectionGap/>
+      <section className="homeCta"><div className="homeCtaInner"><h2>{t.finalTitle}</h2><p>{t.finalDesc}</p><div className="homeActions"><a href={localePath(locale,"/contact")} className="homeGlassButton">{t.finalButton}</a></div></div></section>
     </main>
   );
 }

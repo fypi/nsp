@@ -1,10 +1,71 @@
-"use client";
+import BasicPage from "@/components/BasicPage";
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+type Locale = "zh" | "zh-TW" | "en";
 
-const locales=["en","zh","zh-TW"] as const; type Locale=(typeof locales)[number];
-function normalizeLocale(raw:unknown):Locale{if(raw==="en")return"en";if(raw==="zh-TW")return"zh-TW";return"zh";}
-const copy={zh:{title:"安全设置",desc:"管理邮箱状态和双重认证。",email:"邮箱",verified:"已验证",notVerified:"未验证",mfa:"认证器双重认证",mfaDesc:"使用 Google Authenticator、Microsoft Authenticator 或其他认证器 App 扫描二维码。",start:"开启双重认证",cancel:"取消",code:"验证码",placeholder:"请输入 6 位验证码",enable:"确认开启",enabled:"已开启",disabled:"未开启",secret:"手动密钥",refresh:"刷新状态",success:"双重认证已开启。",failed:"操作失败，请稍后重试。"},en:{title:"Security settings",desc:"Manage email status and two-factor authentication.",email:"Email",verified:"Verified",notVerified:"Not verified",mfa:"Authenticator 2FA",mfaDesc:"Scan the QR code with Google Authenticator, Microsoft Authenticator, or another authenticator app.",start:"Enable 2FA",cancel:"Cancel",code:"Code",placeholder:"Enter 6-digit code",enable:"Confirm enable",enabled:"Enabled",disabled:"Not enabled",secret:"Manual secret",refresh:"Refresh status",success:"Two-factor authentication is enabled.",failed:"Operation failed. Please try again later."},"zh-TW":{title:"安全設定",desc:"管理信箱狀態和雙重認證。",email:"信箱",verified:"已驗證",notVerified:"未驗證",mfa:"認證器雙重認證",mfaDesc:"使用 Google Authenticator、Microsoft Authenticator 或其他認證器 App 掃描 QR Code。",start:"開啟雙重認證",cancel:"取消",code:"驗證碼",placeholder:"請輸入 6 位驗證碼",enable:"確認開啟",enabled:"已開啟",disabled:"未開啟",secret:"手動密鑰",refresh:"刷新狀態",success:"雙重認證已開啟。",failed:"操作失敗，請稍後重試。"}};
-export default function SecurityPage(){const params=useParams();const locale=normalizeLocale(params?.locale);const c=copy[locale];const[userEmail,setUserEmail]=useState("");const[emailConfirmed,setEmailConfirmed]=useState(false);const[hasMfa,setHasMfa]=useState(false);const[factorId,setFactorId]=useState("");const[qr,setQr]=useState("");const[secret,setSecret]=useState("");const[code,setCode]=useState("");const[message,setMessage]=useState("");const[loading,setLoading]=useState(false);async function refresh(){const{data:{user}}=await supabase.auth.getUser();setUserEmail(user?.email||"");setEmailConfirmed(Boolean(user?.email_confirmed_at));const{data}=await supabase.auth.mfa.listFactors();setHasMfa(Boolean(data?.totp?.some((f)=>f.status==="verified")));}useEffect(()=>{refresh();},[]);async function startEnroll(){setMessage("");setLoading(true);const{data,error}=await supabase.auth.mfa.enroll({factorType:"totp"});setLoading(false);if(error){setMessage(error.message||c.failed);return;}setFactorId(data.id);setQr(data.totp.qr_code);setSecret(data.totp.secret);}async function confirmEnroll(){if(!factorId)return;setLoading(true);setMessage("");const challenge=await supabase.auth.mfa.challenge({factorId});if(challenge.error){setLoading(false);setMessage(challenge.error.message||c.failed);return;}const verify=await supabase.auth.mfa.verify({factorId,challengeId:challenge.data.id,code:code.trim()});setLoading(false);if(verify.error){setMessage(verify.error.message||c.failed);return;}setMessage(c.success);setQr("");setSecret("");setFactorId("");setCode("");await refresh();}return <main className="subpage-main"><div className="subpage-container"><section className="subpage-hero"><h1>{c.title}</h1><p>{c.desc}</p></section><section className="subpage-section"><div className="card liquidGlassCard"><h3>{c.email}</h3><p>{userEmail||"-"}</p><span className="liquidGlassPillMuted">{emailConfirmed?c.verified:c.notVerified}</span></div></section><section className="subpage-section"><div className="card liquidGlassCard"><h3>{c.mfa}</h3><p>{c.mfaDesc}</p><span className={hasMfa?"liquidGlassPill":"liquidGlassPillMuted"}>{hasMfa?c.enabled:c.disabled}</span><div style={{marginTop:18,display:"grid",gap:12}}>{!qr&&<button type="button" className="liquidGlassPill" onClick={startEnroll} disabled={loading}>{c.start}</button>}{qr&&<><div style={{display:"flex",justifyContent:"center"}}><img src={qr} alt="TOTP QR Code" style={{width:220,height:220,borderRadius:20,background:"#fff",padding:12}}/></div><p style={{wordBreak:"break-all"}}><strong>{c.secret}: </strong>{secret}</p><label>{c.code}</label><input value={code} maxLength={6} inputMode="numeric" onChange={e=>setCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder={c.placeholder} className="contact-input"/><div style={{display:"flex",gap:10,flexWrap:"wrap"}}><button type="button" className="liquidGlassPill" onClick={confirmEnroll} disabled={loading||code.length!==6}>{c.enable}</button><button type="button" className="liquidGlassPillMuted" onClick={()=>{setQr("");setSecret("");setFactorId("");setCode("");}}>{c.cancel}</button></div></>}{message&&<p style={{color:message===c.success?"#166534":"#b42318"}}>{message}</p>}<button type="button" className="liquidGlassPillMuted" onClick={refresh}>{c.refresh}</button></div></div></section></div></main>}
+type BasicCard = { title: string; desc: string; href?: string };
+type BasicPageContent = { eyebrow?: string; title: string; desc: string; cards?: BasicCard[]; note?: string };
+
+function getLocale(raw?: string): Locale {
+  if (raw === "en") return "en";
+  if (raw === "zh-TW" || raw === "zh-tw") return "zh-TW";
+  return "zh";
+}
+
+const content: Record<Locale, BasicPageContent> = {
+  "zh": {
+    "eyebrow": "账号",
+    "title": "安全设置",
+    "desc": "账号相关页面。当前提供页面结构，后续可接入真实用户数据。",
+    "cards": [
+      {
+        "title": "返回首页",
+        "desc": "回到 NINESPRO 首页。",
+        "href": "/"
+      },
+      {
+        "title": "联系我们",
+        "desc": "如果需要更多信息，请联系 NINESPRO。",
+        "href": "/contact"
+      }
+    ]
+  },
+  "zh-TW": {
+    "eyebrow": "帳號",
+    "title": "安全設定",
+    "desc": "帳號相關頁面。當前提供頁面結構，後續可接入真實用戶數據。",
+    "cards": [
+      {
+        "title": "返回首頁",
+        "desc": "回到 NINESPRO 首頁。",
+        "href": "/"
+      },
+      {
+        "title": "聯絡我們",
+        "desc": "如果需要更多資訊，請聯絡 NINESPRO。",
+        "href": "/contact"
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Account",
+    "title": "Security",
+    "desc": "Account-related page. This structure can later connect to real user data.",
+    "cards": [
+      {
+        "title": "Back Home",
+        "desc": "Return to the NINESPRO homepage.",
+        "href": "/"
+      },
+      {
+        "title": "Contact Us",
+        "desc": "Contact NINESPRO for more information.",
+        "href": "/contact"
+      }
+    ]
+  }
+};
+
+export default function Page({ params }: { params: { locale: string } }) {
+  const locale = getLocale(params?.locale);
+  return <BasicPage content={content[locale]} locale={locale} />;
+}

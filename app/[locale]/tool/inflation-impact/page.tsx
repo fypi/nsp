@@ -1,5 +1,5 @@
-﻿"use client";
-import * as React from "react";
-export default function InflationImpactPage(){const h=React.createElement;return h("main",{className:"subpage-main"},h("div",{className:"subpage-container"},h("section",{className:"subpage-hero"},h("h1",null,"Inflation Impact"),h("p",null,"Stable temporary page.")),h("section",{className:"subpage-section"},h("div",{className:"card liquidGlassCard",style:{textAlign:"center"}},h("h3",null,"Page restored"),h("p",{style:{color:"#4b5563",lineHeight:1.8}},"This page is temporarily restored so the project can compile."),h("a",{href:"/zh/tool",className:"liquidGlassPill",style:{textDecoration:"none",marginTop:16}},"Back to Tool Center")))))}
+import RealToolPage from "@/components/tools/RealToolPage";
 
-
+type Locale="zh"|"zh-TW"|"en";
+function getLocale(raw?:string):Locale{if(raw==="en")return"en";if(raw==="zh-TW"||raw==="zh-tw")return"zh-TW";return"zh";}
+export default function Page({params}:{params:{locale:string}}){return <RealToolPage slug="inflation-impact" locale={getLocale(params?.locale)}/>;}

@@ -19,8 +19,9 @@ import type { User } from "@supabase/supabase-js";
 import BrandLogo from "@/components/BrandLogo";
 
 const locales = ["en", "zh", "zh-TW"] as const;
+
 type Locale = (typeof locales)[number];
-type MegaKey = "product" | "solution" | "support" | "tool";
+type MegaKey = "products" | "solutions" | "technology" | "resources" | "company";
 
 type LocaleText = {
   zh: string;
@@ -31,7 +32,7 @@ type LocaleText = {
 type MegaCard = {
   title: LocaleText;
   desc: LocaleText;
-  badge: string;
+  badge: LocaleText;
   route: string;
 };
 
@@ -48,231 +49,318 @@ const languageNames: Record<Locale, string> = {
   "zh-TW": "繁體中文",
 };
 
-const navItems: Array<{
-  key: MegaKey;
-  name: LocaleText;
-  path: string;
-}> = [
+const navItems: Array<{ key: MegaKey; name: LocaleText; path: string }> = [
   {
-    key: "product",
-    name: { zh: "产品中心", en: "Products", tw: "產品中心" },
+    key: "products",
+    name: { zh: "产品", en: "Product", tw: "產品" },
     path: "/product",
   },
   {
-    key: "solution",
-    name: { zh: "解决方案", en: "Solutions", tw: "解決方案" },
+    key: "solutions",
+    name: { zh: "解决方案", en: "Solution", tw: "解決方案" },
     path: "/solution",
   },
   {
-    key: "support",
-    name: { zh: "支持中心", en: "Support", tw: "支援中心" },
-    path: "/support",
+    key: "technology",
+    name: { zh: "技术", en: "Technology", tw: "技術" },
+    path: "/technology",
   },
   {
-    key: "tool",
-    name: { zh: "工具中心", en: "Tools", tw: "工具中心" },
-    path: "/tool",
+    key: "resources",
+    name: { zh: "资源", en: "Resources", tw: "資源" },
+    path: "/resources",
+  },
+  {
+    key: "company",
+    name: { zh: "公司", en: "Company", tw: "公司" },
+    path: "/company",
   },
 ];
 
 const megaData: Record<MegaKey, { cards: MegaCard[]; links: MegaLink[] }> = {
-  product: {
+  products: {
     cards: [
       {
-        title: { zh: "产品总览", en: "Product Overview", tw: "產品總覽" },
+        title: { zh: "文书与内容", en: "Documents & Content", tw: "文書與內容" },
         desc: {
-          zh: "查看九域的产品、工具和服务入口。",
-          en: "Explore NinesPro products, tools, and services.",
-          tw: "查看九域的產品、工具和服務入口。",
+          zh: "文书模板、写作助手、报告生成与合同摘要。",
+          en: "Templates, writing assistant, reports, and contract summaries.",
+          tw: "文書模板、寫作助手、報告生成與合約摘要。",
         },
-        badge: "🔐",
-        route: "/product",
+        badge: { zh: "文", en: "DOC", tw: "文" },
+        route: "/product#documents",
       },
       {
-        title: { zh: "工具中心", en: "Tool Center", tw: "工具中心" },
+        title: { zh: "学习与知识", en: "Learning & Knowledge", tw: "學習與知識" },
         desc: {
-          zh: "文本、技术、学习、办公和金融计算工具。",
-          en: "Text, developer, learning, office, and finance tools.",
-          tw: "文字、技術、學習、辦公和金融計算工具。",
+          zh: "学习计划、知识库、题目解析与阅读总结。",
+          en: "Study plans, knowledge base, explanations, and summaries.",
+          tw: "學習計畫、知識庫、題目解析與閱讀總結。",
         },
-        badge: "🔓",
+        badge: { zh: "学", en: "EDU", tw: "學" },
+        route: "/product#learning",
+      },
+      {
+        title: { zh: "智能自动化", en: "AI Automation", tw: "智能自動化" },
+        desc: {
+          zh: "工作流自动化、数据处理、智能客服与任务代理。",
+          en: "Workflow automation, data processing, AI support, and task agents.",
+          tw: "工作流自動化、數據處理、智能客服與任務代理。",
+        },
+        badge: { zh: "智", en: "AI", tw: "智" },
+        route: "/product#automation",
+      },
+      {
+        title: { zh: "工具中心", en: "Tools", tw: "工具中心" },
+        desc: {
+          zh: "进入 NINESPRO 在线工具矩阵。",
+          en: "Open the NINESPRO online tools matrix.",
+          tw: "進入 NINESPRO 線上工具矩陣。",
+        },
+        badge: { zh: "工", en: "TOOL", tw: "工" },
         route: "/tool",
       },
-      {
-        title: { zh: "定制服务", en: "Custom Build", tw: "定制服務" },
-        desc: {
-          zh: "按需求定制网站、系统和自动化流程。",
-          en: "Custom websites, systems, and automation workflows.",
-          tw: "按需求定制網站、系統和自動化流程。",
-        },
-        badge: "💼",
-        route: "/contact",
-      },
     ],
     links: [
-      { zh: "产品总览", en: "Overview", tw: "產品總覽", route: "/product" },
+      { zh: "产品总览", en: "Product Overview", tw: "產品總覽", route: "/product" },
+      { zh: "文书与内容", en: "Documents", tw: "文書與內容", route: "/product#documents" },
+      { zh: "学习与知识", en: "Learning", tw: "學習與知識", route: "/product#learning" },
+      { zh: "智能自动化", en: "AI Automation", tw: "智能自動化", route: "/product#automation" },
       { zh: "工具中心", en: "Tools", tw: "工具中心", route: "/tool" },
-      { zh: "联系咨询", en: "Contact", tw: "聯絡諮詢", route: "/contact" },
     ],
   },
-  solution: {
+
+  solutions: {
     cards: [
       {
-        title: { zh: "解决方案", en: "Solutions", tw: "解決方案" },
+        title: { zh: "业务", en: "Business", tw: "業務" },
         desc: {
-          zh: "把业务需求拆成可落地的系统和流程。",
-          en: "Turn business needs into systems and workflows.",
-          tw: "把業務需求拆成可落地的系統和流程。",
+          zh: "业务自动化、运营管理、数据洞察与客户支持。",
+          en: "Automation, operations, insights, and customer support.",
+          tw: "業務自動化、營運管理、數據洞察與客戶支持。",
         },
-        badge: "💼",
-        route: "/solution",
+        badge: { zh: "业", en: "BIZ", tw: "業" },
+        route: "/solution#business",
       },
       {
-        title: { zh: "技术服务", en: "Engineering", tw: "技術服務" },
+        title: { zh: "教育", en: "Education", tw: "教育" },
         desc: {
-          zh: "网站、网络、系统与自动化的工程实现。",
-          en: "Engineering for web, networks, systems, and automation.",
-          tw: "網站、網路、系統與自動化的工程實現。",
+          zh: "学习计划、资料总结、题目解析与知识管理。",
+          en: "Study planning, material summaries, explanations, and knowledge management.",
+          tw: "學習計畫、資料總結、題目解析與知識管理。",
         },
-        badge: "💼",
-        route: "/solution",
+        badge: { zh: "教", en: "EDU", tw: "教" },
+        route: "/solution#education",
       },
       {
-        title: { zh: "支持中心", en: "Support", tw: "支援中心" },
+        title: { zh: "创业", en: "Startup", tw: "新創" },
         desc: {
-          zh: "查看支持方式、说明和反馈入口。",
-          en: "View support, guidance, and feedback options.",
-          tw: "查看支援方式、說明和反饋入口。",
+          zh: "MVP、官网落地页、SaaS 基础与品牌系统。",
+          en: "MVP, landing pages, SaaS foundation, and brand systems.",
+          tw: "MVP、官網落地頁、SaaS 基礎與品牌系統。",
         },
-        badge: "🔓",
-        route: "/support",
+        badge: { zh: "创", en: "UP", tw: "創" },
+        route: "/solution#startup",
+      },
+      {
+        title: { zh: "服务能力", en: "Services", tw: "服務能力" },
+        desc: {
+          zh: "查看开发、设计、自动化与企业平台服务。",
+          en: "Explore development, design, automation, and enterprise services.",
+          tw: "查看開發、設計、自動化與企業平台服務。",
+        },
+        badge: { zh: "服", en: "SVC", tw: "服" },
+        route: "/service",
       },
     ],
     links: [
-      { zh: "方案总览", en: "All Solutions", tw: "方案總覽", route: "/solution" },
-      { zh: "支持中心", en: "Support", tw: "支援中心", route: "/support" },
-      { zh: "联系咨询", en: "Contact", tw: "聯絡諮詢", route: "/contact" },
+      { zh: "解决方案总览", en: "Solution Overview", tw: "解決方案總覽", route: "/solution" },
+      { zh: "业务", en: "Business", tw: "業務", route: "/solution#business" },
+      { zh: "教育", en: "Education", tw: "教育", route: "/solution#education" },
+      { zh: "创业", en: "Startup", tw: "新創", route: "/solution#startup" },
+      { zh: "服务能力", en: "Services", tw: "服務能力", route: "/service" },
     ],
   },
-  support: {
+
+  technology: {
     cards: [
       {
-        title: { zh: "帮助中心", en: "Help Center", tw: "幫助中心" },
+        title: { zh: "智能代理", en: "AI Agents", tw: "智能代理" },
         desc: {
-          zh: "了解产品、工具和常见使用问题。",
-          en: "Understand products, tools, and common questions.",
-          tw: "了解產品、工具和常見使用問題。",
+          zh: "任务理解、流程拆解、工具调用与结果校验。",
+          en: "Task understanding, workflow breakdown, tool calling, and validation.",
+          tw: "任務理解、流程拆解、工具調用與結果校驗。",
         },
-        badge: "🔓",
-        route: "/help",
+        badge: { zh: "智", en: "AI", tw: "智" },
+        route: "/technology#ai",
       },
       {
-        title: { zh: "隐私与法律", en: "Privacy & Legal", tw: "隱私與法律" },
+        title: { zh: "云端架构", en: "Cloud Architecture", tw: "雲端架構" },
         desc: {
-          zh: "查看隐私、法律和使用边界。",
-          en: "View privacy, legal terms, and usage boundaries.",
-          tw: "查看隱私、法律和使用邊界。",
+          zh: "API 架构、权限系统、数据存储与监控运维。",
+          en: "API architecture, permissions, data storage, and monitoring.",
+          tw: "API 架構、權限系統、數據存儲與監控運維。",
         },
-        badge: "🔓",
-        route: "/privacy",
+        badge: { zh: "云", en: "CLOUD", tw: "雲" },
+        route: "/technology#cloud",
       },
       {
-        title: { zh: "联系方式", en: "Contact", tw: "聯絡方式" },
+        title: { zh: "自动化引擎", en: "Automation Engine", tw: "自動化引擎" },
         desc: {
-          zh: "合作、咨询、反馈统一入口。",
-          en: "A single entry for cooperation, questions, and feedback.",
-          tw: "合作、諮詢、反饋統一入口。",
+          zh: "触发器、规则引擎、执行记录与集成连接。",
+          en: "Triggers, rule engine, execution logs, and integrations.",
+          tw: "觸發器、規則引擎、執行記錄與整合連接。",
         },
-        badge: "🔓",
-        route: "/contact",
+        badge: { zh: "自", en: "AUTO", tw: "自" },
+        route: "/technology#automation",
+      },
+      {
+        title: { zh: "开发者", en: "Developer", tw: "開發者" },
+        desc: {
+          zh: "开发者能力、接口、工程结构与系统集成。",
+          en: "Developer capabilities, APIs, engineering structure, and integrations.",
+          tw: "開發者能力、接口、工程結構與系統整合。",
+        },
+        badge: { zh: "开", en: "DEV", tw: "開" },
+        route: "/developer",
       },
     ],
     links: [
-      { zh: "支持中心", en: "Support Center", tw: "支援中心", route: "/support" },
-      { zh: "帮助中心", en: "Help Center", tw: "幫助中心", route: "/help" },
-      { zh: "隐私与法律", en: "Privacy & Legal", tw: "隱私與法律", route: "/privacy" },
-      { zh: "联系九域", en: "Contact Us", tw: "聯絡九域", route: "/contact" },
+      { zh: "技术总览", en: "Technology Overview", tw: "技術總覽", route: "/technology" },
+      { zh: "智能代理", en: "AI Agents", tw: "智能代理", route: "/technology#ai" },
+      { zh: "云端架构", en: "Cloud Architecture", tw: "雲端架構", route: "/technology#cloud" },
+      { zh: "自动化引擎", en: "Automation Engine", tw: "自動化引擎", route: "/technology#automation" },
+      { zh: "开发者", en: "Developer", tw: "開發者", route: "/developer" },
     ],
   },
-  tool: {
+
+  resources: {
     cards: [
       {
-        title: { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化" },
+        title: { zh: "博客", en: "Blog", tw: "部落格" },
         desc: {
-          zh: "格式化、压缩和校验 JSON。",
-          en: "Format, minify, and validate JSON.",
-          tw: "格式化、壓縮和校驗 JSON。",
+          zh: "AI、自动化、产品设计和工程实践文章。",
+          en: "Articles on AI, automation, product design, and engineering practice.",
+          tw: "AI、自動化、產品設計和工程實踐文章。",
         },
-        badge: "🔓",
-        route: "/tool/json-formatter",
+        badge: { zh: "博", en: "BLOG", tw: "博" },
+        route: "/resources#blog",
       },
       {
-        title: { zh: "文本对比", en: "Text Diff", tw: "文字對比" },
+        title: { zh: "文档", en: "Documentation", tw: "文檔" },
         desc: {
-          zh: "对比两段文本差异。",
-          en: "Compare differences between two texts.",
-          tw: "對比兩段文字差異。",
+          zh: "产品能力、API、流程、模板和使用说明。",
+          en: "Product capabilities, APIs, workflows, templates, and guides.",
+          tw: "產品能力、API、流程、模板和使用說明。",
         },
-        badge: "🔓",
-        route: "/tool/text-diff",
+        badge: { zh: "文", en: "DOC", tw: "文" },
+        route: "/resources#docs",
       },
       {
-        title: { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具" },
+        title: { zh: "支持", en: "Support", tw: "支持" },
         desc: {
-          zh: "Base64 编码与解码。",
-          en: "Base64 encode and decode.",
-          tw: "Base64 編碼與解碼。",
+          zh: "帮助中心、FAQ、更新日志和服务支持。",
+          en: "Help center, FAQ, changelog, and service support.",
+          tw: "幫助中心、FAQ、更新日誌和服務支持。",
         },
-        badge: "🔓",
-        route: "/tool/base64",
+        badge: { zh: "助", en: "?", tw: "助" },
+        route: "/resources#support",
       },
       {
-        title: { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器" },
+        title: { zh: "工具中心", en: "Tools", tw: "工具中心" },
         desc: {
-          zh: "估算长期复利增长。",
-          en: "Estimate long-term compound growth.",
-          tw: "估算長期複利增長。",
+          zh: "JSON、文本处理、金融计算与效率工具。",
+          en: "JSON, text tools, finance calculators, and productivity utilities.",
+          tw: "JSON、文字處理、金融計算與效率工具。",
         },
-        badge: "🔓",
-        route: "/tool/compound-interest",
+        badge: { zh: "工", en: "TOOL", tw: "工" },
+        route: "/tool",
       },
     ],
     links: [
-      { zh: "JSON 格式化", en: "JSON Formatter", tw: "JSON 格式化", route: "/tool/json-formatter" },
-      { zh: "文本对比", en: "Text Diff", tw: "文字對比", route: "/tool/text-diff" },
-      { zh: "URL 编码 / 解码", en: "URL Encode / Decode", tw: "URL 編碼 / 解碼", route: "/tool/url-codec" },
-      { zh: "Base64 工具", en: "Base64 Tool", tw: "Base64 工具", route: "/tool/base64" },
-      { zh: "复利计算器", en: "Compound Interest", tw: "複利計算器", route: "/tool/compound-interest" },
-      { zh: "文书模板生成器", en: "Document Template", tw: "文書模板生成器", route: "/tool/document-template" },
+      { zh: "资源总览", en: "Resources Overview", tw: "資源總覽", route: "/resources" },
+      { zh: "博客", en: "Blog", tw: "部落格", route: "/resources#blog" },
+      { zh: "文档", en: "Documentation", tw: "文檔", route: "/resources#docs" },
+      { zh: "支持", en: "Support", tw: "支持", route: "/resources#support" },
+      { zh: "工具中心", en: "Tools", tw: "工具中心", route: "/tool" },
+    ],
+  },
+
+  company: {
+    cards: [
+      {
+        title: { zh: "关于", en: "About", tw: "關於" },
+        desc: {
+          zh: "品牌、愿景、产品原则与工程标准。",
+          en: "Brand, vision, product principles, and engineering standards.",
+          tw: "品牌、願景、產品原則與工程標準。",
+        },
+        badge: { zh: "关", en: "N", tw: "關" },
+        route: "/company#about",
+      },
+      {
+        title: { zh: "加入我们", en: "Careers", tw: "加入我們" },
+        desc: {
+          zh: "设计、工程、AI 和产品方向的合作机会。",
+          en: "Future opportunities in design, engineering, AI, and product.",
+          tw: "設計、工程、AI 和產品方向的合作機會。",
+        },
+        badge: { zh: "加", en: "+", tw: "加" },
+        route: "/company#careers",
+      },
+      {
+        title: { zh: "联系", en: "Contact", tw: "聯絡" },
+        desc: {
+          zh: "商务、合作、销售和项目需求联系入口。",
+          en: "Business, partnership, sales, and project contact channels.",
+          tw: "商務、合作、銷售和項目需求聯絡入口。",
+        },
+        badge: { zh: "联", en: "→", tw: "聯" },
+        route: "/company#contact",
+      },
+      {
+        title: { zh: "反馈", en: "Feedback", tw: "反饋" },
+        desc: {
+          zh: "提交产品建议、问题反馈和合作想法。",
+          en: "Submit product suggestions, issues, and partnership ideas.",
+          tw: "提交產品建議、問題反饋和合作想法。",
+        },
+        badge: { zh: "馈", en: "◎", tw: "饋" },
+        route: "/feedback",
+      },
+    ],
+    links: [
+      { zh: "公司总览", en: "Company Overview", tw: "公司總覽", route: "/company" },
+      { zh: "关于", en: "About", tw: "關於", route: "/company#about" },
+      { zh: "加入我们", en: "Careers", tw: "加入我們", route: "/company#careers" },
+      { zh: "联系", en: "Contact", tw: "聯絡", route: "/company#contact" },
+      { zh: "隐私政策", en: "Privacy Policy", tw: "隱私政策", route: "/privacy" },
     ],
   },
 };
 
 function normalizeLocale(rawLocale: unknown): Locale {
-  if (rawLocale === "en") return "en";
+  if (rawLocale === "zh") return "zh";
   if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
-  return "zh";
+  if (rawLocale === "en") return "en";
+  return "en";
 }
 
 function stripLocaleFromPath(path: string): string {
-  const parts = path.split("/");
-  const maybeLocale = parts[1];
+  const clean = path || "/";
+  const parts = clean.split("/").filter(Boolean);
+  const first = parts[0];
 
-  if (locales.includes(maybeLocale as Locale)) {
-    const rest = "/" + parts.slice(2).join("/");
+  if (first === "zh" || first === "zh-TW" || first === "zh-tw" || first === "en") {
+    const rest = "/" + parts.slice(1).join("/");
     return rest === "/" ? "/" : rest;
   }
 
-  return path;
+  return clean.startsWith("/") ? clean : `/${clean}`;
 }
 
 function localePath(locale: Locale, route: string) {
   const cleanRoute = route.startsWith("/") ? route : `/${route}`;
-
-  if (locale === "en") {
-    return cleanRoute === "/" ? "/" : cleanRoute;
-  }
-
   return `/${locale}${cleanRoute === "/" ? "" : cleanRoute}`;
 }
 
@@ -282,8 +370,12 @@ function accountText(locale: Locale) {
       account: "Account Center",
       profile: "Profile",
       security: "Security",
+      favorites: "Favorites",
+      history: "History",
+      downloads: "Downloads",
       logout: "Logout",
       login: "Login",
+      contact: "Contact",
     };
   }
 
@@ -292,8 +384,12 @@ function accountText(locale: Locale) {
       account: "個人中心",
       profile: "個人資訊",
       security: "安全設定",
+      favorites: "收藏",
+      history: "歷史記錄",
+      downloads: "下載記錄",
       logout: "登出",
       login: "登入",
+      contact: "聯絡",
     };
   }
 
@@ -301,8 +397,12 @@ function accountText(locale: Locale) {
     account: "个人中心",
     profile: "个人信息",
     security: "安全设置",
+    favorites: "收藏",
+    history: "历史记录",
+    downloads: "下载记录",
     logout: "退出登录",
     login: "登录",
+    contact: "联系",
   };
 }
 
@@ -318,26 +418,6 @@ function pickLinkText(link: MegaLink, locale: Locale) {
   return link.zh;
 }
 
-function navPillStyle(): CSSProperties {
-  return {
-    background: "transparent",
-    border: "1px solid transparent",
-    color: "#111",
-    transform: "none",
-  };
-}
-
-function isPublicTool(route: string) {
-  return [
-    "/tool/json-formatter",
-    "/tool/text-diff",
-    "/tool/compound-interest",
-    "/tool/base64",
-    "/tool/url-codec",
-    "/tool/document-template",
-  ].includes(route);
-}
-
 function getUserDisplayName(user: User | null, fallback: string) {
   if (!user) return fallback;
 
@@ -350,13 +430,8 @@ function getUserDisplayName(user: User | null, fallback: string) {
     meta.username ||
     meta.nickname;
 
-  if (typeof name === "string" && name.trim()) {
-    return name.trim();
-  }
-
-  if (user.email) {
-    return user.email.split("@")[0];
-  }
+  if (typeof name === "string" && name.trim()) return name.trim();
+  if (user.email) return user.email.split("@")[0];
 
   return fallback;
 }
@@ -378,13 +453,16 @@ const iconBtn: CSSProperties = {
 };
 
 const mobileLinkStyle: CSSProperties = {
-  padding: "12px 16px",
-  borderRadius: 14,
+  padding: "14px 16px",
+  borderRadius: 18,
   textDecoration: "none",
   color: "#111",
-  fontSize: 15,
-  fontWeight: 600,
-  background: "#f5f5f5",
+  fontSize: 17,
+  fontWeight: 760,
+  background:
+    "linear-gradient(145deg, rgba(255,255,255,0.92), rgba(246,248,251,0.78))",
+  border: "1px solid rgba(255,255,255,0.86)",
+  boxShadow: "0 10px 28px rgba(15,23,42,0.06)",
 };
 
 const userMenuLinkStyle: CSSProperties = {
@@ -411,14 +489,11 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isTouchLike, setIsTouchLike] = useState(false);
-
   const [activeMenu, setActiveMenu] = useState<MegaKey | null>(null);
-  const [lastMenu, setLastMenu] = useState<MegaKey>("product");
-
+  const [lastMenu, setLastMenu] = useState<MegaKey>("products");
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [langMenuPos, setLangMenuPos] = useState<{ top: number; left: number } | null>(null);
@@ -437,32 +512,27 @@ export default function Navbar() {
 
   const isReady = mounted;
   const isMegaOpen = activeMenu !== null && !isMobile;
-  const shouldExpandToRightEdge = isMegaOpen;
-  const fixedRight = shouldExpandToRightEdge
-    ? 0
-    : isTouchLike
-      ? TOUCH_SCROLLBAR_W
-      : DESKTOP_SCROLLBAR_W;
-
+  const fixedRight = isMegaOpen ? 0 : isTouchLike ? TOUCH_SCROLLBAR_W : DESKTOP_SCROLLBAR_W;
   const currentMega = megaData[activeMenu ?? lastMenu];
   const accountLabels = accountText(locale);
   const userDisplayName = getUserDisplayName(user, accountLabels.account);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("nines-nav-expanded", shouldExpandToRightEdge);
-    document.body.classList.toggle("nines-nav-expanded", shouldExpandToRightEdge);
+    document.documentElement.classList.toggle("nines-nav-expanded", isMegaOpen);
+    document.body.classList.toggle("nines-nav-expanded", isMegaOpen);
 
     return () => {
       document.documentElement.classList.remove("nines-nav-expanded");
       document.body.classList.remove("nines-nav-expanded");
     };
-  }, [shouldExpandToRightEdge]);
+  }, [isMegaOpen]);
 
   const updateLangMenuPosition = () => {
     const el = langBtnWrapRef.current;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
+
     setLangMenuPos({
       top: Math.round(rect.bottom + 8),
       left: Math.round(rect.left + rect.width / 2),
@@ -503,6 +573,7 @@ export default function Navbar() {
     };
 
     updateDeviceFlags();
+
     window.addEventListener("resize", updateDeviceFlags);
     window.addEventListener("orientationchange", updateDeviceFlags);
     window.addEventListener("resize", updateLangMenuPosition);
@@ -534,6 +605,7 @@ export default function Navbar() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -585,10 +657,13 @@ export default function Navbar() {
 
   const changeLanguage = (nextLocale: Locale) => {
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000`;
-    const basePath = stripLocaleFromPath(pathname);
+
+    const current = window.location.pathname || pathname || "/";
+    const basePath = stripLocaleFromPath(current);
     const nextPath = localePath(nextLocale, basePath);
+
     closeAll();
-    window.location.assign(nextPath);
+    window.location.assign(nextPath + window.location.search + window.location.hash);
   };
 
   const handleLogout = async () => {
@@ -596,26 +671,6 @@ export default function Navbar() {
     setUser(null);
     setShowUserMenu(false);
     router.push(localePath(locale, "/"));
-  };
-
-  const handleToolRoute = (route: string) => {
-    closeAll();
-
-    if (isPublicTool(route)) {
-      router.push(localePath(locale, route));
-      return;
-    }
-
-    if (!user) {
-      router.push(
-        `${localePath(locale, "/login")}?next=${encodeURIComponent(
-          localePath(locale, route)
-        )}`
-      );
-      return;
-    }
-
-    router.push(localePath(locale, route));
   };
 
   return (
@@ -659,14 +714,29 @@ export default function Navbar() {
           boxShadow: "none",
         }}
       >
-        <BrandLogo locale={locale} compact={isMobile} />
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            lineHeight: 1,
+          }}
+        >
+          <BrandLogo locale={locale} compact={isMobile} />
+        </div>
 
         {!isMobile && (
-          <div className="nav-center" style={{ display: "flex", gap: 8, fontSize: 15, color: "#000" }}>
+          <div
+            className="nav-center"
+            style={{
+              display: "flex",
+              gap: 8,
+              fontSize: 15,
+              color: "#000",
+            }}
+          >
             {navItems.map((item) => {
               const isActive = currentPath === item.path || currentPath.startsWith(`${item.path}/`);
               const isHover = hoveredNav === item.key;
-              const pill = navPillStyle();
 
               return (
                 <Link
@@ -688,7 +758,10 @@ export default function Navbar() {
                     fontWeight: isActive ? 800 : 600,
                     textDecoration: "none",
                     position: "relative",
-                    ...pill,
+                    background: "transparent",
+                    border: "1px solid transparent",
+                    color: "#111",
+                    transform: "none",
                   }}
                 >
                   {pickLocaleText(item.name, locale)}
@@ -699,22 +772,38 @@ export default function Navbar() {
         )}
 
         {!isMobile && (
-          <div className="nav-icons-desktop" style={{ display: "flex", gap: 12, position: "relative" }}>
+          <div
+            className="nav-icons-desktop"
+            style={{
+              display: "flex",
+              gap: 12,
+              position: "relative",
+            }}
+          >
             <Link
-              href={localePath(locale, "/support")}
+              href={localePath(locale, "/contact")}
               onClick={closeAll}
-              onMouseEnter={() => setHoveredIcon("help")}
-              onMouseLeave={() => setHoveredIcon((value) => (value === "help" ? null : value))}
+              onMouseEnter={() => setHoveredIcon("contact")}
+              onMouseLeave={() =>
+                setHoveredIcon((value) => (value === "contact" ? null : value))
+              }
               className={[
                 "liquidGlassNavItem",
-                hoveredIcon === "help" ? "liquidGlassNavHover" : "",
+                hoveredIcon === "contact" ? "liquidGlassNavHover" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
-              style={{ ...iconBtn, textDecoration: "none" }}
-              aria-label="Help"
+              style={{
+                ...iconBtn,
+                width: "auto",
+                padding: "0 14px",
+                textDecoration: "none",
+                fontSize: 13,
+                fontWeight: 800,
+              }}
+              aria-label={accountLabels.contact}
             >
-              <span>?</span>
+              <span>{accountLabels.contact}</span>
             </Link>
 
             <div
@@ -741,7 +830,6 @@ export default function Navbar() {
                 style={iconBtn}
                 onClick={() => {
                   if (!isReady) return;
-
                   updateLangMenuPosition();
                   setShowLangMenu((value) => !value);
                   setShowUserMenu(false);
@@ -762,15 +850,20 @@ export default function Navbar() {
                   href={localePath(locale, "/login")}
                   onClick={closeAll}
                   onMouseEnter={() => setHoveredIcon("login")}
-                  onMouseLeave={() => setHoveredIcon((value) => (value === "login" ? null : value))}
+                  onMouseLeave={() =>
+                    setHoveredIcon((value) => (value === "login" ? null : value))
+                  }
                   className={[
                     "liquidGlassNavItem",
                     hoveredIcon === "login" ? "liquidGlassNavHover" : "",
                   ]
                     .filter(Boolean)
                     .join(" ")}
-                  style={{ ...iconBtn, textDecoration: "none" }}
-                  aria-label="Login"
+                  style={{
+                    ...iconBtn,
+                    textDecoration: "none",
+                  }}
+                  aria-label={accountLabels.login}
                 >
                   <span>👤</span>
                 </Link>
@@ -784,7 +877,9 @@ export default function Navbar() {
                     .join(" ")}
                   style={iconBtn}
                   onMouseEnter={() => setHoveredIcon("user")}
-                  onMouseLeave={() => setHoveredIcon((value) => (value === "user" ? null : value))}
+                  onMouseLeave={() =>
+                    setHoveredIcon((value) => (value === "user" ? null : value))
+                  }
                   onClick={() => {
                     setShowUserMenu((value) => !value);
                     setShowLangMenu(false);
@@ -818,70 +913,45 @@ export default function Navbar() {
                     style={{
                       padding: "14px 16px",
                       borderBottom: "1px solid rgba(0,0,0,0.06)",
-                      background: "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-                      <div
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 999,
-                          background: "#111827",
-                          color: "#fff",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 17,
-                          fontWeight: 900,
-                          flex: "0 0 40px",
-                        }}
-                      >
-                        {userDisplayName.charAt(0).toUpperCase()}
-                      </div>
-
-                      <div style={{ minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontSize: 15,
-                            fontWeight: 850,
-                            color: "#111827",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            marginBottom: 4,
-                          }}
-                          title={userDisplayName}
-                        >
-                          {userDisplayName}
-                        </div>
-
-                        <div
-                          style={{
-                            fontSize: 12,
-                            color: "#6b7280",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                          title={user.email ?? ""}
-                        >
-                          {user.email}
-                        </div>
-                      </div>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 850,
+                        color: "#111827",
+                      }}
+                    >
+                      {userDisplayName}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "#6b7280",
+                        marginTop: 4,
+                      }}
+                    >
+                      {user.email}
                     </div>
                   </div>
 
                   <Link href={localePath(locale, "/account")} onClick={closeAll} style={userMenuLinkStyle}>
                     {accountLabels.account}
                   </Link>
-
                   <Link href={localePath(locale, "/account/profile")} onClick={closeAll} style={userMenuLinkStyle}>
                     {accountLabels.profile}
                   </Link>
-
                   <Link href={localePath(locale, "/account/security")} onClick={closeAll} style={userMenuLinkStyle}>
                     {accountLabels.security}
+                  </Link>
+                  <Link href={localePath(locale, "/account/favorites")} onClick={closeAll} style={userMenuLinkStyle}>
+                    {accountLabels.favorites}
+                  </Link>
+                  <Link href={localePath(locale, "/account/history")} onClick={closeAll} style={userMenuLinkStyle}>
+                    {accountLabels.history}
+                  </Link>
+                  <Link href={localePath(locale, "/account/downloads")} onClick={closeAll} style={userMenuLinkStyle}>
+                    {accountLabels.downloads}
                   </Link>
 
                   <button
@@ -905,7 +975,14 @@ export default function Navbar() {
         )}
 
         {isMobile && (
-          <div className="nav-icons-mobile" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div
+            className="nav-icons-mobile"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
             <button
               className="mobile-menu-btn"
               onClick={() => {
@@ -955,9 +1032,11 @@ export default function Navbar() {
             flexDirection: "column",
             gap: 6,
             textAlign: "center",
-            background: "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(246,248,251,0.88))",
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(246,248,251,0.88))",
             border: "1px solid rgba(255,255,255,0.92)",
-            boxShadow: "0 18px 42px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.95)",
+            boxShadow:
+              "0 18px 42px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.95)",
             backdropFilter: "blur(18px) saturate(160%)",
             WebkitBackdropFilter: "blur(18px) saturate(160%)",
             overflow: "hidden",
@@ -1034,57 +1113,7 @@ export default function Navbar() {
             {currentMega.cards.map((card, index) => {
               const title = pickLocaleText(card.title, locale);
               const desc = pickLocaleText(card.desc, locale);
-
-              const content = (
-                <div
-                  className="liquidGlassCard"
-                  style={{
-                    width: "100%",
-                    borderRadius: 24,
-                    padding: 16,
-                    transition: "all .18s ease",
-                    minHeight: 142,
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                    <span
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 800,
-                        color: "#111",
-                        padding: "4px 8px",
-                        borderRadius: 999,
-                        background: "rgba(255,255,255,0.6)",
-                        border: "1px solid rgba(255,255,255,0.72)",
-                      }}
-                    >
-                      {card.badge}
-                    </span>
-                  </div>
-
-                  <h3 style={{ fontSize: 15, fontWeight: 800, color: "#000", marginBottom: 8 }}>{title}</h3>
-                  <p style={{ fontSize: 12, lineHeight: 1.55, color: "#4b5563", margin: 0 }}>{desc}</p>
-                </div>
-              );
-
-              if ((activeMenu ?? lastMenu) === "tool") {
-                return (
-                  <button
-                    key={`mega-card-${index}`}
-                    type="button"
-                    onClick={() => handleToolRoute(card.route)}
-                    style={{
-                      textAlign: "left",
-                      background: "transparent",
-                      border: "none",
-                      padding: 0,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {content}
-                  </button>
-                );
-              }
+              const badge = pickLocaleText(card.badge, locale);
 
               return (
                 <Link
@@ -1093,7 +1122,61 @@ export default function Navbar() {
                   onClick={closeAll}
                   style={{ textDecoration: "none" }}
                 >
-                  {content}
+                  <div
+                    className="liquidGlassCard"
+                    style={{
+                      width: "100%",
+                      borderRadius: 24,
+                      padding: 16,
+                      transition: "all .18s ease",
+                      minHeight: 142,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 12,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 900,
+                          color: "#111",
+                          padding: "4px 8px",
+                          borderRadius: 999,
+                          background: "rgba(255,255,255,0.6)",
+                          border: "1px solid rgba(255,255,255,0.72)",
+                        }}
+                      >
+                        {badge}
+                      </span>
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 850,
+                        color: "#000",
+                        marginBottom: 8,
+                      }}
+                    >
+                      {title}
+                    </h3>
+
+                    <p
+                      style={{
+                        fontSize: 12,
+                        lineHeight: 1.55,
+                        color: "#4b5563",
+                        margin: 0,
+                      }}
+                    >
+                      {desc}
+                    </p>
+                  </div>
                 </Link>
               );
             })}
@@ -1110,25 +1193,6 @@ export default function Navbar() {
           >
             {currentMega.links.map((link, index) => {
               const label = pickLinkText(link, locale);
-
-              if ((activeMenu ?? lastMenu) === "tool") {
-                return (
-                  <button
-                    key={`mega-link-${index}`}
-                    type="button"
-                    onClick={() => handleToolRoute(link.route)}
-                    className="liquidGlassPill"
-                    style={{
-                      border: "none",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      width: "fit-content",
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              }
 
               return (
                 <Link
@@ -1155,7 +1219,11 @@ export default function Navbar() {
             left: 0,
             right: fixedRight,
             width: "auto",
-            background: "#ffffff",
+            minHeight: `calc(100vh - ${NAV_H}px)`,
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(246,248,251,0.86))",
+            backdropFilter: "blur(22px) saturate(160%)",
+            WebkitBackdropFilter: "blur(22px) saturate(160%)",
             padding: 20,
             zIndex: 9999,
             display: "flex",
@@ -1176,6 +1244,10 @@ export default function Navbar() {
             </Link>
           ))}
 
+          <Link href={localePath(locale, "/contact")} onClick={closeAll} style={mobileLinkStyle}>
+            {accountLabels.contact}
+          </Link>
+
           {!user && (
             <Link href={localePath(locale, "/login")} onClick={closeAll} style={mobileLinkStyle}>
               {accountLabels.login}
@@ -1193,81 +1265,12 @@ export default function Navbar() {
                 gap: 10,
               }}
             >
-              <div
-                style={{
-                  padding: "14px 16px",
-                  borderRadius: 18,
-                  background: "#f5f5f5",
-                  color: "#111827",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    minWidth: 0,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 999,
-                      background: "#111827",
-                      color: "#ffffff",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 16,
-                      fontWeight: 900,
-                      flex: "0 0 38px",
-                    }}
-                  >
-                    {userDisplayName.charAt(0).toUpperCase()}
-                  </div>
-
-                  <div style={{ minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 850,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        marginBottom: 4,
-                      }}
-                      title={userDisplayName}
-                    >
-                      {userDisplayName}
-                    </div>
-
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: "#6b7280",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                      title={user.email ?? ""}
-                    >
-                      {user.email}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <Link href={localePath(locale, "/account")} onClick={closeAll} style={mobileLinkStyle}>
                 {accountLabels.account}
               </Link>
 
               <Link href={localePath(locale, "/account/profile")} onClick={closeAll} style={mobileLinkStyle}>
                 {accountLabels.profile}
-              </Link>
-
-              <Link href={localePath(locale, "/account/security")} onClick={closeAll} style={mobileLinkStyle}>
-                {accountLabels.security}
               </Link>
 
               <button
@@ -1304,12 +1307,12 @@ export default function Navbar() {
                 style={{
                   padding: "8px 12px",
                   border: "1px solid #eeeeee",
-                  borderRadius: 8,
+                  borderRadius: 999,
                   background: locale === item ? "#111" : "#ffffff",
                   color: locale === item ? "#ffffff" : "#111",
                   fontSize: 13,
                   cursor: "pointer",
-                  fontWeight: 500,
+                  fontWeight: 700,
                 }}
               >
                 {languageNames[item]}

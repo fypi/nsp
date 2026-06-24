@@ -6,9 +6,25 @@ import type { ReactNode } from "react";
 const iconVersion = "20260617";
 
 export const metadata: Metadata = {
-  title: "NinesPro — All things in the world, available at your fingertips",
+  metadataBase: new URL("https://www.ninespro.com"),
+  title: {
+    default: "NinesPro | AI Development & Digital Innovation",
+    template: "%s | NinesPro",
+  },
   description:
-    "A calm workspace for tools, workflows, learning, finance, and AI.",
+    "NinesPro builds AI-powered software, enterprise platforms, cloud systems, and digital experiences for modern businesses.",
+  keywords: [
+    "AI Development",
+    "Software Development",
+    "Digital Innovation",
+    "Enterprise Software",
+    "Cloud Solutions",
+    "Web Development",
+    "AI Automation",
+    "SaaS Development",
+    "Digital Product Design",
+    "Business Automation",
+  ],
   icons: {
     icon: [
       { url: `/icon.svg?v=${iconVersion}`, type: "image/svg+xml" },
@@ -16,6 +32,20 @@ export const metadata: Metadata = {
     ],
     shortcut: `/icon.svg?v=${iconVersion}`,
     apple: [{ url: `/apple-icon.svg?v=${iconVersion}`, type: "image/svg+xml" }],
+  },
+  openGraph: {
+    title: "NinesPro | AI Development & Digital Innovation",
+    description:
+      "NinesPro builds AI-powered software, enterprise platforms, cloud systems, and digital experiences for modern businesses.",
+    url: "https://www.ninespro.com",
+    siteName: "NinesPro",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NinesPro | AI Development & Digital Innovation",
+    description:
+      "NinesPro builds AI-powered software, enterprise platforms, cloud systems, and digital experiences for modern businesses.",
   },
 };
 

@@ -1,159 +1,192 @@
-"use client";
-
-import { useParams } from "next/navigation";
+import BasicPage from "@/components/BasicPage";
 
 type Locale = "zh" | "zh-TW" | "en";
 
-type PrivacyText = {
-  title: string;
-  desc: string;
+type BasicCard = { title: string; desc: string; href?: string };
+type BasicSection = { title: string; body: string[] };
+type BasicPageContent = { eyebrow?: string; title: string; desc: string; cards?: BasicCard[]; sections?: BasicSection[]; note?: string };
 
-  sectionInfoTitle: string;
-  sectionInfoDesc: string;
-
-  sectionUseTitle: string;
-  sectionUseDesc: string;
-
-  sectionProtectTitle: string;
-  sectionProtectDesc: string;
-
-  sectionContactTitle: string;
-  sectionContactDesc: string;
-
-  disclaimerTitle: string;
-  disclaimerDesc: string;
-};
-
-function normalizeLocale(rawLocale: unknown): Locale {
-  if (rawLocale === "en") return "en";
-  if (rawLocale === "zh") return "zh";
-  if (rawLocale === "zh-TW" || rawLocale === "zh-tw") return "zh-TW";
-
+function getLocale(raw?: string): Locale {
+  if (raw === "en") return "en";
+  if (raw === "zh-TW" || raw === "zh-tw") return "zh-TW";
   return "zh";
 }
 
-const privacyText: Record<Locale, PrivacyText> = {
-  zh: {
-    title: "隐私与法律",
-    desc: "本页面说明九域如何收集、使用、保护您的个人信息，以及网站内容和工具的使用边界。",
-
-    sectionInfoTitle: "我们可能收集的信息",
-    sectionInfoDesc:
-      "当您使用账号、联系表单或相关工具时，我们可能会收集您主动提交的信息，例如邮箱、姓名、留言内容以及必要的账号信息。我们不会主动索取与服务无关的敏感信息。",
-
-    sectionUseTitle: "信息如何使用",
-    sectionUseDesc:
-      "我们使用这些信息主要用于账号登录、联系回复、问题处理、服务改进和安全维护。除非法律要求或获得您的明确授权，我们不会出售您的个人信息。",
-
-    sectionProtectTitle: "信息保护",
-    sectionProtectDesc:
-      "我们会采取合理的技术和管理措施保护信息安全，包括访问控制、必要的数据隔离和服务端安全配置。但互联网传输无法保证绝对安全，请避免提交不必要的敏感内容。",
-
-    sectionContactTitle: "联系我们",
-    sectionContactDesc:
-      "如果您对隐私、法律条款或数据处理方式有疑问，可以通过联系方式页面与我们沟通。",
-
-    disclaimerTitle: "免责声明：",
-    disclaimerDesc:
-      "九域网站中的工具、内容和示例仅用于学习、效率辅助和一般信息参考，不构成投资建议、法律意见、财务意见或专业服务承诺。涉及关键决策时，请结合实际情况自行核验，并咨询相关专业人士。",
+const content: Record<Locale, BasicPageContent> = {
+  "zh": {
+    "title": "隐私政策",
+    "desc": "说明 NINESPRO 如何收集、使用、保存和保护与服务相关的信息。",
+    "sections": [
+      {
+        "title": "我们可能收集的信息",
+        "body": [
+          "当用户访问网站、提交联系表单、发送邮件或使用在线工具时，我们可能接收用户主动提供的信息，例如姓名、邮箱、公司、项目需求和反馈内容。",
+          "我们也可能收集基本技术信息，例如浏览器类型、访问页面、设备信息、语言偏好和基础日志，用于安全、性能和产品改进。"
+        ]
+      },
+      {
+        "title": "信息的使用方式",
+        "body": [
+          "信息主要用于回应咨询、提供服务、处理合作需求、改进网站体验、维护安全和排查问题。",
+          "我们不会出售用户个人信息，也不会在没有合理原因的情况下将信息用于与 NINESPRO 服务无关的用途。"
+        ]
+      },
+      {
+        "title": "信息保存与安全",
+        "body": [
+          "我们会根据业务、法律和安全需要，在合理期限内保存必要信息。",
+          "我们会采取合理的技术和组织措施保护信息，但互联网传输和电子存储无法保证绝对安全。"
+        ]
+      },
+      {
+        "title": "用户权利",
+        "body": [
+          "用户可以通过 support@ninespro.com 联系我们，请求访问、更正或删除与用户相关的信息。",
+          "如果用户希望停止接收非必要联系，也可以通过同一邮箱提出请求。"
+        ]
+      }
+    ],
+    "note": "本页面为一般说明，不构成法律意见。正式政策可根据公司实际业务、地区法规和数据处理流程进一步完善。",
+    "cards": [
+      {
+        "title": "隐私政策",
+        "desc": "了解我们如何处理信息。",
+        "href": "/privacy"
+      },
+      {
+        "title": "服务条款",
+        "desc": "了解使用 NINESPRO 服务的基本规则。",
+        "href": "/terms"
+      },
+      {
+        "title": "Cookie 政策",
+        "desc": "了解 Cookie 和类似技术的使用方式。",
+        "href": "/cookies"
+      },
+      {
+        "title": "联系我们",
+        "desc": "如有法律、隐私或服务问题，请联系支持。",
+        "href": "mailto:support@ninespro.com"
+      }
+    ]
   },
-
   "zh-TW": {
-    title: "隱私與法律",
-    desc: "本頁面說明九域如何收集、使用、保護您的個人資訊，以及網站內容和工具的使用邊界。",
-
-    sectionInfoTitle: "我們可能收集的資訊",
-    sectionInfoDesc:
-      "當您使用帳號、聯絡表單或相關工具時，我們可能會收集您主動提交的資訊，例如郵箱、姓名、留言內容以及必要的帳號資訊。我們不會主動索取與服務無關的敏感資訊。",
-
-    sectionUseTitle: "資訊如何使用",
-    sectionUseDesc:
-      "我們使用這些資訊主要用於帳號登入、聯絡回覆、問題處理、服務改進和安全維護。除非法律要求或獲得您的明確授權，我們不會出售您的個人資訊。",
-
-    sectionProtectTitle: "資訊保護",
-    sectionProtectDesc:
-      "我們會採取合理的技術和管理措施保護資訊安全，包括訪問控制、必要的資料隔離和服務端安全配置。但網際網路傳輸無法保證絕對安全，請避免提交不必要的敏感內容。",
-
-    sectionContactTitle: "聯絡我們",
-    sectionContactDesc:
-      "如果您對隱私、法律條款或資料處理方式有疑問，可以通過聯絡方式頁面與我們溝通。",
-
-    disclaimerTitle: "免責聲明：",
-    disclaimerDesc:
-      "九域網站中的工具、內容和示例僅用於學習、效率輔助和一般資訊參考，不構成投資建議、法律意見、財務意見或專業服務承諾。涉及關鍵決策時，請結合實際情況自行核驗，並諮詢相關專業人士。",
+    "title": "隱私政策",
+    "desc": "說明 NINESPRO 如何收集、使用、保存和保護與服務相關的資訊。",
+    "sections": [
+      {
+        "title": "我們可能收集的資訊",
+        "body": [
+          "當用戶訪問網站、提交聯絡表單、發送郵件或使用線上工具時，我們可能接收用戶主動提供的資訊，例如姓名、信箱、公司、項目需求和反饋內容。",
+          "我們也可能收集基本技術資訊，例如瀏覽器類型、訪問頁面、設備資訊、語言偏好和基礎日誌，用於安全、性能和產品改進。"
+        ]
+      },
+      {
+        "title": "資訊的使用方式",
+        "body": [
+          "資訊主要用於回應諮詢、提供服務、處理合作需求、改進網站體驗、維護安全和排查問題。",
+          "我們不會出售用戶個人資訊，也不會在沒有合理原因的情況下將資訊用於與 NINESPRO 服務無關的用途。"
+        ]
+      },
+      {
+        "title": "資訊保存與安全",
+        "body": [
+          "我們會根據業務、法律和安全需要，在合理期限內保存必要資訊。",
+          "我們會採取合理的技術和組織措施保護資訊，但網路傳輸和電子儲存無法保證絕對安全。"
+        ]
+      },
+      {
+        "title": "用戶權利",
+        "body": [
+          "用戶可以通過 support@ninespro.com 聯絡我們，請求訪問、更正或刪除與用戶相關的資訊。",
+          "如果用戶希望停止接收非必要聯絡，也可以通過同一信箱提出請求。"
+        ]
+      }
+    ],
+    "note": "本頁面為一般說明，不構成法律意見。正式政策可根據公司實際業務、地區法規和數據處理流程進一步完善。",
+    "cards": [
+      {
+        "title": "隱私政策",
+        "desc": "了解我們如何處理資訊。",
+        "href": "/privacy"
+      },
+      {
+        "title": "服務條款",
+        "desc": "了解使用 NINESPRO 服務的基本規則。",
+        "href": "/terms"
+      },
+      {
+        "title": "Cookie 政策",
+        "desc": "了解 Cookie 和類似技術的使用方式。",
+        "href": "/cookies"
+      },
+      {
+        "title": "聯絡我們",
+        "desc": "如有法律、隱私或服務問題，請聯絡支持。",
+        "href": "mailto:support@ninespro.com"
+      }
+    ]
   },
-
-  en: {
-    title: "Privacy & Legal",
-    desc:
-      "This page explains how NinesPro collects, uses, and protects personal information, as well as the usage boundaries of website content and tools.",
-
-    sectionInfoTitle: "Information We May Collect",
-    sectionInfoDesc:
-      "When you use an account, contact form, or related tools, we may collect information you voluntarily submit, such as email address, name, message content, and necessary account information. We do not intentionally request sensitive information unrelated to the service.",
-
-    sectionUseTitle: "How Information Is Used",
-    sectionUseDesc:
-      "We use this information mainly for account login, contact replies, issue handling, service improvement, and security maintenance. Unless required by law or explicitly authorized by you, we do not sell your personal information.",
-
-    sectionProtectTitle: "Information Protection",
-    sectionProtectDesc:
-      "We take reasonable technical and administrative measures to protect information security, including access control, necessary data separation, and server-side security configuration. However, internet transmission cannot be guaranteed to be absolutely secure, so please avoid submitting unnecessary sensitive content.",
-
-    sectionContactTitle: "Contact Us",
-    sectionContactDesc:
-      "If you have questions about privacy, legal terms, or data handling, you can contact us through the contact page.",
-
-    disclaimerTitle: "Disclaimer:",
-    disclaimerDesc:
-      "Tools, content, and examples on NinesPro are provided for learning, productivity assistance, and general informational reference only. They do not constitute investment advice, legal advice, financial advice, or a professional service commitment. For critical decisions, please verify based on your actual situation and consult relevant professionals.",
-  },
+  "en": {
+    "title": "Privacy Policy",
+    "desc": "How NINESPRO collects, uses, stores, and protects information related to the services.",
+    "sections": [
+      {
+        "title": "Information We May Collect",
+        "body": [
+          "When users visit the website, submit contact forms, send emails, or use online tools, NINESPRO may receive information voluntarily provided by users, such as name, email, company, project requirements, and feedback.",
+          "NINESPRO may also collect basic technical information such as browser type, visited pages, device information, language preference, and basic logs for security, performance, and product improvement."
+        ]
+      },
+      {
+        "title": "How Information Is Used",
+        "body": [
+          "Information is primarily used to respond to inquiries, provide services, process partnership requests, improve website experience, maintain security, and troubleshoot issues.",
+          "NINESPRO does not sell personal information and does not use information for purposes unrelated to NINESPRO services without a reasonable basis."
+        ]
+      },
+      {
+        "title": "Retention and Security",
+        "body": [
+          "NINESPRO retains necessary information for a reasonable period based on business, legal, and security needs.",
+          "Reasonable technical and organizational measures are used to protect information, but internet transmission and electronic storage cannot be guaranteed to be absolutely secure."
+        ]
+      },
+      {
+        "title": "User Rights",
+        "body": [
+          "Users may contact support@ninespro.com to request access, correction, or deletion of information related to them.",
+          "Users may also contact the same email address to opt out of non-essential communications."
+        ]
+      }
+    ],
+    "note": "This page is general information and does not constitute legal advice. Formal policy text may be refined based on actual business operations, regional laws, and data processing workflows.",
+    "cards": [
+      {
+        "title": "Privacy Policy",
+        "desc": "Learn how information is handled.",
+        "href": "/privacy"
+      },
+      {
+        "title": "Terms of Service",
+        "desc": "Understand the basic rules for using NINESPRO services.",
+        "href": "/terms"
+      },
+      {
+        "title": "Cookie Policy",
+        "desc": "Learn how cookies and similar technologies are used.",
+        "href": "/cookies"
+      },
+      {
+        "title": "Contact Us",
+        "desc": "For legal, privacy, or service questions, contact support.",
+        "href": "mailto:support@ninespro.com"
+      }
+    ]
+  }
 };
 
-export default function PrivacyPage() {
-  const params = useParams();
-  const locale = normalizeLocale(params?.locale);
-  const t = privacyText[locale];
-
-  return (
-    <main className="subpage-main">
-      <div className="subpage-container">
-        <div className="subpage-hero">
-          <h1>{t.title}</h1>
-          <p>{t.desc}</p>
-        </div>
-
-        <section className="subpage-section">
-          <div className="card-grid">
-            <div className="card">
-              <h3>{t.sectionInfoTitle}</h3>
-              <p>{t.sectionInfoDesc}</p>
-            </div>
-
-            <div className="card">
-              <h3>{t.sectionUseTitle}</h3>
-              <p>{t.sectionUseDesc}</p>
-            </div>
-
-            <div className="card">
-              <h3>{t.sectionProtectTitle}</h3>
-              <p>{t.sectionProtectDesc}</p>
-            </div>
-
-            <div className="card">
-              <h3>{t.sectionContactTitle}</h3>
-              <p>{t.sectionContactDesc}</p>
-            </div>
-          </div>
-        </section>
-
-        <div className="disclaimer-box">
-          <p>
-            <strong>{t.disclaimerTitle}</strong>
-            {t.disclaimerDesc}
-          </p>
-        </div>
-      </div>
-    </main>
-  );
+export default function Page({ params }: { params: { locale: string } }) {
+  const locale = getLocale(params?.locale);
+  return <BasicPage content={content[locale]} locale={locale} />;
 }

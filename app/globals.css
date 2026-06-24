@@ -5,32 +5,71 @@
 }
 
 /* =========================================================
-   NINE 可调：全站统一滚动条参数
-   桌面端使用 12px 原生滚动条；移动端/平板端由最后的
-   NINE TOUCH CUSTOM SCROLLBAR FINAL 覆盖为 6px 自定义滚动条。
+   NINE GLOBAL CLEAN FINAL
+   说明：
+   - 导航栏：纯白
+   - Footer：纯白、收窄、居中
+   - 其它页面主体层：产品层浅灰 #e9ebef
+   - 卡片：白色玻璃
+   - 按钮/箭头：透明液态玻璃
    ========================================================= */
+
 :root {
   --nines-scrollbar-width: 12px;
   --nines-scrollbar-button-size: 12px;
   --nines-scrollbar-icon-size: 16px;
   --nines-scrollbar-thumb-inset: 2.5px;
 
-  --lg-blue: rgba(126, 177, 231, 0.55);
-  --lg-shadow: rgba(15, 23, 42, 0.08);
+  --nines-bg: #e9ebef;
+  --nines-white: #ffffff;
+  --nines-text: #05070a;
+  --nines-muted: #586275;
+  --nines-blue: rgba(126, 177, 231, 0.55);
 }
+
+/* =========================================================
+   Base
+   ========================================================= */
 
 html,
 body {
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background: var(--nines-bg);
   overflow: hidden;
+}
+
+body {
+  color: var(--nines-text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+a,
+[role="button"] {
+  position: relative;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    opacity 180ms ease;
 }
 
 .page-wrapper {
   width: 100%;
   height: 100%;
   margin-left: 0;
+  background: var(--nines-bg);
 }
 
 .page-container {
@@ -39,10 +78,11 @@ body {
   overflow-y: scroll;
   scroll-behavior: smooth;
   padding-bottom: 1px;
+  background: var(--nines-bg);
 }
 
 /* =========================================================
-   主页面滚动条：桌面端
+   Desktop Scrollbar
    ========================================================= */
 
 .page-container::-webkit-scrollbar {
@@ -98,9 +138,7 @@ body {
 }
 
 /* =========================================================
-   导航栏大下拉时隐藏主页滚动条
-   注意：Navbar.tsx 现在只会在桌面 Mega 大下拉时加这个 class。
-   语言小菜单、用户小菜单、移动端菜单不会触发。
+   Mega Menu Scroll Lock
    ========================================================= */
 
 html.nines-nav-expanded,
@@ -149,7 +187,155 @@ body.nines-nav-expanded .page-container::-webkit-scrollbar-button:single-button:
 }
 
 /* =========================================================
-   首页旧 screen 样式
+   Navbar
+   ========================================================= */
+
+nav,
+header,
+.navbar,
+.nines-navbar,
+.site-nav,
+.site-header,
+.nav-center,
+.nav-left,
+.nav-right {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+.mobile-menu-btn {
+  display: none;
+}
+
+.nav-icons-mobile {
+  display: none !important;
+}
+
+.teslaIconBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #111111;
+  text-decoration: none;
+  padding: 0;
+}
+
+.teslaIconBtn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.teslaIconBtn:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 1180px) {
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  .nav-center {
+    display: none !important;
+  }
+
+  .nav-icons-desktop {
+    display: none !important;
+  }
+
+  .nav-icons-mobile {
+    display: flex !important;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    background: #ffffff;
+    padding: 20px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #eeeeee;
+  }
+}
+
+@media (max-width: 640px) {
+  nav {
+    padding: 0 16px !important;
+  }
+}
+
+/* =========================================================
+   Page Background Rules
+   导航和 Footer 纯白；其它主体统一产品灰
+   ========================================================= */
+
+main,
+.nines-home,
+.home-root,
+.npx5-root,
+.npx4-root,
+.np-root,
+.np-final-root,
+.page-main,
+.subpage-main,
+.auth-page,
+.contact-page,
+.products-page,
+.solutions-page,
+.projects-page {
+  background: var(--nines-bg) !important;
+  background-color: var(--nines-bg) !important;
+}
+
+main > section,
+.npx5-hero,
+.npx4-hero,
+.np-hero,
+.np-final-hero,
+.nines-hero,
+.home-hero,
+.npx5-section,
+.npx4-section,
+.np-section,
+.np-final-section,
+.nines-layer,
+.home-section,
+.npx5-cta,
+.npx4-cta,
+.np-cta,
+.np-final-cta,
+.nines-final-cta,
+.home-final {
+  background-color: var(--nines-bg) !important;
+}
+
+.npx5-hero,
+.npx4-hero,
+.np-hero,
+.np-final-hero,
+.nines-hero,
+.home-hero {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(126, 177, 231, 0.13), rgba(233, 235, 239, 0) 28%),
+    radial-gradient(circle at 82% 74%, rgba(15, 23, 42, 0.035), rgba(233, 235, 239, 0) 32%),
+    var(--nines-bg) !important;
+}
+
+.nines-section-gap,
+.home-section-gap {
+  background: var(--nines-bg) !important;
+  background-color: var(--nines-bg) !important;
+}
+
+/* =========================================================
+   Legacy Screen
    ========================================================= */
 
 .screen {
@@ -210,193 +396,14 @@ body.nines-nav-expanded .page-container::-webkit-scrollbar-button:single-button:
   margin-bottom: 40px;
 }
 
-.btn-group {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-white,
-.btn-dark {
-  display: inline-block;
-  padding: 12px 32px;
-  border-radius: 999px;
-  border: none;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-white {
-  background: #ffffff;
-  color: #000000;
-}
-
-.btn-dark {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-@media (max-width: 640px) {
-  .content h1 {
-    font-size: 32px;
-  }
-
-  .content p {
-    font-size: 15px;
-    margin-bottom: 28px;
-  }
-
-  .content {
-    padding: 0 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .btn-white,
-  .btn-dark {
-    padding: 10px 24px;
-    font-size: 13px;
-  }
-
-  .btn-group {
-    gap: 10px;
-  }
-}
-
 /* =========================================================
-   旧 footer 样式
-   ========================================================= */
-
-.page-footer {
-  width: 100%;
-  text-align: center;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: #ffffff;
-  font-size: 13px;
-  color: #333333;
-  line-height: 3;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-}
-
-.footer-links a {
-  color: #333333;
-  text-decoration: none;
-  margin: 0 5px;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
-
-/* =========================================================
-   基础交互
-   ========================================================= */
-
-a,
-button,
-[role="button"] {
-  position: relative;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.teslaIconBtn {
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #111111;
-  text-decoration: none;
-  padding: 0;
-}
-
-.teslaIconBtn:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.teslaIconBtn:active {
-  transform: translateY(1px);
-}
-
-/* =========================================================
-   Navbar 响应式
-   ========================================================= */
-
-.mobile-menu-btn {
-  display: none;
-}
-
-.nav-icons-mobile {
-  display: none !important;
-}
-
-@media (max-width: 1180px) {
-  .mobile-menu-btn {
-    display: flex !important;
-  }
-
-  .nav-center {
-    display: none !important;
-  }
-
-  .nav-icons-desktop {
-    display: none !important;
-  }
-
-  .nav-icons-mobile {
-    display: flex !important;
-  }
-
-  .mobile-menu {
-    position: fixed;
-    top: 52px;
-    left: 0;
-    background: #ffffff;
-    padding: 20px;
-    z-index: 9998;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    border-top: 1px solid #eeeeee;
-  }
-}
-
-@media (max-width: 640px) {
-  nav {
-    padding: 0 16px !important;
-  }
-}
-
-/* =========================================================
-   子页面布局
+   Subpage Layout
    ========================================================= */
 
 .subpage-main {
   min-height: 100vh;
   padding-top: 80px;
   padding-bottom: 80px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(126, 177, 231, 0.055), rgba(255, 255, 255, 0) 34%),
-    #ffffff;
 }
 
 .subpage-container {
@@ -452,21 +459,37 @@ button,
   margin-top: 24px;
 }
 
+/* =========================================================
+   Cards
+   ========================================================= */
+
+.card,
+.npx5-card,
+.npx4-card,
+.np-card,
+.np-final-card,
+.nines-carousel-card,
+.liquidGlassCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 36px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.72) 38%, rgba(247, 248, 250, 0.92) 76%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 243, 248, 0.82)) !important;
+  background-color: rgba(255, 255, 255, 0.86) !important;
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 22px 58px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
 .card {
   border-radius: 32px;
   padding: 24px;
-  overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 250, 0.92));
-  border: 1px solid rgba(15, 23, 42, 0.05);
-  box-shadow:
-    0 18px 46px rgba(15, 23, 42, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
   transition:
     transform 200ms ease,
     box-shadow 200ms ease,
-    border-color 200ms ease,
-    background 200ms ease;
+    border-color 200ms ease;
 }
 
 .card:hover {
@@ -489,128 +512,6 @@ button,
   line-height: 1.65;
 }
 
-@media (max-width: 640px) {
-  .subpage-hero h1 {
-    font-size: 30px;
-  }
-
-  .subpage-hero p {
-    font-size: 15px;
-  }
-
-  .subpage-container {
-    padding: 0 16px;
-  }
-}
-
-/* =========================================================
-   子页面滚动条：桌面端
-   ========================================================= */
-
-html:not(:has(body .page-container)) {
-  background: #ffffff !important;
-  height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: hidden !important;
-}
-
-body:not(:has(.page-container)) {
-  background: #ffffff !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: scroll !important;
-  scrollbar-width: auto !important;
-  scrollbar-color: #888888 #ffffff !important;
-}
-
-body:not(:has(.page-container)) .subpage-main {
-  min-height: 100vh !important;
-  height: auto !important;
-  overflow: visible !important;
-  padding-bottom: 80px !important;
-}
-
-body:not(:has(.page-container)) .subpage-container,
-body:not(:has(.page-container)) .subpage-section,
-body:not(:has(.page-container)) .card-grid {
-  height: auto !important;
-  overflow: visible !important;
-}
-
-body:not(:has(.page-container)) .card {
-  height: auto !important;
-}
-
-body:not(:has(.page-container)) footer,
-body:not(:has(.page-container)) .page-footer {
-  position: relative !important;
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-  overflow: visible !important;
-  background: #ffffff !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar {
-  width: var(--nines-scrollbar-width) !important;
-  height: var(--nines-scrollbar-width) !important;
-  display: block !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-track {
-  background: #ffffff !important;
-  display: block !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-thumb {
-  background: #888888 !important;
-  border-radius: 6px !important;
-  border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
-  background-clip: content-box !important;
-  display: block !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button {
-  display: block !important;
-  width: var(--nines-scrollbar-button-size) !important;
-  height: var(--nines-scrollbar-button-size) !important;
-  min-height: var(--nines-scrollbar-button-size) !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
-body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement {
-  display: block !important;
-  width: var(--nines-scrollbar-button-size) !important;
-  height: var(--nines-scrollbar-button-size) !important;
-  min-height: var(--nines-scrollbar-button-size) !important;
-  background-color: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: var(--nines-scrollbar-icon-size) !important;
-}
-
-body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
-body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
-  display: block !important;
-  width: var(--nines-scrollbar-button-size) !important;
-  height: var(--nines-scrollbar-button-size) !important;
-  min-height: var(--nines-scrollbar-button-size) !important;
-  background-color: #e0e0e0 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: var(--nines-scrollbar-icon-size) !important;
-}
-
-@media (max-width: 900px) {
-  body:not(:has(.page-container)) .subpage-main {
-    padding-top: 76px !important;
-    padding-bottom: 70px !important;
-  }
-}
-
 /* =========================================================
    Auth / Contact
    ========================================================= */
@@ -620,7 +521,6 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f5f5;
   padding: 24px;
 }
 
@@ -665,18 +565,6 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
 
 .auth-form input:focus {
   border-color: #111111;
-}
-
-.auth-form button[type="submit"] {
-  padding: 12px;
-  border-radius: 999px;
-  border: none;
-  background: #111111;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
 }
 
 .auth-links {
@@ -733,22 +621,8 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
   resize: vertical;
 }
 
-.contact-button {
-  background: #111111;
-  color: #ffffff;
-  padding: 12px;
-  border-radius: 999px;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-.contact-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* =========================================================
-   Liquid Glass 导航系统
+   Liquid Glass Navigation
    ========================================================= */
 
 .liquidGlassNavItem,
@@ -764,12 +638,6 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   transform: translateY(0) scale(1) !important;
-  transition:
-    transform 180ms cubic-bezier(0.2, 0.9, 0.25, 1.2),
-    background 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    color 180ms ease !important;
 }
 
 .liquidGlassNavItem:hover,
@@ -784,9 +652,7 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
   border-color: rgba(126, 177, 231, 0.46) !important;
   box-shadow:
     0 10px 26px rgba(15, 23, 42, 0.1),
-    0 3px 10px rgba(126, 177, 231, 0.1),
-    inset 0 1px 1px rgba(255, 255, 255, 1),
-    inset 0 -10px 18px rgba(15, 23, 42, 0.038) !important;
+    inset 0 1px 1px rgba(255, 255, 255, 1) !important;
   backdrop-filter: blur(22px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
   transform: translateY(-1px) scale(1.035) !important;
@@ -795,11 +661,7 @@ body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical
 .liquidGlassNavActive,
 .nav-link.nav-active,
 .nav-link.nav-active.liquid-glass,
-nav a[aria-current="page"],
-nav a[style*="font-weight: 800"],
-nav a[style*="font-weight:800"],
-nav a[style*="font-weight: 700"],
-nav a[style*="font-weight:700"] {
+nav a[aria-current="page"] {
   color: #05070a !important;
   font-weight: 850 !important;
   background:
@@ -809,14 +671,9 @@ nav a[style*="font-weight:700"] {
   border: 1px solid rgba(91, 155, 224, 0.76) !important;
   box-shadow:
     0 12px 28px rgba(15, 23, 42, 0.11),
-    0 4px 14px rgba(126, 177, 231, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.96),
-    inset 0 -11px 20px rgba(15, 23, 42, 0.04) !important;
+    inset 0 1px 1px rgba(255, 255, 255, 0.96) !important;
   backdrop-filter: blur(24px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95),
-    0 0 1px rgba(5, 7, 10, 0.18) !important;
 }
 
 .liquidGlassNavItem::before,
@@ -878,338 +735,10 @@ nav button {
 }
 
 /* =========================================================
-   Liquid Glass 卡片 / 胶囊
+   Liquid Glass Buttons
    ========================================================= */
 
-.liquidGlassCard {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden !important;
-  border-radius: 36px !important;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.72) 36%, rgba(248, 250, 252, 0.86) 70%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(245, 247, 250, 0.82)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.96) !important;
-  box-shadow:
-    0 22px 58px rgba(15, 23, 42, 0.07),
-    0 3px 12px rgba(15, 23, 42, 0.032),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -18px 34px rgba(15, 23, 42, 0.024) !important;
-  backdrop-filter: blur(18px) saturate(145%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-  clip-path: inset(0 round 36px) !important;
-  background-clip: padding-box !important;
-  contain: paint;
-}
-
-.liquidGlassCard > * {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-.liquidGlassCard::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: inherit !important;
-  clip-path: inset(0 round 36px) !important;
-  background:
-    radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.045), rgba(15, 23, 42, 0.012) 38%, rgba(15, 23, 42, 0) 70%),
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.24) 38%, rgba(255, 255, 255, 0) 72%) !important;
-}
-
-.liquidGlassCard::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: inherit !important;
-  clip-path: inset(0 round 36px) !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.82),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98);
-}
-
-.liquidGlassCard:hover {
-  transform: translateY(-4px) scale(1.012) !important;
-  border-color: rgba(126, 177, 231, 0.32) !important;
-  box-shadow:
-    0 30px 72px rgba(15, 23, 42, 0.095),
-    0 8px 20px rgba(126, 177, 231, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -18px 34px rgba(15, 23, 42, 0.026) !important;
-}
-
-.liquidGlassCardPlanned {
-  opacity: 0.96 !important;
-}
-
-.liquidGlassPill,
-.liquidGlassPillDark,
-.liquidGlassPillMuted,
-.card > p:last-child a {
-  position: relative !important;
-  isolation: isolate !important;
-  overflow: hidden !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 34px !important;
-  padding: 8px 16px !important;
-  border-radius: 999px !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
-  text-decoration: none !important;
-  white-space: nowrap !important;
-  color: #111111 !important;
-  border: 1px solid rgba(255, 255, 255, 0.94) !important;
-  background:
-    radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.48) 38%, rgba(255, 255, 255, 0.18) 76%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(243, 246, 249, 0.78)) !important;
-  box-shadow:
-    0 9px 22px rgba(15, 23, 42, 0.085),
-    0 2px 6px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -8px 16px rgba(15, 23, 42, 0.032) !important;
-  backdrop-filter: blur(18px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
-  transition:
-    transform 180ms cubic-bezier(0.2, 0.9, 0.25, 1.2),
-    box-shadow 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease !important;
-}
-
-.liquidGlassPill:hover,
-.liquidGlassPillDark:hover,
-.liquidGlassPillMuted:hover,
-.card > p:last-child a:hover {
-  transform: translateY(-2px) scale(1.035) !important;
-  border-color: rgba(126, 177, 231, 0.58) !important;
-  box-shadow:
-    0 14px 30px rgba(15, 23, 42, 0.115),
-    0 4px 12px rgba(126, 177, 231, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -10px 18px rgba(15, 23, 42, 0.038) !important;
-}
-
-.liquidGlassPillMuted {
-  color: #6b7280 !important;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(246, 247, 249, 0.7)) !important;
-  box-shadow:
-    0 8px 18px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-}
-
-nav + div .liquidGlassCard {
-  border-radius: 24px !important;
-}
-
-@media (max-width: 640px) {
-  .liquidGlassCard,
-  .subpage-main .card {
-    border-radius: 28px !important;
-    clip-path: inset(0 round 28px) !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .liquidGlassNavItem,
-  .liquidGlassCard,
-  .liquidGlassPill,
-  .card {
-    transition: none !important;
-    transform: none !important;
-  }
-}
-
-/* =========================================================
-   子页面玻璃卡片文字可读性
-   ========================================================= */
-
-.subpage-main .liquidGlassCard,
-.subpage-main .card,
-.subpage-main [class*="liquid"],
-.subpage-main [class*="Glass"],
-.subpage-main [class*="glass"] {
-  color: #111827 !important;
-}
-
-.subpage-main .liquidGlassCard *,
-.subpage-main .card *,
-.subpage-main [class*="liquid"] *,
-.subpage-main [class*="Glass"] *,
-.subpage-main [class*="glass"] * {
-  position: relative !important;
-  z-index: 5 !important;
-  color: #111827 !important;
-  opacity: 1 !important;
-  -webkit-text-fill-color: #111827 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72) !important;
-}
-
-.subpage-main .liquidGlassCard h1,
-.subpage-main .liquidGlassCard h2,
-.subpage-main .liquidGlassCard h3,
-.subpage-main .liquidGlassCard h4,
-.subpage-main .card h1,
-.subpage-main .card h2,
-.subpage-main .card h3,
-.subpage-main .card h4,
-.subpage-main [class*="liquid"] h1,
-.subpage-main [class*="liquid"] h2,
-.subpage-main [class*="liquid"] h3,
-.subpage-main [class*="liquid"] h4,
-.subpage-main [class*="Glass"] h1,
-.subpage-main [class*="Glass"] h2,
-.subpage-main [class*="Glass"] h3,
-.subpage-main [class*="Glass"] h4,
-.subpage-main [class*="glass"] h1,
-.subpage-main [class*="glass"] h2,
-.subpage-main [class*="glass"] h3,
-.subpage-main [class*="glass"] h4 {
-  color: #05070a !important;
-  -webkit-text-fill-color: #05070a !important;
-  font-weight: 850 !important;
-  opacity: 1 !important;
-}
-
-.subpage-main .liquidGlassCard p,
-.subpage-main .card p,
-.subpage-main [class*="liquid"] p,
-.subpage-main [class*="Glass"] p,
-.subpage-main [class*="glass"] p,
-.subpage-main .liquidGlassCard span,
-.subpage-main .card span,
-.subpage-main [class*="liquid"] span,
-.subpage-main [class*="Glass"] span,
-.subpage-main [class*="glass"] span,
-.subpage-main .liquidGlassCard div,
-.subpage-main .card div,
-.subpage-main [class*="liquid"] div,
-.subpage-main [class*="Glass"] div,
-.subpage-main [class*="glass"] div {
-  color: #374151 !important;
-  -webkit-text-fill-color: #374151 !important;
-  opacity: 1 !important;
-}
-
-.subpage-main .liquidGlassCard::before,
-.subpage-main .card::before,
-.subpage-main [class*="liquid"]::before,
-.subpage-main [class*="Glass"]::before,
-.subpage-main [class*="glass"]::before {
-  opacity: 0.42 !important;
-  z-index: 0 !important;
-}
-
-.subpage-main .liquidGlassCard::after,
-.subpage-main .card::after,
-.subpage-main [class*="liquid"]::after,
-.subpage-main [class*="Glass"]::after,
-.subpage-main [class*="glass"]::after {
-  opacity: 0.55 !important;
-  z-index: 0 !important;
-}
-
-.subpage-main .subpage-section > div:not(.card-grid),
-.subpage-main .subpage-section > article,
-.subpage-main .subpage-section > section {
-  color: #111827 !important;
-}
-
-.subpage-main .subpage-section > div:not(.card-grid) *,
-.subpage-main .subpage-section > article *,
-.subpage-main .subpage-section > section * {
-  position: relative !important;
-  z-index: 6 !important;
-  color: #111827 !important;
-  -webkit-text-fill-color: #111827 !important;
-  opacity: 1 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72) !important;
-}
-
-.subpage-main .subpage-section > div:not(.card-grid) p,
-.subpage-main .subpage-section > article p,
-.subpage-main .subpage-section > section p {
-  color: #4b5563 !important;
-  -webkit-text-fill-color: #4b5563 !important;
-}
-
-/* =========================================================
-   全站浅色按钮覆盖
-   ========================================================= */
-
-.auth-page button,
-.auth-page button[type="submit"],
-.auth-form button,
-.auth-form button[type="submit"],
-.auth-box button,
-.auth-box button[type="submit"],
-.login-page button,
-.register-page button,
-form button[type="submit"],
-.subpage-main button[type="submit"],
-.subpage-main button:not(.mobile-menu-btn),
-.contact-button,
-.btn-dark,
-button[style*="background: #111"],
-button[style*="background:#111"],
-button[style*="background: rgb(17, 17, 17)"],
-button[style*="background-color: #111"],
-button[style*="background-color:#111"],
-a[style*="background: #111"],
-a[style*="background:#111"],
-a[style*="background-color: #111"],
-a[style*="background-color:#111"],
-.dark-action,
-.black-action {
-  color: #111827 !important;
-  -webkit-text-fill-color: #111827 !important;
-  background:
-    radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.58) 38%, rgba(255, 255, 255, 0.22) 76%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(243, 246, 249, 0.86)) !important;
-  background-color: rgba(255, 255, 255, 0.92) !important;
-  border: 1px solid rgba(255, 255, 255, 0.96) !important;
-  box-shadow:
-    0 10px 24px rgba(15, 23, 42, 0.08),
-    0 2px 8px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
-  backdrop-filter: blur(16px) saturate(155%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-  font-weight: 800 !important;
-}
-
-.auth-page button *,
-.auth-form button *,
-.auth-box button *,
-.login-page button *,
-.register-page button *,
-form button[type="submit"] *,
-.subpage-main button[type="submit"] *,
-.subpage-main button:not(.mobile-menu-btn) *,
-.contact-button *,
-.btn-dark *,
-button[style*="background: #111"] *,
-button[style*="background:#111"] *,
-a[style*="background: #111"] *,
-a[style*="background:#111"] * {
-  color: #111827 !important;
-  -webkit-text-fill-color: #111827 !important;
-  opacity: 1 !important;
-}
-
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
+.btn-white,
 .btn-dark,
 .contact-button,
 .auth-form button,
@@ -1221,100 +750,34 @@ form button[type="submit"],
 a.btn-dark,
 a.liquidGlassPill,
 button.liquidGlassPill,
-.liquidGlassPill {
+.liquidGlassPill,
+.npx5-glass-btn,
+.npx4-glass-btn,
+.np-glass-btn,
+.np-final-action,
+.nines-cta {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  text-decoration: none;
   color: #111827 !important;
   -webkit-text-fill-color: #111827 !important;
-  background:
-    radial-gradient(
-      circle at 18% 8%,
-      rgba(255, 255, 255, 1),
-      rgba(255, 255, 255, 0.58) 38%,
-      rgba(255, 255, 255, 0.22) 76%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.96),
-      rgba(243, 246, 249, 0.86)
-    ) !important;
-  background-color: rgba(255, 255, 255, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.96) !important;
-  border-radius: 999px !important;
-  box-shadow:
-    0 10px 24px rgba(15, 23, 42, 0.08),
-    0 2px 8px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
-  backdrop-filter: blur(16px) saturate(155%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
   font-weight: 800 !important;
-}
-
-button[style*="background: #111"],
-button[style*="background:#111"],
-button[style*="background-color: #111"],
-button[style*="background-color:#111"],
-button[style*="background: black"],
-button[style*="background:black"],
-button[style*="background-color: black"],
-button[style*="background-color:black"],
-button[style*="background: rgb(17, 17, 17)"],
-button[style*="background-color: rgb(17, 17, 17)"],
-a[style*="background: #111"],
-a[style*="background:#111"],
-a[style*="background-color: #111"],
-a[style*="background-color:#111"],
-a[style*="background: black"],
-a[style*="background:black"],
-a[style*="background-color: black"],
-a[style*="background-color:black"],
-a[style*="background: rgb(17, 17, 17)"],
-a[style*="background-color: rgb(17, 17, 17)"] {
-  color: #111827 !important;
-  -webkit-text-fill-color: #111827 !important;
   background:
-    radial-gradient(
-      circle at 18% 8%,
-      rgba(255, 255, 255, 1),
-      rgba(255, 255, 255, 0.58) 38%,
-      rgba(255, 255, 255, 0.22) 76%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.96),
-      rgba(243, 246, 249, 0.86)
-    ) !important;
-  background-color: rgba(255, 255, 255, 0.94) !important;
-  border: 1px solid rgba(255, 255, 255, 0.96) !important;
-  border-radius: 999px !important;
+    radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.26) 42%, rgba(255, 255, 255, 0.08) 76%) !important;
+  background-color: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.52) !important;
   box-shadow:
-    0 10px 24px rgba(15, 23, 42, 0.08),
-    0 2px 8px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -8px 16px rgba(15, 23, 42, 0.03) !important;
-  backdrop-filter: blur(16px) saturate(155%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(155%) !important;
+    0 10px 26px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset 0 -8px 16px rgba(15, 23, 42, 0.025) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
 }
 
-button *,
-.btn-dark *,
-.contact-button *,
-.auth-form button *,
-.auth-box button *,
-.auth-page button *,
-.subpage-main button *,
-.card button *,
-.liquidGlassPill *,
-a[style*="background"] * {
-  color: #111827 !important;
-  -webkit-text-fill-color: #111827 !important;
-  opacity: 1 !important;
-}
-
-button:hover,
-input[type="button"]:hover,
-input[type="submit"]:hover,
-input[type="reset"]:hover,
+.btn-white:hover,
 .btn-dark:hover,
 .contact-button:hover,
 .auth-form button:hover,
@@ -1326,55 +789,341 @@ form button[type="submit"]:hover,
 a.btn-dark:hover,
 a.liquidGlassPill:hover,
 button.liquidGlassPill:hover,
-.liquidGlassPill:hover {
+.liquidGlassPill:hover,
+.npx5-glass-btn:hover,
+.npx4-glass-btn:hover,
+.np-glass-btn:hover,
+.np-final-action:hover,
+.nines-cta:hover {
   transform: translateY(-1px) scale(1.02) !important;
   border-color: rgba(126, 177, 231, 0.48) !important;
-  box-shadow:
-    0 14px 30px rgba(15, 23, 42, 0.11),
-    0 4px 12px rgba(126, 177, 231, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
-button:disabled,
-input[type="button"]:disabled,
-input[type="submit"]:disabled,
-input[type="reset"]:disabled,
-.auth-form button:disabled,
-.auth-box button:disabled,
-.auth-page button:disabled,
-.subpage-main button:disabled,
-.card button:disabled {
-  opacity: 0.56 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
 }
 
 /* =========================================================
-   NINE 修复：首页轮播左右箭头 hover 不下移
+   Carousel Arrow Transparent Glass
    ========================================================= */
 
-button.carousel-arrow,
-button.carousel-arrow:hover,
-button.carousel-arrow:active,
-button.carousel-arrow:focus,
-.carousel-arrow,
+.npx5-carousel-shell,
+.npx4-carousel-shell,
+.np-carousel-shell,
+.np-final-carousel-shell {
+  position: relative !important;
+}
+
+.npx5-track,
+.npx4-track,
+.np-track,
+.np-final-track {
+  padding-left: max(140px, calc((100vw - 1240px) / 2 + 140px)) !important;
+  padding-right: max(160px, calc((100vw - 1240px) / 2 + 160px)) !important;
+}
+
+.npx5-arrow,
+.npx4-arrow,
+.np-arrow,
+.np-final-arrow,
+.nines-carousel-side-arrow,
+.carousel-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  z-index: 30 !important;
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: rgba(17, 24, 39, 0.88) !important;
+  cursor: pointer !important;
+  transform: translateY(-50%) !important;
+  opacity: 0.88 !important;
+  background:
+    radial-gradient(circle at 22% 14%, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.22) 38%, rgba(255, 255, 255, 0.07) 76%) !important;
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow:
+    0 12px 34px rgba(15, 23, 42, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset 0 -8px 18px rgba(15, 23, 42, 0.035) !important;
+  backdrop-filter: blur(9px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(9px) saturate(150%) !important;
+}
+
+.npx5-arrow:hover,
+.npx5-arrow:active,
+.npx5-arrow:focus,
+.npx5-arrow:focus-visible,
+.npx4-arrow:hover,
+.npx4-arrow:active,
+.npx4-arrow:focus,
+.npx4-arrow:focus-visible,
+.np-arrow:hover,
+.np-arrow:active,
+.np-arrow:focus,
+.np-arrow:focus-visible,
+.np-final-arrow:hover,
+.np-final-arrow:active,
+.np-final-arrow:focus,
+.np-final-arrow:focus-visible,
+.nines-carousel-side-arrow:hover,
+.nines-carousel-side-arrow:active,
+.nines-carousel-side-arrow:focus,
 .carousel-arrow:hover,
 .carousel-arrow:active,
 .carousel-arrow:focus {
   top: 50% !important;
   transform: translateY(-50%) !important;
+  opacity: 0.96 !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(126, 177, 231, 0.55) !important;
 }
 
-button.carousel-arrow:hover,
-.carousel-arrow:hover {
-  opacity: 1 !important;
+.npx5-arrow-svg,
+.npx4-arrow-svg,
+.np-arrow-svg,
+.np-final-arrow-svg {
+  display: block !important;
+  width: 22px !important;
+  height: 22px !important;
+  flex: 0 0 22px !important;
+  pointer-events: none !important;
+}
+
+.npx5-arrow-left,
+.npx4-arrow-left,
+.np-arrow-left,
+.np-final-arrow-left,
+.nines-carousel-side-arrow-left {
+  left: 24px !important;
+}
+
+.npx5-arrow-right,
+.npx4-arrow-right,
+.np-arrow-right,
+.np-final-arrow-right,
+.nines-carousel-side-arrow-right {
+  right: 38px !important;
 }
 
 /* =========================================================
-   NINE TOUCH CUSTOM SCROLLBAR FINAL
-   手机 / 平板：隐藏系统细滚动条，使用 components/NinesTouchScrollbar.tsx。
-   右侧统一预留 6px；可见滑块 3px；左右各约 1.5px。
-   电脑端和电脑端缩小窗口不受影响。
+   Footer Final
+   ========================================================= */
+
+footer,
+.page-footer,
+.nines-footer,
+.site-footer {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  text-align: center !important;
+  width: 100% !important;
+  padding: 56px 24px 32px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+footer *,
+.page-footer *,
+.nines-footer *,
+.site-footer * {
+  background-color: transparent !important;
+}
+
+footer > *,
+.page-footer > *,
+.nines-footer > *,
+.site-footer > *,
+.nines-footer-inner,
+.footer-inner,
+.footer-container {
+  width: min(820px, calc(100vw - 48px)) !important;
+  max-width: 820px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.nines-footer-brand,
+.footer-brand,
+.page-footer-brand {
+  max-width: 520px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+
+.nines-footer-grid,
+.footer-grid,
+.footer-links {
+  width: min(760px, 100%) !important;
+  max-width: 760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+  gap: 22px !important;
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer p,
+footer span,
+footer small,
+footer a,
+.page-footer h1,
+.page-footer h2,
+.page-footer h3,
+.page-footer h4,
+.page-footer p,
+.page-footer span,
+.page-footer small,
+.page-footer a,
+.nines-footer h1,
+.nines-footer h2,
+.nines-footer h3,
+.nines-footer h4,
+.nines-footer p,
+.nines-footer span,
+.nines-footer small,
+.nines-footer a {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+footer a,
+.page-footer a,
+.nines-footer a,
+.nines-footer-grid a,
+.footer-grid a,
+.footer-links a {
+  display: block !important;
+  width: fit-content !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.nines-footer-bottom,
+.footer-bottom,
+.page-footer-bottom {
+  width: min(760px, 100%) !important;
+  max-width: 760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+
+/* =========================================================
+   Body Scrollbar For Pages Without .page-container
+   ========================================================= */
+
+html:not(:has(body .page-container)) {
+  background: var(--nines-bg) !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+body:not(:has(.page-container)) {
+  background: var(--nines-bg) !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  scrollbar-width: auto !important;
+  scrollbar-color: #888888 #ffffff !important;
+}
+
+body:not(:has(.page-container)) .subpage-main {
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 80px !important;
+}
+
+body:not(:has(.page-container)) .subpage-container,
+body:not(:has(.page-container)) .subpage-section,
+body:not(:has(.page-container)) .card-grid {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body:not(:has(.page-container)) .card {
+  height: auto !important;
+}
+
+body:not(:has(.page-container)) footer,
+body:not(:has(.page-container)) .page-footer {
+  position: relative !important;
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar {
+  width: var(--nines-scrollbar-width) !important;
+  height: var(--nines-scrollbar-width) !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-track {
+  background: #ffffff !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-thumb {
+  background: #888888 !important;
+  border-radius: 6px !important;
+  border: var(--nines-scrollbar-thumb-inset) solid transparent !important;
+  background-clip: content-box !important;
+  display: block !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:start:decrement,
+body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:decrement {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 8l8 8H4z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+body:not(:has(.page-container))::-webkit-scrollbar-button:vertical:end:increment,
+body:not(:has(.page-container))::-webkit-scrollbar-button:single-button:vertical:increment {
+  display: block !important;
+  width: var(--nines-scrollbar-button-size) !important;
+  height: var(--nines-scrollbar-button-size) !important;
+  min-height: var(--nines-scrollbar-button-size) !important;
+  background-color: #e0e0e0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 16l-8-8h16z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: var(--nines-scrollbar-icon-size) !important;
+}
+
+/* =========================================================
+   Touch Scrollbar
    ========================================================= */
 
 @media (pointer: coarse) {
@@ -1429,4 +1178,200 @@ button.carousel-arrow:hover,
     background: transparent !important;
     background-image: none !important;
   }
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 900px) {
+  body:not(:has(.page-container)) .subpage-main {
+    padding-top: 76px !important;
+    padding-bottom: 70px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  footer,
+  .page-footer,
+  .nines-footer,
+  .site-footer {
+    padding: 48px 18px 28px !important;
+  }
+
+  footer > *,
+  .page-footer > *,
+  .nines-footer > *,
+  .site-footer > *,
+  .nines-footer-inner,
+  .footer-inner,
+  .footer-container {
+    width: calc(100vw - 36px) !important;
+    max-width: calc(100vw - 36px) !important;
+  }
+
+  .nines-footer-grid,
+  .footer-grid,
+  .footer-links {
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+  }
+
+  .npx5-track,
+  .npx4-track,
+  .np-track,
+  .np-final-track {
+    padding-left: 84px !important;
+    padding-right: 84px !important;
+  }
+
+  .npx5-arrow-left,
+  .npx4-arrow-left,
+  .np-arrow-left,
+  .np-final-arrow-left {
+    left: 10px !important;
+  }
+
+  .npx5-arrow-right,
+  .npx4-arrow-right,
+  .np-arrow-right,
+  .np-final-arrow-right {
+    right: 10px !important;
+  }
+
+  .subpage-hero h1 {
+    font-size: 30px;
+  }
+
+  .subpage-hero p {
+    font-size: 15px;
+  }
+
+  .subpage-container {
+    padding: 0 16px;
+  }
+
+  .liquidGlassCard,
+  .subpage-main .card {
+    border-radius: 28px !important;
+    clip-path: inset(0 round 28px) !important;
+  }
+}
+
+/* =========================================================
+   Reduced Motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .liquidGlassNavItem,
+  .liquidGlassCard,
+  .liquidGlassPill,
+  .card,
+  .nines-orb-a,
+  .nines-orb-b,
+  .nines-layer-marquee div {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .nines-carousel-track,
+  .npx5-track,
+  .npx4-track,
+  .np-track,
+  .np-final-track {
+    scroll-behavior: auto !important;
+  }
+}
+/* =========================================================/* =================================================.css
+   Purpose:
+   1) Hide mega menu single-character badges like 关 / 加 / 联 / 馈
+   2) Fix selectors that were pasted as &gt; instead of >
+   3) Keep footer/nav/card styles intact
+   ========================================================= */
+
+/* 1) Mega menu cards: remove the tiny badge/icon row */
+.liquidGlassCard > div:first-child {
+  display: none !important;
+}
+
+.liquidGlassCard h3 {
+  margin-top: 0 !important;
+}
+
+/* If any old navbar/card badge class exists, hide it too */
+.liquidGlassCard [class*="badge"],
+.liquidGlassCard [class*="Badge"],
+.liquidGlassCard [data-badge],
+.liquidGlassCard .megaBadge,
+.liquidGlassCard .mega-badge {
+  display: none !important;
+}
+
+/* 2) Correct escaped child selectors from &gt; to > */
+main > section,
+.npx5-hero,
+.npx4-hero,
+.np-hero,
+.np-final-hero,
+.nines-hero,
+.home-hero,
+.npx5-section,
+.npx4-section,
+.np-section,
+.np-final-section,
+.nines-layer,
+.home-section,
+.npx5-cta,
+.npx4-cta,
+.np-cta,
+.np-final-cta,
+.nines-final-cta,
+.home-final {
+  background-color: var(--nines-bg) !important;
+}
+
+.liquidGlassNavItem > *,
+.nav-link > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+footer > *,
+.page-footer > *,
+.nines-footer > *,
+.site-footer > *,
+.nines-footer-inner,
+.footer-inner,
+.footer-container {
+  width: min(820px, calc(100vw - 48px)) !important;
+  max-width: 820px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 760px) {
+  footer > *,
+  .page-footer > *,
+  .nines-footer > *,
+  .site-footer > *,
+  .nines-footer-inner,
+  .footer-inner,
+  .footer-container {
+    width: calc(100vw - 36px) !important;
+    max-width: calc(100vw - 36px) !important;
+  }
+}
+/* Tool title max 40px override. Paste into app/globals.css if any tool title is still too large. */
+.realToolHero h1,
+.aiToolHero h1,
+.toolHero h1,
+.toolIndexHero h1,
+.classicsHero h1,
+.basicHero h1 {
+  font-size: clamp(32px, 4vw, 40px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.045em !important;
 }
