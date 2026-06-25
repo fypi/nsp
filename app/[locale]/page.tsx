@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -16,796 +17,383 @@ type PageCopy = {
 
 function getLocale(raw?: string): Locale {
   if (raw === "en") return "en";
-  if (raw === "zh-TW") return "zh-TW";
+  if (raw === "zh-TW" || raw === "zh-tw") return "zh-TW";
   return "zh";
 }
 
 function localePath(locale: Locale, path: string) {
   const clean = path.startsWith("/") ? path : `/${path}`;
+  if (locale === "en") return clean === "/" ? "/" : clean;
   return `/${locale}${clean === "/" ? "" : clean}`;
 }
 
 const copy: Record<Locale, PageCopy> = {
-  "zh": {
-    "brand": "NINESPRO",
-    "slogan": "尽知天下事，弹指皆可得。",
-    "desc": "设计并工程化下一代 AI 软件、企业平台、云端系统与数字体验。",
-    "explore": "探索产品",
-    "contact": "联系我们",
-    "finalTitle": "启动你的下一个项目。",
-    "finalDesc": "告诉我们你想构建什么，NINESPRO 帮你把想法变成现实。",
-    "finalButton": "联系我们",
-    "products": {
-      "kicker": "产品",
-      "title": "智能、规模与速度。",
-      "desc": "将 AI、云端、设计与企业工程整合为面向未来的产品体系。",
-      "items": [
-        {
-          "title": "Nines AI",
-          "desc": "面向知识、写作、研究与自动化的 AI Agent 与智能工作流。"
-        },
-        {
-          "title": "Nines Cloud",
-          "desc": "云端系统、API、仪表盘与数字产品基础设施。"
-        },
-        {
-          "title": "Nines Studio",
-          "desc": "极简网站、界面、品牌系统与数字体验。"
-        },
-        {
-          "title": "Nines Enterprise",
-          "desc": "企业定制软件、内部平台与自动化系统。"
-        },
-        {
-          "title": "Nines Tools",
-          "desc": "面向开发、文档、文本处理和效率场景的在线工具。"
-        },
-        {
-          "title": "Nines Data",
-          "desc": "数据看板、报告、可视化与商业智能系统。"
-        },
-        {
-          "title": "Nines Flow",
-          "desc": "审批、任务、流程与自动执行的工作流系统。"
-        },
-        {
-          "title": "Nines Labs",
-          "desc": "AI 产品原型与未来数字体验实验空间。"
-        }
+  zh: {
+    brand: "NINESPRO",
+    slogan: "尽知天下事，弹指皆可得。",
+    desc: "面向 AI 原生产品、数字平台、在线工具和企业软件的设计与工程化建设。",
+    explore: "探索产品",
+    contact: "联系 NINESPRO",
+    finalTitle: "开始一次认真构建。",
+    finalDesc: "告诉 NINESPRO 项目方向、业务目标和当前问题，一起整理清晰的产品路径。",
+    finalButton: "发送邮件",
+    products: {
+      kicker: "产品",
+      title: "产品能力清晰呈现。",
+      desc: "产品中心用于说明 NINESPRO 的产品方向、AI 能力、工具体系和工程化交付方式。",
+      items: [
+        { title: "Nines AI", desc: "面向内容生成、知识整理、研究辅助和流程自动化的 AI 能力。" },
+        { title: "Nines Cloud", desc: "面向账号、权限、API、数据和后台管理的云端系统基础。" },
+        { title: "Nines Studio", desc: "面向官网、界面、品牌页面和数字体验的设计与开发。" },
+        { title: "Nines Enterprise", desc: "面向企业流程、内部平台和业务系统的定制开发。" },
+        { title: "Nines Tools", desc: "面向开发、文档、文本处理和效率场景的在线工具体系。" },
+        { title: "Nines Data", desc: "面向数据看板、报告整理、可视化和业务分析的系统能力。" },
+        { title: "Nines Flow", desc: "面向审批、任务、协作和自动执行的工作流能力。" },
+        { title: "Nines Labs", desc: "面向 AI 产品原型、工具实验和未来体验的持续探索。" }
       ]
     },
-    "solutions": {
-      "kicker": "解决方案",
-      "title": "从想法到系统。",
-      "desc": "把业务问题转化为清晰、可执行、可扩展的数字系统。",
-      "items": [
-        {
-          "title": "业务自动化",
-          "desc": "用 AI 工作流和定制软件替代重复劳动。"
-        },
-        {
-          "title": "AI 转型",
-          "desc": "把大模型、Agent 和自动化接入真实业务流程。"
-        },
-        {
-          "title": "数字平台",
-          "desc": "构建 SaaS、门户、仪表盘和内部工具。"
-        },
-        {
-          "title": "数据智能",
-          "desc": "把数据转化为洞察、报告和决策系统。"
-        },
-        {
-          "title": "创业系统",
-          "desc": "MVP、产品原型、落地页和可扩展产品基础。"
-        },
-        {
-          "title": "企业运营",
-          "desc": "用于管理、协作和流程控制的内部平台。"
-        },
-        {
-          "title": "教育学习",
-          "desc": "学习工具、知识系统和 AI 辅助学习体验。"
-        },
-        {
-          "title": "定制开发",
-          "desc": "把独特业务流程转化为可靠软件系统。"
-        }
+    solutions: {
+      kicker: "解决方案",
+      title: "面向真实业务场景。",
+      desc: "围绕业务自动化、AI 转型、数字平台和定制开发，提供可落地的方案设计与系统建设。",
+      items: [
+        { title: "业务自动化", desc: "梳理重复流程，建设更高效的任务、审批、协作和执行系统。" },
+        { title: "AI 转型", desc: "将大模型、Agent 和自动化能力接入真实业务流程。" },
+        { title: "数字平台", desc: "构建 SaaS、门户、仪表盘、后台和内部工具。" },
+        { title: "数据智能", desc: "把数据整理为可理解的看板、报告、洞察和决策支持。" },
+        { title: "创业系统", desc: "支持落地页、产品原型、MVP 和早期产品基础建设。" },
+        { title: "企业运营", desc: "建设用于管理、协作、流程控制和业务追踪的内部平台。" },
+        { title: "教育学习", desc: "建设学习工具、知识系统和 AI 辅助学习体验。" },
+        { title: "定制开发", desc: "根据独特业务路径开发可维护、可扩展的软件系统。" }
       ]
     },
-    "ai": {
-      "kicker": "AI",
-      "title": "以智能为核心。",
-      "desc": "围绕 Agent、知识系统、文档智能和自动化执行，构建真正可落地的 AI 能力。",
-      "items": [
-        {
-          "title": "AI 代理",
-          "desc": "理解任务、拆解流程、调用工具并自动完成多步骤工作。"
-        },
-        {
-          "title": "知识系统",
-          "desc": "把文档、数据、经验与业务规则组织成可搜索的知识系统。"
-        },
-        {
-          "title": "文档智能",
-          "desc": "面向合同、报告、表格和资料的解析、总结与抽取。"
-        },
-        {
-          "title": "研究助手",
-          "desc": "用于调研、写作、分析和决策辅助的智能工作空间。"
-        }
+    ai: {
+      kicker: "AI",
+      title: "AI 能力进入产品流程。",
+      desc: "围绕生成、整理、分析、自动化和知识管理，把 AI 能力接入实际产品与业务流程。",
+      items: [
+        { title: "AI 代理", desc: "根据目标拆解步骤、组织上下文，并辅助完成多步骤任务。" },
+        { title: "知识系统", desc: "将文档、资料、经验和业务规则整理成可检索、可复用的知识结构。" },
+        { title: "文档智能", desc: "面向合同、报告、表格和资料进行解析、总结、提取和重组。" },
+        { title: "研究助手", desc: "用于调研、写作、分析和决策辅助的智能工作空间。" }
       ]
     },
-    "development": {
-      "kicker": "开发",
-      "title": "从界面到平台。",
-      "desc": "以产品化方式交付网站、SaaS、仪表盘、API、后台系统和企业内部工具。",
-      "items": [
-        {
-          "title": "网站开发",
-          "desc": "高性能官网、落地页、品牌页面与多语言站点。"
-        },
-        {
-          "title": "SaaS 平台",
-          "desc": "订阅、用户、权限、数据、运营后台和可扩展产品基础。"
-        },
-        {
-          "title": "云端接口",
-          "desc": "面向集成、自动化和外部应用的稳定 API 系统。"
-        },
-        {
-          "title": "内部工具",
-          "desc": "为团队管理、审批、协作和运营流程打造内部平台。"
-        }
+    development: {
+      kicker: "开发",
+      title: "从界面到系统。",
+      desc: "以产品化方式交付网站、工具、API、后台、权限和企业内部系统。",
+      items: [
+        { title: "网站开发", desc: "高性能官网、落地页、品牌页面和多语言站点。" },
+        { title: "SaaS 平台", desc: "用户、权限、数据、运营后台和可扩展产品基础。" },
+        { title: "云端接口", desc: "面向集成、自动化和外部应用的稳定 API 系统。" },
+        { title: "内部工具", desc: "为团队管理、审批、协作和运营流程打造内部平台。" }
       ]
     },
-    "projects": {
-      "kicker": "案例",
-      "title": "精选项目。",
-      "desc": "覆盖 AI 平台、SaaS 仪表盘、企业官网与品牌系统。",
-      "items": [
-        {
-          "title": "AI 平台",
-          "desc": "文档处理、知识整理与工作流自动化空间。"
-        },
-        {
-          "title": "SaaS 仪表盘",
-          "desc": "用于业务数据和运营洞察的分析仪表盘。"
-        },
-        {
-          "title": "企业官网",
-          "desc": "面向品牌展示、转化与扩展的企业官网。"
-        },
-        {
-          "title": "品牌系统",
-          "desc": "面向数字产品长期增长的极简识别系统。"
-        }
+    projects: {
+      kicker: "项目方向",
+      title: "从需求到可运行系统。",
+      desc: "NINESPRO 面向 AI 平台、SaaS 仪表盘、企业官网和品牌系统提供产品化建设能力。",
+      items: [
+        { title: "AI 平台", desc: "面向文档处理、知识整理和工作流自动化的产品空间。" },
+        { title: "SaaS 仪表盘", desc: "面向业务数据、运营指标和洞察分析的可视化平台。" },
+        { title: "企业官网", desc: "面向品牌展示、产品说明、访问转化和长期扩展的网站系统。" },
+        { title: "品牌系统", desc: "面向数字产品长期增长的视觉、内容和体验一致性建设。" }
       ]
     },
-    "why": {
-      "kicker": "为什么选择 NINESPRO",
-      "title": "不是外包，是系统能力。",
-      "desc": "从策略、设计、工程、AI 到云端架构，用统一标准把想法变成可运行、可增长的产品。",
-      "items": [
-        {
-          "title": "产品思维",
-          "desc": "不只做页面，而是从产品、路径、转化和长期增长设计系统。"
-        },
-        {
-          "title": "AI 原生",
-          "desc": "把 AI 能力作为底层能力，而不是后期附加功能。"
-        },
-        {
-          "title": "工程质量",
-          "desc": "重视结构、性能、可维护性和长期扩展。"
-        },
-        {
-          "title": "设计精度",
-          "desc": "追求极简、清晰、高级且具有品牌一致性的数字体验。"
-        }
+    why: {
+      kicker: "方法",
+      title: "以系统能力建设产品。",
+      desc: "从策略、设计、工程、AI 到云端架构，用统一标准把想法变成可运行、可增长的产品。",
+      items: [
+        { title: "产品思维", desc: "围绕产品路径、用户体验、转化目标和长期增长设计系统。" },
+        { title: "AI 原生", desc: "将 AI 作为产品能力的一部分，融入实际使用流程。" },
+        { title: "工程质量", desc: "重视结构、性能、权限、可维护性和长期扩展。" },
+        { title: "设计精度", desc: "追求简洁、清晰、稳定且具有品牌一致性的数字体验。" }
       ]
     },
-    "statsTitle": "信任来自结果。",
-    "statsDesc": "为面向未来的产品、团队和组织构建稳定的数字基础。",
-    "stats": [
-      {
-        "value": "100+",
-        "label": "项目交付"
-      },
-      {
-        "value": "99.9%",
-        "label": "可用性目标"
-      },
-      {
-        "value": "24/7",
-        "label": "技术支持"
-      },
-      {
-        "value": "50+",
-        "label": "客户与团队"
-      }
+    statsTitle: "构建方式。",
+    statsDesc: "以产品思维、AI 原生能力和工程化方法建设可持续迭代的数字系统。",
+    stats: [
+      { value: "项目制", label: "清晰交付" },
+      { value: "AI 原生", label: "产品能力" },
+      { value: "工程化", label: "稳定落地" },
+      { value: "长期", label: "持续迭代" }
     ],
-    "testimonials": {
-      "kicker": "客户反馈",
-      "title": "把复杂变清晰。",
-      "desc": "我们帮助团队把分散需求变成可执行、可扩展的数字产品。",
-      "items": [
-        {
-          "title": "创始人",
-          "desc": "NINESPRO 帮我们把想法快速变成了可演示、可扩展的 MVP。"
-        },
-        {
-          "title": "运营团队",
-          "desc": "自动化系统减少了大量重复工作，让团队重新专注在关键业务上。"
-        },
-        {
-          "title": "企业客户",
-          "desc": "从官网到内部平台，整体体验更统一，交付也更稳定。"
-        }
+    testimonials: {
+      kicker: "工作方式",
+      title: "把复杂需求整理成清晰路径。",
+      desc: "NINESPRO 将业务目标、用户路径、系统能力和交付节奏整理成可执行的产品方案。",
+      items: [
+        { title: "需求梳理", desc: "从业务目标、用户场景和功能边界开始，明确第一阶段要建设的核心能力。" },
+        { title: "流程优化", desc: "梳理重复流程、任务节点和协作方式，为自动化和内部工具建设打基础。" },
+        { title: "系统交付", desc: "以稳定架构、清晰权限和可维护代码交付可持续迭代的数字系统。" }
       ]
     },
-    "partners": {
-      "kicker": "合作",
-      "title": "与创新者同行。",
-      "desc": "面向创业团队、企业部门、教育组织和数字服务机构。",
-      "items": [
-        {
-          "title": "创业团队",
-          "desc": "从 MVP 到可增长产品基础。"
-        },
-        {
-          "title": "企业组织",
-          "desc": "内部平台、流程系统和企业数字化。"
-        },
-        {
-          "title": "教育机构",
-          "desc": "知识系统、学习工具和 AI 辅助体验。"
-        },
-        {
-          "title": "服务机构",
-          "desc": "为品牌、技术和交付团队提供产品工程能力。"
-        }
+    partners: {
+      kicker: "适用场景",
+      title: "适用于不同阶段的数字建设。",
+      desc: "从早期产品验证到企业内部平台，NINESPRO 根据实际目标选择合适的建设方式。",
+      items: [
+        { title: "产品验证", desc: "用于落地页、原型、MVP 和早期产品基础建设。" },
+        { title: "企业平台", desc: "用于内部工具、流程系统、数据看板和业务管理平台。" },
+        { title: "知识与学习", desc: "用于知识整理、学习工具、内容生成和 AI 辅助学习体验。" },
+        { title: "服务交付", desc: "用于官网建设、数字体验、工具开发和客户项目交付支持。" }
       ]
     },
-    "contactSection": {
-      "kicker": "联系",
-      "title": "开始一次认真构建。",
-      "desc": "告诉我们你的项目方向、业务目标和当前问题，我们会帮助你整理成清晰的产品路径。",
-      "items": [
-        {
-          "title": "商务邮箱",
-          "desc": "support@ninespro.com"
-        },
-        {
-          "title": "合作邮箱",
-          "desc": "partner@ninespro.com"
-        },
-        {
-          "title": "销售邮箱",
-          "desc": "sales@ninespro.com"
-        }
+    contactSection: {
+      kicker: "联系",
+      title: "统一联系入口。",
+      desc: "如需项目沟通、合作咨询或问题反馈，请通过统一邮箱联系 NINESPRO。",
+      items: [
+        { title: "统一邮箱", desc: "one@ninespro.com" },
+        { title: "联系页面", desc: "提交合作、反馈或支持需求。" },
+        { title: "项目沟通", desc: "说明项目方向、目标和当前问题。" }
       ]
     }
   },
   "zh-TW": {
-    "brand": "NINESPRO",
-    "slogan": "盡知天下事，彈指皆可得。",
-    "desc": "設計並工程化下一代 AI 軟體、企業平台、雲端系統與數位體驗。",
-    "explore": "探索產品",
-    "contact": "聯絡我們",
-    "finalTitle": "啟動你的下一個項目。",
-    "finalDesc": "告訴我們你想構建什麼，NINESPRO 幫你把想法變成現實。",
-    "finalButton": "聯絡我們",
-    "products": {
-      "kicker": "產品",
-      "title": "智能、規模與速度。",
-      "desc": "將 AI、雲端、設計與企業工程整合為面向未來的產品體系。",
-      "items": [
-        {
-          "title": "Nines AI",
-          "desc": "面向知識、寫作、研究與自動化的 AI Agent 與智能工作流。"
-        },
-        {
-          "title": "Nines Cloud",
-          "desc": "雲端系統、API、儀表板與數位產品基礎設施。"
-        },
-        {
-          "title": "Nines Studio",
-          "desc": "極簡網站、介面、品牌系統與數位體驗。"
-        },
-        {
-          "title": "Nines Enterprise",
-          "desc": "企業定制軟體、內部平台與自動化系統。"
-        },
-        {
-          "title": "Nines Tools",
-          "desc": "面向開發、文檔、文字處理和效率場景的線上工具。"
-        },
-        {
-          "title": "Nines Data",
-          "desc": "數據看板、報告、視覺化與商業智能系統。"
-        },
-        {
-          "title": "Nines Flow",
-          "desc": "審批、任務、流程與自動執行的工作流系統。"
-        },
-        {
-          "title": "Nines Labs",
-          "desc": "AI 產品原型與未來數位體驗實驗空間。"
-        }
+    brand: "NINESPRO",
+    slogan: "盡知天下事，彈指皆可得。",
+    desc: "面向 AI 原生產品、數位平台、線上工具和企業軟體的設計與工程化建設。",
+    explore: "探索產品",
+    contact: "聯絡 NINESPRO",
+    finalTitle: "開始一次認真構建。",
+    finalDesc: "告訴 NINESPRO 項目方向、業務目標和當前問題，一起整理清晰的產品路徑。",
+    finalButton: "發送郵件",
+    products: {
+      kicker: "產品",
+      title: "產品能力清晰呈現。",
+      desc: "產品中心用於說明 NINESPRO 的產品方向、AI 能力、工具體系和工程化交付方式。",
+      items: [
+        { title: "Nines AI", desc: "面向內容生成、知識整理、研究輔助和流程自動化的 AI 能力。" },
+        { title: "Nines Cloud", desc: "面向帳號、權限、API、數據和後台管理的雲端系統基礎。" },
+        { title: "Nines Studio", desc: "面向官網、介面、品牌頁面和數位體驗的設計與開發。" },
+        { title: "Nines Enterprise", desc: "面向企業流程、內部平台和業務系統的定制開發。" },
+        { title: "Nines Tools", desc: "面向開發、文檔、文字處理和效率場景的線上工具體系。" },
+        { title: "Nines Data", desc: "面向數據看板、報告整理、視覺化和業務分析的系統能力。" },
+        { title: "Nines Flow", desc: "面向審批、任務、協作和自動執行的工作流能力。" },
+        { title: "Nines Labs", desc: "面向 AI 產品原型、工具實驗和未來體驗的持續探索。" }
       ]
     },
-    "solutions": {
-      "kicker": "解決方案",
-      "title": "從想法到系統。",
-      "desc": "把業務問題轉化為清晰、可執行、可擴展的數位系統。",
-      "items": [
-        {
-          "title": "業務自動化",
-          "desc": "用 AI 工作流和定制軟體替代重複勞動。"
-        },
-        {
-          "title": "AI 轉型",
-          "desc": "把大模型、Agent 和自動化接入真實業務流程。"
-        },
-        {
-          "title": "數位平台",
-          "desc": "構建 SaaS、入口網站、儀表板和內部工具。"
-        },
-        {
-          "title": "數據智能",
-          "desc": "把數據轉化為洞察、報告和決策系統。"
-        },
-        {
-          "title": "新創系統",
-          "desc": "MVP、產品原型、落地頁和可擴展產品基礎。"
-        },
-        {
-          "title": "企業營運",
-          "desc": "用於管理、協作和流程控制的內部平台。"
-        },
-        {
-          "title": "教育學習",
-          "desc": "學習工具、知識系統和 AI 輔助學習體驗。"
-        },
-        {
-          "title": "定制開發",
-          "desc": "把獨特業務流程轉化為可靠軟體系統。"
-        }
+    solutions: {
+      kicker: "解決方案",
+      title: "面向真實業務場景。",
+      desc: "圍繞業務自動化、AI 轉型、數位平台和定制開發，提供可落地的方案設計與系統建設。",
+      items: [
+        { title: "業務自動化", desc: "梳理重複流程，建設更高效的任務、審批、協作和執行系統。" },
+        { title: "AI 轉型", desc: "將大模型、Agent 和自動化能力接入真實業務流程。" },
+        { title: "數位平台", desc: "構建 SaaS、入口網站、儀表板、後台和內部工具。" },
+        { title: "數據智能", desc: "把數據整理為可理解的看板、報告、洞察和決策支持。" },
+        { title: "新創系統", desc: "支持落地頁、產品原型、MVP 和早期產品基礎建設。" },
+        { title: "企業營運", desc: "建設用於管理、協作、流程控制和業務追蹤的內部平台。" },
+        { title: "教育學習", desc: "建設學習工具、知識系統和 AI 輔助學習體驗。" },
+        { title: "定制開發", desc: "根據獨特業務路徑開發可維護、可擴展的軟體系統。" }
       ]
     },
-    "ai": {
-      "kicker": "AI",
-      "title": "以智能为核心。",
-      "desc": "围绕 Agent、知识系统、文档智能和自动化执行，构建真正可落地的 AI 能力。",
-      "items": [
-        {
-          "title": "AI 代理",
-          "desc": "理解任务、拆解流程、调用工具并自动完成多步骤工作。"
-        },
-        {
-          "title": "知识系统",
-          "desc": "把文档、数据、经验与业务规则组织成可搜索的知识系统。"
-        },
-        {
-          "title": "文档智能",
-          "desc": "面向合同、报告、表格和资料的解析、总结与抽取。"
-        },
-        {
-          "title": "研究助手",
-          "desc": "用于调研、写作、分析和决策辅助的智能工作空间。"
-        }
+    ai: {
+      kicker: "AI",
+      title: "AI 能力進入產品流程。",
+      desc: "圍繞生成、整理、分析、自動化和知識管理，把 AI 能力接入實際產品與業務流程。",
+      items: [
+        { title: "AI 代理", desc: "根據目標拆解步驟、組織上下文，並輔助完成多步驟任務。" },
+        { title: "知識系統", desc: "將文檔、資料、經驗和業務規則整理成可檢索、可複用的知識結構。" },
+        { title: "文檔智能", desc: "面向合同、報告、表格和資料進行解析、總結、提取和重組。" },
+        { title: "研究助手", desc: "用於調研、寫作、分析和決策輔助的智能工作空間。" }
       ]
     },
-    "development": {
-      "kicker": "开发",
-      "title": "从界面到平台。",
-      "desc": "以产品化方式交付网站、SaaS、仪表盘、API、后台系统和企业内部工具。",
-      "items": [
-        {
-          "title": "网站开发",
-          "desc": "高性能官网、落地页、品牌页面与多语言站点。"
-        },
-        {
-          "title": "SaaS 平台",
-          "desc": "订阅、用户、权限、数据、运营后台和可扩展产品基础。"
-        },
-        {
-          "title": "云端接口",
-          "desc": "面向集成、自动化和外部应用的稳定 API 系统。"
-        },
-        {
-          "title": "内部工具",
-          "desc": "为团队管理、审批、协作和运营流程打造内部平台。"
-        }
+    development: {
+      kicker: "開發",
+      title: "從界面到系統。",
+      desc: "以產品化方式交付網站、工具、API、後台、權限和企業內部系統。",
+      items: [
+        { title: "網站開發", desc: "高性能官網、落地頁、品牌頁面和多語言站點。" },
+        { title: "SaaS 平台", desc: "用戶、權限、數據、營運後台和可擴展產品基礎。" },
+        { title: "雲端接口", desc: "面向集成、自動化和外部應用的穩定 API 系統。" },
+        { title: "內部工具", desc: "為團隊管理、審批、協作和營運流程打造內部平台。" }
       ]
     },
-    "projects": {
-      "kicker": "案例",
-      "title": "精选项目。",
-      "desc": "覆盖 AI 平台、SaaS 仪表盘、企业官网与品牌系统。",
-      "items": [
-        {
-          "title": "AI 平台",
-          "desc": "文档处理、知识整理与工作流自动化空间。"
-        },
-        {
-          "title": "SaaS 仪表盘",
-          "desc": "用于业务数据和运营洞察的分析仪表盘。"
-        },
-        {
-          "title": "企业官网",
-          "desc": "面向品牌展示、转化与扩展的企业官网。"
-        },
-        {
-          "title": "品牌系统",
-          "desc": "面向数字产品长期增长的极简识别系统。"
-        }
+    projects: {
+      kicker: "項目方向",
+      title: "從需求到可運行系統。",
+      desc: "NINESPRO 面向 AI 平台、SaaS 儀表板、企業官網和品牌系統提供產品化建設能力。",
+      items: [
+        { title: "AI 平台", desc: "面向文檔處理、知識整理和工作流自動化的產品空間。" },
+        { title: "SaaS 儀表板", desc: "面向業務數據、營運指標和洞察分析的視覺化平台。" },
+        { title: "企業官網", desc: "面向品牌展示、產品說明、訪問轉化和長期擴展的網站系統。" },
+        { title: "品牌系統", desc: "面向數位產品長期增長的視覺、內容和體驗一致性建設。" }
       ]
     },
-    "why": {
-      "kicker": "为什么选择 NINESPRO",
-      "title": "不是外包，是系统能力。",
-      "desc": "从策略、设计、工程、AI 到云端架构，用统一标准把想法变成可运行、可增长的产品。",
-      "items": [
-        {
-          "title": "产品思维",
-          "desc": "不只做页面，而是从产品、路径、转化和长期增长设计系统。"
-        },
-        {
-          "title": "AI 原生",
-          "desc": "把 AI 能力作为底层能力，而不是后期附加功能。"
-        },
-        {
-          "title": "工程质量",
-          "desc": "重视结构、性能、可维护性和长期扩展。"
-        },
-        {
-          "title": "设计精度",
-          "desc": "追求极简、清晰、高级且具有品牌一致性的数字体验。"
-        }
+    why: {
+      kicker: "方法",
+      title: "以系統能力建設產品。",
+      desc: "從策略、設計、工程、AI 到雲端架構，用統一標準把想法變成可運行、可成長的產品。",
+      items: [
+        { title: "產品思維", desc: "圍繞產品路徑、用戶體驗、轉化目標和長期增長設計系統。" },
+        { title: "AI 原生", desc: "將 AI 作為產品能力的一部分，融入實際使用流程。" },
+        { title: "工程質量", desc: "重視結構、性能、權限、可維護性和長期擴展。" },
+        { title: "設計精度", desc: "追求簡潔、清晰、穩定且具有品牌一致性的數位體驗。" }
       ]
     },
-    "statsTitle": "信任来自结果。",
-    "statsDesc": "为面向未来的产品、团队和组织构建稳定的数字基础。",
-    "stats": [
-      {
-        "value": "100+",
-        "label": "项目交付"
-      },
-      {
-        "value": "99.9%",
-        "label": "可用性目标"
-      },
-      {
-        "value": "24/7",
-        "label": "技术支持"
-      },
-      {
-        "value": "50+",
-        "label": "客户与团队"
-      }
+    statsTitle: "構建方式。",
+    statsDesc: "以產品思維、AI 原生能力和工程化方法建設可持續迭代的數位系統。",
+    stats: [
+      { value: "項目制", label: "清晰交付" },
+      { value: "AI 原生", label: "產品能力" },
+      { value: "工程化", label: "穩定落地" },
+      { value: "長期", label: "持續迭代" }
     ],
-    "testimonials": {
-      "kicker": "客戶反饋",
-      "title": "把複雜變清晰。",
-      "desc": "我們幫助團隊把分散需求變成可執行、可擴展的數位產品。",
-      "items": [
-        {
-          "title": "創辦人",
-          "desc": "NINESPRO 幫我們把想法快速變成了可演示、可擴展的 MVP。"
-        },
-        {
-          "title": "營運團隊",
-          "desc": "自動化系統減少了大量重複工作，讓團隊重新專注在關鍵業務上。"
-        },
-        {
-          "title": "企業客戶",
-          "desc": "從官網到內部平台，整體體驗更統一，交付也更穩定。"
-        }
+    testimonials: {
+      kicker: "工作方式",
+      title: "把複雜需求整理成清晰路徑。",
+      desc: "NINESPRO 將業務目標、用戶路徑、系統能力和交付節奏整理成可執行的產品方案。",
+      items: [
+        { title: "需求梳理", desc: "從業務目標、用戶場景和功能邊界開始，明確第一階段要建設的核心能力。" },
+        { title: "流程優化", desc: "梳理重複流程、任務節點和協作方式，為自動化和內部工具建設打基礎。" },
+        { title: "系統交付", desc: "以穩定架構、清晰權限和可維護代碼交付可持續迭代的數位系統。" }
       ]
     },
-    "partners": {
-      "kicker": "合作",
-      "title": "與創新者同行。",
-      "desc": "面向新創團隊、企業部門、教育組織和數位服務機構。",
-      "items": [
-        {
-          "title": "新創團隊",
-          "desc": "從 MVP 到可成長產品基礎。"
-        },
-        {
-          "title": "企業組織",
-          "desc": "內部平台、流程系統和企業數位化。"
-        },
-        {
-          "title": "教育機構",
-          "desc": "知識系統、學習工具和 AI 輔助體驗。"
-        },
-        {
-          "title": "服務機構",
-          "desc": "為品牌、技術和交付團隊提供產品工程能力。"
-        }
+    partners: {
+      kicker: "適用場景",
+      title: "適用於不同階段的數位建設。",
+      desc: "從早期產品驗證到企業內部平台，NINESPRO 根據實際目標選擇合適的建設方式。",
+      items: [
+        { title: "產品驗證", desc: "用於落地頁、原型、MVP 和早期產品基礎建設。" },
+        { title: "企業平台", desc: "用於內部工具、流程系統、數據看板和業務管理平台。" },
+        { title: "知識與學習", desc: "用於知識整理、學習工具、內容生成和 AI 輔助學習體驗。" },
+        { title: "服務交付", desc: "用於官網建設、數位體驗、工具開發和客戶項目交付支持。" }
       ]
     },
-    "contactSection": {
-      "kicker": "聯絡",
-      "title": "開始一次認真構建。",
-      "desc": "告訴我們你的項目方向、業務目標和當前問題，我們會幫助你整理成清晰的產品路徑。",
-      "items": [
-        {
-          "title": "商務信箱",
-          "desc": "support@ninespro.com"
-        },
-        {
-          "title": "合作信箱",
-          "desc": "partner@ninespro.com"
-        },
-        {
-          "title": "銷售信箱",
-          "desc": "sales@ninespro.com"
-        }
+    contactSection: {
+      kicker: "聯絡",
+      title: "統一聯絡入口。",
+      desc: "如需項目溝通、合作諮詢或問題反饋，請通過統一信箱聯絡 NINESPRO。",
+      items: [
+        { title: "統一信箱", desc: "one@ninespro.com" },
+        { title: "聯絡頁面", desc: "提交合作、反饋或支持需求。" },
+        { title: "項目溝通", desc: "說明項目方向、目標和當前問題。" }
       ]
     }
   },
-  "en": {
-    "brand": "NINESPRO",
-    "slogan": "The world’s knowledge, at your fingertips.",
-    "desc": "Designing and engineering the next generation of AI-powered software, enterprise platforms, cloud systems, and digital experiences.",
-    "explore": "Explore Product",
-    "contact": "Contact Us",
-    "finalTitle": "Start your next project.",
-    "finalDesc": "Tell us what you want to build. NINESPRO will help you make it real.",
-    "finalButton": "Contact Us",
-    "products": {
-      "kicker": "Product",
-      "title": "Intelligence. Scale. Speed.",
-      "desc": "AI, cloud, design, and enterprise engineering in one future-ready product system.",
-      "items": [
-        {
-          "title": "Nines AI",
-          "desc": "AI agents and workflows for knowledge, writing, research, and automation."
-        },
-        {
-          "title": "Nines Cloud",
-          "desc": "Cloud systems, APIs, dashboards, and digital product infrastructure."
-        },
-        {
-          "title": "Nines Studio",
-          "desc": "Minimal websites, interfaces, brand systems, and digital experiences."
-        },
-        {
-          "title": "Nines Enterprise",
-          "desc": "Custom software, internal platforms, and automation systems."
-        },
-        {
-          "title": "Nines Tools",
-          "desc": "Online utilities for developers, documents, text, and productivity."
-        },
-        {
-          "title": "Nines Data",
-          "desc": "Dashboards, reports, visualization, and business intelligence."
-        },
-        {
-          "title": "Nines Flow",
-          "desc": "Workflow systems for approvals, tasks, and process automation."
-        },
-        {
-          "title": "Nines Labs",
-          "desc": "Experimental AI prototypes and future digital experiences."
-        }
+  en: {
+    brand: "NINESPRO",
+    slogan: "The world’s knowledge, at your fingertips.",
+    desc: "Design and engineering for AI-native products, digital platforms, online tools, and enterprise software.",
+    explore: "Explore Product",
+    contact: "Contact NINESPRO",
+    finalTitle: "Start building seriously.",
+    finalDesc: "Share the project direction, business goals, and current problems with NINESPRO. Build a clear product path together.",
+    finalButton: "Send Email",
+    products: {
+      kicker: "Product",
+      title: "Product capabilities, clearly presented.",
+      desc: "The product center explains NINESPRO product directions, AI capabilities, tool systems, and engineering delivery methods.",
+      items: [
+        { title: "Nines AI", desc: "AI capability for content generation, knowledge organization, research assistance, and workflow automation." },
+        { title: "Nines Cloud", desc: "Cloud foundations for accounts, permissions, APIs, data, and admin systems." },
+        { title: "Nines Studio", desc: "Design and development for websites, interfaces, brand pages, and digital experiences." },
+        { title: "Nines Enterprise", desc: "Custom development for enterprise workflows, internal platforms, and business systems." },
+        { title: "Nines Tools", desc: "Online tool systems for development, documents, text processing, and productivity." },
+        { title: "Nines Data", desc: "System capability for dashboards, reporting, visualization, and business analysis." },
+        { title: "Nines Flow", desc: "Workflow capability for approvals, tasks, collaboration, and automated execution." },
+        { title: "Nines Labs", desc: "Continuous exploration for AI prototypes, tool experiments, and future experiences." }
       ]
     },
-    "solutions": {
-      "kicker": "Solution",
-      "title": "From idea to system.",
-      "desc": "Turn business problems into clear, executable, and scalable digital systems.",
-      "items": [
-        {
-          "title": "Business Automation",
-          "desc": "Replace repetitive work with AI workflows and custom software."
-        },
-        {
-          "title": "AI Transformation",
-          "desc": "Bring language models, agents, and automation into real business processes."
-        },
-        {
-          "title": "Digital Platforms",
-          "desc": "Build SaaS products, portals, dashboards, and internal tools."
-        },
-        {
-          "title": "Data Intelligence",
-          "desc": "Turn data into insights, reports, and decision systems."
-        },
-        {
-          "title": "Startup Systems",
-          "desc": "MVPs, prototypes, landing pages, and scalable product foundations."
-        },
-        {
-          "title": "Enterprise Operations",
-          "desc": "Internal platforms for management, collaboration, and workflow control."
-        },
-        {
-          "title": "Education & Learning",
-          "desc": "Learning tools, knowledge systems, and AI-assisted study experiences."
-        },
-        {
-          "title": "Custom Development",
-          "desc": "Transform unique processes into reliable software systems."
-        }
+    solutions: {
+      kicker: "Solution",
+      title: "Built for real business scenarios.",
+      desc: "NINESPRO provides practical solution design and system delivery across automation, AI transformation, digital platforms, and custom development.",
+      items: [
+        { title: "Business Automation", desc: "Map repetitive processes and build efficient task, approval, collaboration, and execution systems." },
+        { title: "AI Transformation", desc: "Bring language models, agents, and automation into real business processes." },
+        { title: "Digital Platforms", desc: "Build SaaS products, portals, dashboards, admin systems, and internal tools." },
+        { title: "Data Intelligence", desc: "Turn data into understandable dashboards, reports, insights, and decision support." },
+        { title: "Startup Systems", desc: "Support landing pages, product prototypes, MVPs, and early product foundations." },
+        { title: "Enterprise Operations", desc: "Build internal platforms for management, collaboration, workflow control, and tracking." },
+        { title: "Education & Learning", desc: "Build learning tools, knowledge systems, and AI-assisted study experiences." },
+        { title: "Custom Development", desc: "Transform unique business paths into maintainable and extensible software systems." }
       ]
     },
-    "ai": {
-      "kicker": "AI",
-      "title": "Intelligence at the core.",
-      "desc": "Agents, knowledge systems, document intelligence, and automation built for real workflows.",
-      "items": [
-        {
-          "title": "AI Agents",
-          "desc": "Understand tasks, break down processes, call tools, and execute multi-step work."
-        },
-        {
-          "title": "Knowledge Systems",
-          "desc": "Organize documents, data, experience, and rules into searchable systems."
-        },
-        {
-          "title": "Document Intelligence",
-          "desc": "Parse, summarize, and extract contracts, reports, forms, and files."
-        },
-        {
-          "title": "Research Assistants",
-          "desc": "AI workspaces for research, writing, analysis, and decision support."
-        }
+    ai: {
+      kicker: "AI",
+      title: "AI capabilities inside product workflows.",
+      desc: "NINESPRO connects AI capabilities for generation, organization, analysis, automation, and knowledge management into real products and workflows.",
+      items: [
+        { title: "AI Agents", desc: "Break goals into steps, organize context, and support multi-step task execution." },
+        { title: "Knowledge Systems", desc: "Organize documents, materials, experience, and business rules into reusable knowledge structures." },
+        { title: "Document Intelligence", desc: "Parse, summarize, extract, and restructure contracts, reports, forms, and files." },
+        { title: "Research Assistants", desc: "Intelligent workspace for research, writing, analysis, and decision support." }
       ]
     },
-    "development": {
-      "kicker": "Development",
-      "title": "From interface to platform.",
-      "desc": "Websites, SaaS products, dashboards, APIs, internal tools, and enterprise systems.",
-      "items": [
-        {
-          "title": "Web Development",
-          "desc": "High-performance websites, landing pages, brand pages, and multilingual sites."
-        },
-        {
-          "title": "SaaS Platforms",
-          "desc": "Subscriptions, users, permissions, data, admin panels, and scalable foundations."
-        },
-        {
-          "title": "Cloud APIs",
-          "desc": "Reliable APIs for integrations, automation, and external applications."
-        },
-        {
-          "title": "Internal Tools",
-          "desc": "Internal platforms for management, approvals, collaboration, and operations."
-        }
+    development: {
+      kicker: "Development",
+      title: "From interface to system.",
+      desc: "Productized delivery for websites, tools, APIs, admin systems, permissions, and internal platforms.",
+      items: [
+        { title: "Web Development", desc: "High-performance websites, landing pages, brand pages, and multilingual sites." },
+        { title: "SaaS Platforms", desc: "Users, permissions, data, admin panels, and scalable product foundations." },
+        { title: "Cloud APIs", desc: "Reliable API systems for integrations, automation, and external applications." },
+        { title: "Internal Tools", desc: "Internal platforms for management, approvals, collaboration, and operations." }
       ]
     },
-    "projects": {
-      "kicker": "Case Studies",
-      "title": "Featured projects.",
-      "desc": "AI platforms, SaaS dashboards, enterprise websites, and brand systems.",
-      "items": [
-        {
-          "title": "AI Platform",
-          "desc": "Document processing, knowledge organization, and workflow automation."
-        },
-        {
-          "title": "SaaS Dashboard",
-          "desc": "Analytics dashboard for business data and operational insights."
-        },
-        {
-          "title": "Enterprise Website",
-          "desc": "Corporate website for brand presence, conversion, and scalability."
-        },
-        {
-          "title": "Brand System",
-          "desc": "Minimal identity system for long-term digital product growth."
-        }
+    projects: {
+      kicker: "Project Directions",
+      title: "From requirements to running systems.",
+      desc: "NINESPRO provides productized development capability for AI platforms, SaaS dashboards, enterprise websites, and brand systems.",
+      items: [
+        { title: "AI Platform", desc: "Product spaces for document processing, knowledge organization, and workflow automation." },
+        { title: "SaaS Dashboard", desc: "Visualization platforms for business data, operational metrics, and analytical insights." },
+        { title: "Enterprise Website", desc: "Website systems for brand presence, product explanation, conversion, and long-term expansion." },
+        { title: "Brand System", desc: "Visual, content, and experience consistency for long-term digital product growth." }
       ]
     },
-    "why": {
-      "kicker": "Why NINESPRO",
-      "title": "Not outsourcing. System capability.",
-      "desc": "Strategy, design, engineering, AI, and cloud architecture in one product standard.",
-      "items": [
-        {
-          "title": "Product Thinking",
-          "desc": "We design systems around product paths, conversion, and long-term growth."
-        },
-        {
-          "title": "AI Native",
-          "desc": "AI is a core capability, not a feature added at the end."
-        },
-        {
-          "title": "Engineering Quality",
-          "desc": "Structure, performance, maintainability, and long-term scalability."
-        },
-        {
-          "title": "Design Precision",
-          "desc": "Minimal, clear, premium, and consistent digital experiences."
-        }
+    why: {
+      kicker: "Approach",
+      title: "Building products with system capability.",
+      desc: "Strategy, design, engineering, AI, and cloud architecture in one product standard.",
+      items: [
+        { title: "Product Thinking", desc: "Design systems around product paths, user experience, conversion goals, and long-term growth." },
+        { title: "AI Native", desc: "Make AI part of product capability and integrate it into real usage flows." },
+        { title: "Engineering Quality", desc: "Structure, performance, permissions, maintainability, and long-term scalability." },
+        { title: "Design Precision", desc: "Simple, clear, stable, and brand-consistent digital experiences." }
       ]
     },
-    "statsTitle": "Trust comes from results.",
-    "statsDesc": "Stable digital foundations for future-facing products, teams, and organizations.",
-    "stats": [
-      {
-        "value": "100+",
-        "label": "Projects Delivered"
-      },
-      {
-        "value": "99.9%",
-        "label": "Uptime Target"
-      },
-      {
-        "value": "24/7",
-        "label": "Support"
-      },
-      {
-        "value": "50+",
-        "label": "Clients & Teams"
-      }
+    statsTitle: "How NINESPRO builds.",
+    statsDesc: "Product thinking, AI-native capability, and engineered execution for digital systems that can keep improving.",
+    stats: [
+      { value: "Project", label: "Delivery" },
+      { value: "AI Native", label: "Capability" },
+      { value: "Engineered", label: "Execution" },
+      { value: "Long-term", label: "Iteration" }
     ],
-    "testimonials": {
-      "kicker": "Testimonials",
-      "title": "Turning complexity into clarity.",
-      "desc": "We help teams transform scattered requirements into scalable digital products.",
-      "items": [
-        {
-          "title": "Founder",
-          "desc": "NINESPRO helped us turn an idea into a demo-ready and scalable MVP."
-        },
-        {
-          "title": "Operations Team",
-          "desc": "Automation reduced repetitive work and helped the team focus on key operations."
-        },
-        {
-          "title": "Enterprise Client",
-          "desc": "From website to internal platform, the experience became more unified and stable."
-        }
+    testimonials: {
+      kicker: "Working Method",
+      title: "Turning complex needs into a clear path.",
+      desc: "NINESPRO organizes business goals, user journeys, system capability, and delivery cadence into executable product plans.",
+      items: [
+        { title: "Requirement Mapping", desc: "Start from business goals, user scenarios, and feature boundaries to define the first-stage product capability." },
+        { title: "Process Optimization", desc: "Map repetitive workflows, task nodes, and collaboration patterns before building automation and internal tools." },
+        { title: "System Delivery", desc: "Deliver digital systems with stable architecture, clear permissions, and maintainable code." }
       ]
     },
-    "partners": {
-      "kicker": "Partners",
-      "title": "Built with innovators.",
-      "desc": "For startups, enterprises, education teams, and digital service organizations.",
-      "items": [
-        {
-          "title": "Startups",
-          "desc": "From MVP to a scalable product foundation."
-        },
-        {
-          "title": "Enterprises",
-          "desc": "Internal platforms, workflow systems, and digital operations."
-        },
-        {
-          "title": "Education",
-          "desc": "Knowledge systems, learning tools, and AI-assisted experiences."
-        },
-        {
-          "title": "Agencies",
-          "desc": "Product engineering capability for brand, tech, and delivery teams."
-        }
+    partners: {
+      kicker: "Use Cases",
+      title: "For different stages of digital development.",
+      desc: "From early product validation to internal platforms, NINESPRO selects the right delivery approach for the actual goal.",
+      items: [
+        { title: "Product Validation", desc: "Landing pages, prototypes, MVPs, and early product foundations." },
+        { title: "Enterprise Platforms", desc: "Internal tools, workflow systems, dashboards, and business management platforms." },
+        { title: "Knowledge & Learning", desc: "Knowledge organization, learning tools, content generation, and AI-assisted study experiences." },
+        { title: "Service Delivery", desc: "Website development, digital experience, tool development, and customer project delivery support." }
       ]
     },
-    "contactSection": {
-      "kicker": "Contact",
-      "title": "Start building seriously.",
-      "desc": "Share your project direction, business goals, and current challenges.",
-      "items": [
-        {
-          "title": "Business Email",
-          "desc": "support@ninespro.com"
-        },
-        {
-          "title": "Partnership",
-          "desc": "partner@ninespro.com"
-        },
-        {
-          "title": "Sales",
-          "desc": "sales@ninespro.com"
-        }
+    contactSection: {
+      kicker: "Contact",
+      title: "Unified contact entry.",
+      desc: "For project inquiries, collaboration, or feedback, contact NINESPRO through the unified email address.",
+      items: [
+        { title: "Unified Email", desc: "one@ninespro.com" },
+        { title: "Contact Page", desc: "Submit partnership, feedback, or support needs." },
+        { title: "Project Discussion", desc: "Share project direction, goals, and current challenges." }
       ]
     }
   }
@@ -818,7 +406,7 @@ function StatSection({ title, desc, stats }: { title: string; desc: string; stat
     <section className="homeLayer homeStatsLayer">
       <div className="homeLayerInner">
         <div className="homeMotionZone homeStatsHeadZone"><div className="homeLayerHead"><p className="homeLayerKicker">{title}</p><h2 className="homeLayerTitle">{desc}</h2></div></div>
-        <div className="homeStatsGrid">{stats.map((item) => <article className="homeCard homeStatCard" key={item.value}><strong>{item.value}</strong><span>{item.label}</span></article>)}</div>
+        <div className="homeStatsGrid">{stats.map((item) => <article className="homeCard homeStatCard" key={`${item.value}-${item.label}`}><strong>{item.value}</strong><span>{item.label}</span></article>)}</div>
       </div>
     </section>
   );
@@ -948,7 +536,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         .homeCard h3 { margin: 0 0 14px; font-size: 26px; line-height: 1.06; letter-spacing: -.045em; font-weight: 950; }
         .homeCard p { margin: 0; max-width: 390px; font-size: 16px; line-height: 1.58; color: #4b5563; font-weight: 620; text-wrap: balance; }
         .homeStatCard { min-height: 220px; justify-content: center; text-align: center; }
-        .homeStatCard strong { display: block; font-size: clamp(44px, 5vw, 76px); line-height: 1; letter-spacing: -.06em; font-weight: 950; }
+        .homeStatCard strong { display: block; font-size: clamp(36px, 4.2vw, 56px); line-height: 1; letter-spacing: -.06em; font-weight: 950; }
         .homeStatCard span { display: block; margin-top: 12px; color: #4b5563; font-size: 16px; font-weight: 700; }
         .homeArrow { position: absolute; top: 50%; z-index: 30; width: 54px; height: 54px; padding: 0; border-radius: 999px; border: 1px solid rgba(255,255,255,.5); display: flex; align-items: center; justify-content: center; color: rgba(17,24,39,.88); background: radial-gradient(circle at 22% 14%, rgba(255,255,255,.68), rgba(255,255,255,.22) 38%, rgba(255,255,255,.07) 76%); background-color: rgba(255,255,255,.14); box-shadow: 0 12px 34px rgba(15,23,42,.11), inset 0 1px 0 rgba(255,255,255,.68), inset 0 -8px 18px rgba(15,23,42,.035); backdrop-filter: blur(9px) saturate(150%); -webkit-backdrop-filter: blur(9px) saturate(150%); cursor: pointer; transform: translate3d(0,-50%,0); opacity: .88; line-height: 1; }
         .homeArrowGlyph { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 37px; font-weight: 750; line-height: 1; transform: translateY(-2px); pointer-events: none; }
@@ -964,9 +552,9 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         @media (max-width: 760px) { .homeHero { padding: 104px 18px 70px; } .homeHeroInner, .homeLayerHead, .homeCtaInner { animation: none; } .homeMotionZone, .homeStatsHeadZone { height: auto; margin-bottom: 34px; overflow: visible; } .homeLayerHead { position: relative; } .homeTrack { grid-auto-columns: minmax(280px, 86vw); padding-left: 84px; padding-right: 84px; } .homeArrowLeft { left: 10px; } .homeArrowRight { right: 10px; } }
       `}</style>
 
-      <section className="homeHero"><div className="homeHeroInner"><h1 className="homeBrand">{t.brand}</h1><p className="homeSlogan">{t.slogan}</p><p className="homeDesc">{t.desc}</p><div className="homeActions"><a href={localePath(locale,"/product")} className="homeGlassButton">{t.explore}</a><a href={localePath(locale,"/contact")} className="homeGlassButton">{t.contact}</a></div></div></section>
+      <section className="homeHero"><div className="homeHeroInner"><h1 className="homeBrand">{t.brand}</h1><p className="homeSlogan">{t.slogan}</p><p className="homeDesc">{t.desc}</p><div className="homeActions"><a href={localePath(locale,"/product")} className="homeGlassButton">{t.explore}</a><a href="mailto:one@ninespro.com" className="homeGlassButton">{t.contact}</a></div></div></section>
       <SectionGap/><ShowcaseSection section={t.products}/><SectionGap/><ShowcaseSection section={t.solutions}/><SectionGap/><ShowcaseSection section={t.ai}/><SectionGap/><ShowcaseSection section={t.development}/><SectionGap/><ShowcaseSection section={t.projects}/><SectionGap/><ShowcaseSection section={t.why}/><SectionGap/><StatSection title={t.statsTitle} desc={t.statsDesc} stats={t.stats}/><SectionGap/><ShowcaseSection section={t.testimonials}/><SectionGap/><ShowcaseSection section={t.partners}/><SectionGap/><ShowcaseSection section={t.contactSection}/><SectionGap/>
-      <section className="homeCta"><div className="homeCtaInner"><h2>{t.finalTitle}</h2><p>{t.finalDesc}</p><div className="homeActions"><a href={localePath(locale,"/contact")} className="homeGlassButton">{t.finalButton}</a></div></div></section>
+      <section className="homeCta"><div className="homeCtaInner"><h2>{t.finalTitle}</h2><p>{t.finalDesc}</p><div className="homeActions"><a href="mailto:one@ninespro.com" className="homeGlassButton">{t.finalButton}</a></div></div></section>
     </main>
   );
 }
